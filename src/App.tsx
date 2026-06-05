@@ -209,7 +209,7 @@ export default function App() {
   const [newInvoiceAmount, setNewInvoiceAmount] = useState(0);
 
   // API base URL
-  const API_BASE = 'http://localhost:3000';
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   // Fetch Data Helpers
   const fetchProducts = React.useCallback(async () => {

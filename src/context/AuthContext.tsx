@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = 'http://localhost:3000/auth';
+  const API_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/auth`;
 
   const login = async (email: string, password: string) => {
     setError(null);
