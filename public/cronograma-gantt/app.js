@@ -93,7 +93,7 @@ const DEFAULT_TASKS = [
     name: 'Modelado de Base de Datos y Mapeo de IVA',
     startWeek: 1,
     endWeek: 2,
-    progress: 90,
+    progress: 100,
     color: 'var(--task-color-3)',
     desc: 'Diseño lógico en PostgreSQL para el IVA, retenciones, compras y ventas. Configuración de Prisma.',
     dependency: 'task-2'
@@ -103,7 +103,7 @@ const DEFAULT_TASKS = [
     name: 'Módulo de Contabilidad (Facturas de Empresa)',
     startWeek: 2,
     endWeek: 3,
-    progress: 80,
+    progress: 100,
     color: 'var(--task-color-4)',
     desc: 'Contabilización automática de facturas de la empresa ingresadas al sistema y generación de asientos contables.',
     dependency: 'task-3'
@@ -113,7 +113,7 @@ const DEFAULT_TASKS = [
     name: 'Módulo de Ventas y Retenciones de Clientes',
     startWeek: 3,
     endWeek: 4,
-    progress: 75,
+    progress: 100,
     color: 'var(--task-color-5)',
     desc: 'Registro de ventas y vinculación automática con los comprobantes de retención emitidos por los clientes.',
     dependency: 'task-4'
@@ -289,7 +289,18 @@ function init() {
     saveState();
   } else {
     tasks = migrateLegacyTasks(loadedTasks);
-    saveState();
+    // Auto-update completed tasks (task-3, task-4, task-5) to 100% if they were cached at lower progress
+    let modified = false;
+    tasks = tasks.map(t => {
+      if ((t.id === 'task-3' || t.id === 'task-4' || t.id === 'task-5') && t.progress < 100) {
+        t.progress = 100;
+        modified = true;
+      }
+      return t;
+    });
+    if (modified) {
+      saveState();
+    }
   }
 
   // Load theme preference

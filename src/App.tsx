@@ -186,6 +186,16 @@ export default function App() {
   const [cashInvoiceId, setCashInvoiceId] = useState('');
   const [cashPurchaseId, setCashPurchaseId] = useState('');
 
+  // SRI Configuration States
+  const [sriSubTab, setSriSubTab] = useState<'formulario' | 'ats' | 'config'>('formulario');
+  const [sriSimulate, setSriSimulate] = useState(true);
+  const [sriEnvironment, setSriEnvironment] = useState('1');
+  const [sriSignatureBase64, setSriSignatureBase64] = useState('');
+  const [sriSignaturePassword, setSriSignaturePassword] = useState('');
+  const [sriConfigHasSignature, setSriConfigHasSignature] = useState(false);
+  const [sriConfigLoading, setSriConfigLoading] = useState(false);
+  const [sriSaving, setSriSaving] = useState(false);
+
 
   // Auth State
   const [isLoginView, setIsLoginView] = useState(true);
@@ -397,6 +407,26 @@ export default function App() {
     }
   }, [token]);
 
+  const fetchSriConfig = React.useCallback(async () => {
+    if (!token) return;
+    setSriConfigLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/auth/profile/sri-config`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSriSimulate(data.sriSimulate);
+        setSriEnvironment(data.sriEnvironment);
+        setSriConfigHasSignature(data.hasSignature);
+      }
+    } catch (err) {
+      console.error('Error fetching SRI config:', err);
+    } finally {
+      setSriConfigLoading(false);
+    }
+  }, [token]);
+
   // Load active tab data
   useEffect(() => {
     if (user && token) {
@@ -413,6 +443,7 @@ export default function App() {
           void fetchInvoices();
           void fetchPurchases();
           void fetchReconciliationSummary();
+          void fetchSriConfig();
         }
         if (activeTab === 'assets') {
           void fetchAssets();
@@ -421,7 +452,19 @@ export default function App() {
       }, 0);
       return () => clearTimeout(timer);
     }
-  }, [user, token, activeTab, fetchProducts, fetchAssets, fetchDepreciations, fetchInvoices, fetchPurchases, fetchReconciliationSummary, fetchAccountingData]);
+  }, [
+    user,
+    token,
+    activeTab,
+    fetchProducts,
+    fetchAssets,
+    fetchDepreciations,
+    fetchInvoices,
+    fetchPurchases,
+    fetchReconciliationSummary,
+    fetchAccountingData,
+    fetchSriConfig,
+  ]);
 
   // Periodic polling for invoices to update SRI authorization status
   useEffect(() => {
@@ -616,6 +659,60 @@ export default function App() {
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleP12FileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        const base64 = (event.target.result as string).split(',')[1];
+        setSriSignatureBase64(base64);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveSriConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token) return;
+    setSriSaving(true);
+    try {
+      const body: any = {
+        sriSimulate,
+        sriEnvironment,
+      };
+      if (sriSignatureBase64) {
+        body.signatureBase64 = sriSignatureBase64;
+      }
+      if (sriSignaturePassword) {
+        body.signaturePassword = sriSignaturePassword;
+      }
+      const res = await fetch(`${API_BASE}/auth/profile/sri-config`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSriConfigHasSignature(data.hasSignature);
+        setSriSignatureBase64('');
+        setSriSignaturePassword('');
+        alert('Configuración del SRI guardada correctamente.');
+      } else {
+        alert('Error al guardar la configuración del SRI.');
+      }
+    } catch (err) {
+      console.error('Error saving SRI config:', err);
+      alert('Error de conexión al guardar la configuración.');
+    } finally {
+      setSriSaving(false);
     }
   };
 
@@ -1879,9 +1976,21 @@ export default function App() {
             {/* TAB: REPORTES SRI */}
             {activeTab === 'sri' && (
               <div className="fade-in">
-                <div className="grid-2">
-                  {/* Formulario 104 VAT simulator */}
-                  <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                {/* SRI Sub-navigation tabs */}
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem' }}>
+                  <button className={`btn-sm ${sriSubTab === 'formulario' ? 'status-aura' : ''}`} onClick={() => setSriSubTab('formulario')}>
+                    📊 Formulario 104 (IVA)
+                  </button>
+                  <button className={`btn-sm ${sriSubTab === 'ats' ? 'status-aura' : ''}`} onClick={() => setSriSubTab('ats')}>
+                    📦 Anexo Transaccional (ATS)
+                  </button>
+                  <button className={`btn-sm ${sriSubTab === 'config' ? 'status-aura' : ''}`} onClick={() => setSriSubTab('config')}>
+                    ⚙️ Configuración SRI & Firma
+                  </button>
+                </div>
+
+                {sriSubTab === 'formulario' && (
+                  <div className="table-container glass-panel fade-in" style={{ padding: '1.5rem', margin: 0 }}>
                     <h3 style={{ marginTop: 0 }}>Simulador del Formulario 104 (IVA Ecuador)</h3>
                     <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
                       Cálculo en tiempo real de los casilleros de ventas y adquisiciones del SRI según facturación electrónica emitida y compras sincronizadas.
@@ -1951,9 +2060,10 @@ export default function App() {
                       </div>
                     </div>
                   </div>
+                )}
 
-                  {/* ATS exporter */}
-                  <div className="card glass-panel flex-column" style={{ padding: '1.5rem', margin: 0, height: '100%' }}>
+                {sriSubTab === 'ats' && (
+                  <div className="card glass-panel flex-column fade-in" style={{ padding: '1.5rem', margin: 0 }}>
                     <h3 style={{ marginTop: 0 }}>Generador del Anexo Transaccional (ATS)</h3>
                     <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
                       Estructura oficial XML/JSON para la declaración simplificada del anexo transaccional del SRI. Contiene datos de ventas y compras del periodo.
@@ -1971,9 +2081,147 @@ export default function App() {
                       </pre>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {sriSubTab === 'config' && (
+                  <div className="grid-2 fade-in">
+                    <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                      <h3 style={{ marginTop: 0 }}>Conexión SOAP & Servidor SRI</h3>
+                      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                        Configura el comportamiento del sistema al emitir facturas. Puedes alternar entre el modo simulador local y la conexión real al SOAP del SRI.
+                      </p>
+
+                      {sriConfigLoading ? (
+                        <p>Cargando configuración...</p>
+                      ) : (
+                        <form onSubmit={handleSaveSriConfig}>
+                          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 'bold' }}>
+                              <input
+                                type="checkbox"
+                                checked={sriSimulate}
+                                onChange={(e) => setSriSimulate(e.target.checked)}
+                                style={{ width: 'auto', margin: 0 }}
+                              />
+                              Modo Simulación (Evita llamadas reales al SRI)
+                            </label>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginTop: '4px', paddingLeft: '24px' }}>
+                              Si está activado, el sistema autogenera respuestas exitosas locales. Si está desactivado, enviará la información al SOAP del SRI usando la firma electrónica.
+                            </span>
+                          </div>
+
+                          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                            <label>Ambiente de Destino:</label>
+                            <select
+                              value={sriEnvironment}
+                              onChange={(e) => setSriEnvironment(e.target.value)}
+                              disabled={sriSimulate}
+                            >
+                              <option value="1">Ambiente 1: Pruebas (celcer.sri.gob.ec)</option>
+                              <option value="2">Ambiente 2: Producción (cel.sri.gob.ec)</option>
+                            </select>
+                          </div>
+
+                          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.5rem', marginTop: '1.5rem' }}>
+                            <h4 style={{ margin: '0 0 1rem', fontSize: '1rem', fontWeight: 'bold' }}>Firma Electrónica (Firma Digital .p12)</h4>
+                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                              Para firmar los comprobantes electrónicos (XAdES-BES) antes de enviarlos al SRI.
+                            </p>
+
+                            <div className="form-group">
+                              <label>Archivo de Firma (.p12):</label>
+                              <input
+                                type="file"
+                                accept=".p12"
+                                onChange={handleP12FileChange}
+                                style={{
+                                  background: 'rgba(0,0,0,0.3)',
+                                  border: '1px dashed var(--border)',
+                                  borderRadius: '8px',
+                                  padding: '10px',
+                                  color: 'var(--text-primary)',
+                                  width: '100%',
+                                }}
+                              />
+                              <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginTop: '4px' }}>
+                                {sriConfigHasSignature ? '✔️ Firma guardada anteriormente en el servidor.' : '⚠️ No se ha subido ninguna firma electrónica aún.'}
+                              </span>
+                            </div>
+
+                            <div className="form-group" style={{ marginTop: '1rem' }}>
+                              <label>Contraseña de la Firma:</label>
+                              <input
+                                type="password"
+                                value={sriSignaturePassword}
+                                onChange={(e) => setSriSignaturePassword(e.target.value)}
+                                placeholder={sriConfigHasSignature ? '••••••••' : 'Ingresa la contraseña del certificado'}
+                              />
+                            </div>
+                          </div>
+
+                          <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '1.5rem' }} disabled={sriSaving}>
+                            {sriSaving ? 'Guardando...' : 'Guardar Configuración'}
+                          </button>
+                        </form>
+                      )}
+                    </div>
+
+                    <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                      <h3 style={{ marginTop: 0 }}>Estado del SOAP y Diagnóstico</h3>
+                      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                        Detalles sobre los endpoints y pruebas de conexión física con el SRI.
+                      </p>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                          <span>WSDL Recepción:</span>
+                          <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', opacity: 0.8 }}>
+                            {sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...'}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                          <span>WSDL Autorización:</span>
+                          <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', opacity: 0.8 }}>
+                            {sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...'}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                          <span>Conexión SRI SOAP:</span>
+                          <span>
+                            {sriSimulate ? (
+                              <span className="badge-status status-aura">SIMULADO</span>
+                            ) : (
+                              <span className="badge-status status-yes">ACTIVO REAL</span>
+                            )}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
+                          <span>Certificado XAdES-BES:</span>
+                          <span>
+                            {sriConfigHasSignature ? (
+                              <span className="badge-status status-yes">CARGADO (.p12)</span>
+                            ) : (
+                              <span className="badge-status status-partial">MOCK EN MEMORIA</span>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div style={{ marginTop: '2rem', padding: '1rem', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', fontSize: '12px', border: '1px solid var(--border)' }}>
+                        <strong>Guía de Comprobación:</strong>
+                        <ol style={{ paddingLeft: '1.25rem', marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <li>Desactiva el "Modo Simulación".</li>
+                          <li>Guarda los cambios (si no tienes firma real, el sistema usará un certificado mock).</li>
+                          <li>Ve al panel de Ventas y emite una nueva factura.</li>
+                          <li>El sistema llamará al SOAP del SRI. Si usas la firma mock, recibirás el error de firma de parte del SRI. Esto es la prueba física de que la conexión SOAP funciona.</li>
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
+
 
             {/* TAB: FIXED ASSETS */}
             {activeTab === 'assets' && (
