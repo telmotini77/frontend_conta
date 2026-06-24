@@ -1091,7 +1091,41 @@ export default function App() {
                 <span className="user-avatar" style={{ fontSize: '1.5rem' }}>🏢</span>
                 {!isSidebarCollapsed && (
                   <div className="user-info" style={{ display: 'flex', flexDirection: 'column', fontSize: '12px' }}>
-                    <strong style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }}>{user.name}</strong>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <strong style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '110px' }}>{user.name}</strong>
+                      <button 
+                        onClick={() => {
+                          setActiveTab('sri');
+                          setSriSubTab('config');
+                        }}
+                        style={{ 
+                          background: 'transparent', 
+                          border: 'none', 
+                          padding: '2px', 
+                          cursor: 'pointer', 
+                          display: 'flex', 
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'transform 0.2s ease',
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.transform = 'rotate(30deg) scale(1.15)'}
+                        onMouseLeave={(e) => e.currentTarget.style.transform = 'rotate(0deg) scale(1)'}
+                        title="Configurar SOAP SRI"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <defs>
+                            <linearGradient id="gearGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                              <stop offset="0%" stopColor="#d946ef" />
+                              <stop offset="50%" stopColor="#8b5cf6" />
+                              <stop offset="100%" stopColor="#06b6d4" />
+                            </linearGradient>
+                          </defs>
+                          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41l-1.92-.01c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h1.92c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" 
+                            fill="url(#gearGradient)" 
+                          />
+                        </svg>
+                      </button>
+                    </div>
                     <span style={{ opacity: 0.7 }}>RUC: {user.ruc}</span>
                   </div>
                 )}
@@ -2084,17 +2118,20 @@ export default function App() {
                 {sriSubTab === 'config' && (
                   <div className="grid-2 fade-in">
                     <div className="flex-column" style={{ gap: '1.5rem' }}>
-                      {/* Título y descripción principal */}
+                      {/* Selección del Entorno SRI SOAP */}
                       <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
                         <h3 style={{ marginTop: 0 }}>Modo de Conexión SOAP</h3>
                         <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                          Selecciona el tipo de entorno para interactuar con los servicios web (SOAP) del SRI.
+                          Selecciona el entorno para interactuar con los servicios web (SOAP) del SRI.
                         </p>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                          {/* Opción A: Simulador de Pruebas */}
+                          {/* Opción 1: Simulador Local (Demo) */}
                           <div
-                            onClick={() => setSriSimulate(true)}
+                            onClick={() => {
+                              setSriSimulate(true);
+                              setSriEnvironment('1');
+                            }}
                             className="card glass-panel"
                             style={{
                               padding: '1.25rem',
@@ -2118,10 +2155,10 @@ export default function App() {
                             <div style={{ fontSize: '28px' }}>🧪</div>
                             <div style={{ flex: 1 }}>
                               <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 'bold', color: sriSimulate ? 'var(--cyan)' : 'var(--text-primary)' }}>
-                                Demo / Simulador SOAP de Pruebas
+                                Simulador SOAP (Demo de Pruebas)
                               </h4>
                               <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.4', margin: 0 }}>
-                                Respuestas locales inmediatas. No requiere conexión a internet, firma electrónica (.p12) real ni genera obligaciones tributarias.
+                                Respuestas locales inmediatas. No requiere conexión a internet, firma electrónica real ni genera obligaciones tributarias.
                               </p>
                             </div>
                             {sriSimulate && (
@@ -2131,21 +2168,66 @@ export default function App() {
                             )}
                           </div>
 
-                          {/* Opción B: Conexión Real SRI SOAP */}
+                          {/* Opción 2: SOAP SRI - Entorno de Pruebas */}
                           <div
-                            onClick={() => setSriSimulate(false)}
+                            onClick={() => {
+                              setSriSimulate(false);
+                              setSriEnvironment('1');
+                            }}
                             className="card glass-panel"
                             style={{
                               padding: '1.25rem',
                               cursor: 'pointer',
-                              border: !sriSimulate
+                              border: (!sriSimulate && sriEnvironment === '1')
                                 ? '2px solid var(--indigo)'
                                 : '1px solid var(--border)',
-                              background: !sriSimulate
+                              background: (!sriSimulate && sriEnvironment === '1')
                                 ? 'rgba(99, 102, 241, 0.05)'
                                 : 'rgba(0, 0, 0, 0.2)',
-                              boxShadow: !sriSimulate
+                              boxShadow: (!sriSimulate && sriEnvironment === '1')
                                 ? '0 0 15px var(--indigo-glow)'
+                                : 'none',
+                              transition: 'all 0.3s ease',
+                              position: 'relative',
+                              display: 'flex',
+                              gap: '15px',
+                              alignItems: 'center'
+                            }}
+                          >
+                            <div style={{ fontSize: '28px' }}>📡</div>
+                            <div style={{ flex: 1 }}>
+                              <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 'bold', color: (!sriSimulate && sriEnvironment === '1') ? 'var(--indigo)' : 'var(--text-primary)' }}>
+                                SOAP SRI - Entorno de Pruebas
+                              </h4>
+                              <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.4', margin: 0 }}>
+                                Conexión real con el servidor de pruebas (`celcer.sri.gob.ec`). Valida tu firma electrónica (.p12) sin valor tributario legal.
+                              </p>
+                            </div>
+                            {(!sriSimulate && sriEnvironment === '1') && (
+                              <span style={{ background: 'var(--indigo)', color: '#ffffff', fontSize: '9px', fontWeight: 'bold', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                                Activo
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Opción 3: SOAP SRI - Entorno de Producción (Real) */}
+                          <div
+                            onClick={() => {
+                              setSriSimulate(false);
+                              setSriEnvironment('2');
+                            }}
+                            className="card glass-panel"
+                            style={{
+                              padding: '1.25rem',
+                              cursor: 'pointer',
+                              border: (!sriSimulate && sriEnvironment === '2')
+                                ? '2px solid var(--emerald)'
+                                : '1px solid var(--border)',
+                              background: (!sriSimulate && sriEnvironment === '2')
+                                ? 'rgba(16, 185, 129, 0.05)'
+                                : 'rgba(0, 0, 0, 0.2)',
+                              boxShadow: (!sriSimulate && sriEnvironment === '2')
+                                ? '0 0 15px var(--emerald-glow)'
                                 : 'none',
                               transition: 'all 0.3s ease',
                               position: 'relative',
@@ -2156,16 +2238,16 @@ export default function App() {
                           >
                             <div style={{ fontSize: '28px' }}>🏛️</div>
                             <div style={{ flex: 1 }}>
-                              <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 'bold', color: !sriSimulate ? 'var(--indigo)' : 'var(--text-primary)' }}>
-                                Sistema Real SRI SOAP
+                              <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 'bold', color: (!sriSimulate && sriEnvironment === '2') ? 'var(--emerald)' : 'var(--text-primary)' }}>
+                                SOAP SRI - Entorno de Producción (Principal y Real)
                               </h4>
                               <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.4', margin: 0 }}>
-                                Conexión en vivo con el SRI. Requiere cargar tu firma electrónica (.p12) autorizada y su contraseña para validar comprobantes legalmente.
+                                Conexión en vivo con el servidor oficial (`cel.sri.gob.ec`). Emite facturas reales con plena validez legal y tributaria.
                               </p>
                             </div>
-                            {!sriSimulate && (
-                              <span style={{ background: 'var(--indigo)', color: '#ffffff', fontSize: '9px', fontWeight: 'bold', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase' }}>
-                                Activo
+                            {(!sriSimulate && sriEnvironment === '2') && (
+                              <span style={{ background: 'var(--emerald)', color: '#090a0f', fontSize: '9px', fontWeight: 'bold', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                                Activo Real
                               </span>
                             )}
                           </div>
@@ -2216,24 +2298,14 @@ export default function App() {
                             </div>
                           </div>
                         ) : (
-                          /* Formulario para el Sistema Real */
+                          /* Formulario para el Sistema Real (Pruebas / Producción) */
                           <form onSubmit={handleSaveSriConfig} className="fade-in">
-                            <h4 style={{ margin: '0 0 10px', color: 'var(--indigo)' }}>⚙️ Parámetros del Sistema Real SRI</h4>
+                            <h4 style={{ margin: '0 0 10px', color: sriEnvironment === '2' ? 'var(--emerald)' : 'var(--indigo)' }}>
+                              {sriEnvironment === '2' ? '⚙️ Parámetros del Entorno de Producción' : '⚙️ Parámetros del Entorno de Pruebas'}
+                            </h4>
                             <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                              Introduce las credenciales del emisor y el certificado de firma electrónica para la conexión real.
+                              Introduce tu firma electrónica para la conexión real al servidor SOAP del SRI.
                             </p>
-
-                            <div className="form-group" style={{ marginBottom: '1.25rem' }}>
-                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 'bold' }}>Ambiente de Destino:</label>
-                              <select
-                                value={sriEnvironment}
-                                onChange={(e) => setSriEnvironment(e.target.value)}
-                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
-                              >
-                                <option value="1">Ambiente 1: Pruebas (celcer.sri.gob.ec)</option>
-                                <option value="2">Ambiente 2: Producción (cel.sri.gob.ec)</option>
-                              </select>
-                            </div>
 
                             <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.25rem', marginTop: '1.25rem' }}>
                               <h5 style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 'bold' }}>Firma Electrónica (Formato .p12)</h5>
@@ -2273,8 +2345,13 @@ export default function App() {
                               </div>
                             </div>
 
-                            <button type="submit" className="btn btn-indigo w-full" style={{ marginTop: '1.5rem' }} disabled={sriSaving}>
-                              {sriSaving ? 'Guardando...' : 'Guardar Configuración Real'}
+                            <button 
+                              type="submit" 
+                              className={`btn w-full ${sriEnvironment === '2' ? 'btn-emerald' : 'btn-indigo'}`} 
+                              style={{ marginTop: '1.5rem' }} 
+                              disabled={sriSaving}
+                            >
+                              {sriSaving ? 'Guardando...' : `Guardar Configuración de ${sriEnvironment === '2' ? 'Producción' : 'Pruebas'}`}
                             </button>
                           </form>
                         )}
@@ -2306,8 +2383,10 @@ export default function App() {
                           <span>
                             {sriSimulate ? (
                               <span className="badge-status status-aura">MOCK SIMULADO</span>
+                            ) : sriEnvironment === '2' ? (
+                              <span className="badge-status status-yes" style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--emerald)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>PRODUCCIÓN REAL</span>
                             ) : (
-                              <span className="badge-status status-yes">ACTIVO REAL</span>
+                              <span className="badge-status status-yes">PRUEBAS REAL</span>
                             )}
                           </span>
                         </div>
@@ -2334,12 +2413,17 @@ export default function App() {
                               <li>Inicia el tutorial con el botón <strong>"Iniciar tutorial"</strong> para entender el flujo completo.</li>
                               <li>Ve al panel de Ventas y emite una nueva factura para ver la simulación en acción.</li>
                             </>
+                          ) : sriEnvironment === '2' ? (
+                            <>
+                              <li>Estás en el entorno de Producción Real.</li>
+                              <li>Sube tu archivo de firma electrónica `.p12` real y digita su contraseña.</li>
+                              <li>Toda factura emitida aquí se enviará y registrará en la base de datos oficial del SRI.</li>
+                            </>
                           ) : (
                             <>
-                              <li>Desactiva el modo de simulación seleccionando "Sistema Real SRI SOAP" y guarda.</li>
-                              <li>Sube tu archivo de firma electrónica `.p12` real y digita su contraseña.</li>
-                              <li>Ve al panel de Ventas y emite una nueva factura.</li>
-                              <li>El sistema llamará al SOAP del SRI. Si usas la firma mock, recibirás el error de firma de parte del SRI. Esto es la prueba física de que la conexión SOAP funciona.</li>
+                              <li>Estás en el entorno de Pruebas Real.</li>
+                              <li>Sube tu archivo de firma electrónica `.p12` (incluso de pruebas/real) y digita su contraseña.</li>
+                              <li>Ve al panel de Ventas y emite una nueva factura. El sistema validará la estructura contra el SRI de pruebas.</li>
                             </>
                           )}
                         </ol>
