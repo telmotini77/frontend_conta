@@ -195,6 +195,8 @@ export default function App() {
   const [sriConfigHasSignature, setSriConfigHasSignature] = useState(false);
   const [sriConfigLoading, setSriConfigLoading] = useState(false);
   const [sriSaving, setSriSaving] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(1);
 
 
   // Auth State
@@ -2081,111 +2083,229 @@ export default function App() {
 
                 {sriSubTab === 'config' && (
                   <div className="grid-2 fade-in">
-                    <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
-                      <h3 style={{ marginTop: 0 }}>Conexión SOAP & Servidor SRI</h3>
-                      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                        Configura el comportamiento del sistema al emitir facturas. Puedes alternar entre el modo simulador local y la conexión real al SOAP del SRI.
-                      </p>
+                    <div className="flex-column" style={{ gap: '1.5rem' }}>
+                      {/* Título y descripción principal */}
+                      <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                        <h3 style={{ marginTop: 0 }}>Modo de Conexión SOAP</h3>
+                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                          Selecciona el tipo de entorno para interactuar con los servicios web (SOAP) del SRI.
+                        </p>
 
-                      {sriConfigLoading ? (
-                        <p>Cargando configuración...</p>
-                      ) : (
-                        <form onSubmit={handleSaveSriConfig}>
-                          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: 'bold' }}>
-                              <input
-                                type="checkbox"
-                                checked={sriSimulate}
-                                onChange={(e) => setSriSimulate(e.target.checked)}
-                                style={{ width: 'auto', margin: 0 }}
-                              />
-                              Modo Simulación (Evita llamadas reales al SRI)
-                            </label>
-                            <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginTop: '4px', paddingLeft: '24px' }}>
-                              Si está activado, el sistema autogenera respuestas exitosas locales. Si está desactivado, enviará la información al SOAP del SRI usando la firma electrónica.
-                            </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                          {/* Opción A: Simulador de Pruebas */}
+                          <div
+                            onClick={() => setSriSimulate(true)}
+                            className="card glass-panel"
+                            style={{
+                              padding: '1.25rem',
+                              cursor: 'pointer',
+                              border: sriSimulate
+                                ? '2px solid var(--cyan)'
+                                : '1px solid var(--border)',
+                              background: sriSimulate
+                                ? 'rgba(6, 182, 212, 0.05)'
+                                : 'rgba(0, 0, 0, 0.2)',
+                              boxShadow: sriSimulate
+                                ? '0 0 15px var(--cyan-glow)'
+                                : 'none',
+                              transition: 'all 0.3s ease',
+                              position: 'relative',
+                              display: 'flex',
+                              gap: '15px',
+                              alignItems: 'center'
+                            }}
+                          >
+                            <div style={{ fontSize: '28px' }}>🧪</div>
+                            <div style={{ flex: 1 }}>
+                              <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 'bold', color: sriSimulate ? 'var(--cyan)' : 'var(--text-primary)' }}>
+                                Demo / Simulador SOAP de Pruebas
+                              </h4>
+                              <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.4', margin: 0 }}>
+                                Respuestas locales inmediatas. No requiere conexión a internet, firma electrónica (.p12) real ni genera obligaciones tributarias.
+                              </p>
+                            </div>
+                            {sriSimulate && (
+                              <span style={{ background: 'var(--cyan)', color: '#090a0f', fontSize: '9px', fontWeight: 'bold', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                                Activo
+                              </span>
+                            )}
                           </div>
 
-                          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                            <label>Ambiente de Destino:</label>
-                            <select
-                              value={sriEnvironment}
-                              onChange={(e) => setSriEnvironment(e.target.value)}
-                              disabled={sriSimulate}
-                            >
-                              <option value="1">Ambiente 1: Pruebas (celcer.sri.gob.ec)</option>
-                              <option value="2">Ambiente 2: Producción (cel.sri.gob.ec)</option>
-                            </select>
+                          {/* Opción B: Conexión Real SRI SOAP */}
+                          <div
+                            onClick={() => setSriSimulate(false)}
+                            className="card glass-panel"
+                            style={{
+                              padding: '1.25rem',
+                              cursor: 'pointer',
+                              border: !sriSimulate
+                                ? '2px solid var(--indigo)'
+                                : '1px solid var(--border)',
+                              background: !sriSimulate
+                                ? 'rgba(99, 102, 241, 0.05)'
+                                : 'rgba(0, 0, 0, 0.2)',
+                              boxShadow: !sriSimulate
+                                ? '0 0 15px var(--indigo-glow)'
+                                : 'none',
+                              transition: 'all 0.3s ease',
+                              position: 'relative',
+                              display: 'flex',
+                              gap: '15px',
+                              alignItems: 'center'
+                            }}
+                          >
+                            <div style={{ fontSize: '28px' }}>🏛️</div>
+                            <div style={{ flex: 1 }}>
+                              <h4 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 'bold', color: !sriSimulate ? 'var(--indigo)' : 'var(--text-primary)' }}>
+                                Sistema Real SRI SOAP
+                              </h4>
+                              <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.4', margin: 0 }}>
+                                Conexión en vivo con el SRI. Requiere cargar tu firma electrónica (.p12) autorizada y su contraseña para validar comprobantes legalmente.
+                              </p>
+                            </div>
+                            {!sriSimulate && (
+                              <span style={{ background: 'var(--indigo)', color: '#ffffff', fontSize: '9px', fontWeight: 'bold', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                                Activo
+                              </span>
+                            )}
                           </div>
+                        </div>
+                      </div>
 
-                          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.5rem', marginTop: '1.5rem' }}>
-                            <h4 style={{ margin: '0 0 1rem', fontSize: '1rem', fontWeight: 'bold' }}>Firma Electrónica (Firma Digital .p12)</h4>
-                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                              Para firmar los comprobantes electrónicos (XAdES-BES) antes de enviarlos al SRI.
+                      {/* Configuración específica según la selección */}
+                      <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                        {sriConfigLoading ? (
+                          <p>Cargando configuración...</p>
+                        ) : sriSimulate ? (
+                          /* Interfaz para el Simulador */
+                          <div className="fade-in">
+                            <h4 style={{ margin: '0 0 10px', color: 'var(--cyan)' }}>🔬 Simulador SOAP Activo</h4>
+                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                              El sistema está configurado en modo educativo y de pruebas locales. Las facturas emitidas simularán su firma y el flujo SOAP del SRI de manera automática.
                             </p>
 
-                            <div className="form-group">
-                              <label>Archivo de Firma (.p12):</label>
-                              <input
-                                type="file"
-                                accept=".p12"
-                                onChange={handleP12FileChange}
-                                style={{
-                                  background: 'rgba(0,0,0,0.3)',
-                                  border: '1px dashed var(--border)',
-                                  borderRadius: '8px',
-                                  padding: '10px',
-                                  color: 'var(--text-primary)',
-                                  width: '100%',
-                                }}
-                              />
-                              <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginTop: '4px' }}>
-                                {sriConfigHasSignature ? '✔️ Firma guardada anteriormente en el servidor.' : '⚠️ No se ha subido ninguna firma electrónica aún.'}
-                              </span>
+                            <div style={{ background: 'rgba(6, 182, 212, 0.05)', border: '1px solid rgba(6, 182, 212, 0.2)', borderRadius: '8px', padding: '12px', marginBottom: '1.5rem' }}>
+                              <h5 style={{ margin: '0 0 6px', fontSize: '12px', fontWeight: 'bold', color: 'var(--cyan)' }}>Guía Rápida de Interacción:</h5>
+                              <ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '11px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                <li>Dirígete a la pestaña <strong>Control de Ventas</strong>.</li>
+                                <li>Ingresa un cliente ficticio y el monto de la venta.</li>
+                                <li>Haz clic en <strong>Firmar y Transmitir al SRI</strong>.</li>
+                                <li>La factura se autorizará de inmediato, calculando el IVA.</li>
+                              </ul>
                             </div>
 
-                            <div className="form-group" style={{ marginTop: '1rem' }}>
-                              <label>Contraseña de la Firma:</label>
-                              <input
-                                type="password"
-                                value={sriSignaturePassword}
-                                onChange={(e) => setSriSignaturePassword(e.target.value)}
-                                placeholder={sriConfigHasSignature ? '••••••••' : 'Ingresa la contraseña del certificado'}
-                              />
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                              <button
+                                type="button"
+                                className="btn btn-cyan"
+                                onClick={() => { setShowTutorial(true); setTutorialStep(1); }}
+                                style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', fontSize: '13px' }}
+                              >
+                                📖 Iniciar tutorial
+                              </button>
+
+                              <button
+                                type="button"
+                                className="btn"
+                                onClick={handleSaveSriConfig}
+                                style={{ border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-primary)' }}
+                                disabled={sriSaving}
+                              >
+                                {sriSaving ? 'Guardando...' : 'Guardar Configuración'}
+                              </button>
                             </div>
                           </div>
+                        ) : (
+                          /* Formulario para el Sistema Real */
+                          <form onSubmit={handleSaveSriConfig} className="fade-in">
+                            <h4 style={{ margin: '0 0 10px', color: 'var(--indigo)' }}>⚙️ Parámetros del Sistema Real SRI</h4>
+                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                              Introduce las credenciales del emisor y el certificado de firma electrónica para la conexión real.
+                            </p>
 
-                          <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '1.5rem' }} disabled={sriSaving}>
-                            {sriSaving ? 'Guardando...' : 'Guardar Configuración'}
-                          </button>
-                        </form>
-                      )}
+                            <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 'bold' }}>Ambiente de Destino:</label>
+                              <select
+                                value={sriEnvironment}
+                                onChange={(e) => setSriEnvironment(e.target.value)}
+                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                              >
+                                <option value="1">Ambiente 1: Pruebas (celcer.sri.gob.ec)</option>
+                                <option value="2">Ambiente 2: Producción (cel.sri.gob.ec)</option>
+                              </select>
+                            </div>
+
+                            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.25rem', marginTop: '1.25rem' }}>
+                              <h5 style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 'bold' }}>Firma Electrónica (Formato .p12)</h5>
+                              <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                                Archivo pkcs12 necesario para firmar digitalmente cada documento XML bajo el estándar XAdES-BES.
+                              </p>
+
+                              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                                <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>Archivo de Firma (.p12):</label>
+                                <input
+                                  type="file"
+                                  accept=".p12"
+                                  onChange={handleP12FileChange}
+                                  style={{
+                                    background: 'rgba(0,0,0,0.3)',
+                                    border: '1px dashed var(--border)',
+                                    borderRadius: '8px',
+                                    padding: '10px',
+                                    color: 'var(--text-primary)',
+                                    width: '100%',
+                                  }}
+                                />
+                                <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginTop: '4px' }}>
+                                  {sriConfigHasSignature ? '✔️ Firma guardada anteriormente en el servidor.' : '⚠️ No se ha subido ninguna firma electrónica aún.'}
+                                </span>
+                              </div>
+
+                              <div className="form-group">
+                                <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>Contraseña de la Firma:</label>
+                                <input
+                                  type="password"
+                                  value={sriSignaturePassword}
+                                  onChange={(e) => setSriSignaturePassword(e.target.value)}
+                                  placeholder={sriConfigHasSignature ? '••••••••' : 'Ingresa la contraseña del certificado'}
+                                  style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                                />
+                              </div>
+                            </div>
+
+                            <button type="submit" className="btn btn-indigo w-full" style={{ marginTop: '1.5rem' }} disabled={sriSaving}>
+                              {sriSaving ? 'Guardando...' : 'Guardar Configuración Real'}
+                            </button>
+                          </form>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                    {/* Lado derecho: Estado del SOAP y Diagnóstico */}
+                    <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0, display: 'flex', flexDirection: 'column' }}>
                       <h3 style={{ marginTop: 0 }}>Estado del SOAP y Diagnóstico</h3>
                       <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
                         Detalles sobre los endpoints y pruebas de conexión física con el SRI.
                       </p>
 
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem', flex: 1 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
                           <span>WSDL Recepción:</span>
                           <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', opacity: 0.8 }}>
-                            {sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...'}
+                            {sriSimulate ? 'Simulador Local (N/A)' : (sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...')}
                           </span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
                           <span>WSDL Autorización:</span>
                           <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', opacity: 0.8 }}>
-                            {sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...'}
+                            {sriSimulate ? 'Simulador Local (N/A)' : (sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...')}
                           </span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
                           <span>Conexión SRI SOAP:</span>
                           <span>
                             {sriSimulate ? (
-                              <span className="badge-status status-aura">SIMULADO</span>
+                              <span className="badge-status status-aura">MOCK SIMULADO</span>
                             ) : (
                               <span className="badge-status status-yes">ACTIVO REAL</span>
                             )}
@@ -2194,7 +2314,9 @@ export default function App() {
                         <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
                           <span>Certificado XAdES-BES:</span>
                           <span>
-                            {sriConfigHasSignature ? (
+                            {sriSimulate ? (
+                              <span className="badge-status status-aura">MOCK EN MEMORIA</span>
+                            ) : sriConfigHasSignature ? (
                               <span className="badge-status status-yes">CARGADO (.p12)</span>
                             ) : (
                               <span className="badge-status status-partial">MOCK EN MEMORIA</span>
@@ -2206,10 +2328,20 @@ export default function App() {
                       <div style={{ marginTop: '2rem', padding: '1rem', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', fontSize: '12px', border: '1px solid var(--border)' }}>
                         <strong>Guía de Comprobación:</strong>
                         <ol style={{ paddingLeft: '1.25rem', marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                          <li>Desactiva el "Modo Simulación".</li>
-                          <li>Guarda los cambios (si no tienes firma real, el sistema usará un certificado mock).</li>
-                          <li>Ve al panel de Ventas y emite una nueva factura.</li>
-                          <li>El sistema llamará al SOAP del SRI. Si usas la firma mock, recibirás el error de firma de parte del SRI. Esto es la prueba física de que la conexión SOAP funciona.</li>
+                          {sriSimulate ? (
+                            <>
+                              <li>Asegúrate de que la configuración esté guardada.</li>
+                              <li>Inicia el tutorial con el botón <strong>"Iniciar tutorial"</strong> para entender el flujo completo.</li>
+                              <li>Ve al panel de Ventas y emite una nueva factura para ver la simulación en acción.</li>
+                            </>
+                          ) : (
+                            <>
+                              <li>Desactiva el modo de simulación seleccionando "Sistema Real SRI SOAP" y guarda.</li>
+                              <li>Sube tu archivo de firma electrónica `.p12` real y digita su contraseña.</li>
+                              <li>Ve al panel de Ventas y emite una nueva factura.</li>
+                              <li>El sistema llamará al SOAP del SRI. Si usas la firma mock, recibirás el error de firma de parte del SRI. Esto es la prueba física de que la conexión SOAP funciona.</li>
+                            </>
+                          )}
                         </ol>
                       </div>
                     </div>
@@ -2437,6 +2569,169 @@ export default function App() {
               element.click();
               document.body.removeChild(element);
             }}>Descargar Archivo .xml</button>
+          </div>
+        </div>
+      )}
+
+      {/* INTERACTIVE TUTORIAL MODAL */}
+      {showTutorial && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(5px)' }}>
+          <div className="glass-panel" style={{ width: '90%', maxWidth: '600px', padding: '2rem', display: 'flex', flexDirection: 'column', position: 'relative', border: '1px solid rgba(6, 182, 212, 0.3)' }}>
+            
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '20px' }}>📖</span>
+                <strong style={{ fontSize: '16px', color: 'var(--cyan)' }}>Tutorial: Simulador SOAP de Pruebas</strong>
+              </div>
+              <button 
+                type="button" 
+                className="btn-sm status-no" 
+                onClick={() => setShowTutorial(false)}
+                style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: 'none', cursor: 'pointer', padding: '4px 10px', borderRadius: '4px' }}
+              >
+                Omitir
+              </button>
+            </div>
+
+            {/* Content based on Step */}
+            <div style={{ flex: 1, minHeight: '220px', color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.6' }}>
+              {tutorialStep === 1 && (
+                <div className="fade-in">
+                  <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', fontSize: '15px' }}>
+                    Paso 1 de 5: ¿Qué es el Simulador SOAP de Pruebas?
+                  </h4>
+                  <p>
+                    El <strong>Simulador SOAP (modo demo)</strong> es una herramienta educativa y de validación local integrada en AuraContable.
+                  </p>
+                  <p style={{ marginTop: '10px' }}>
+                    Su principal función es emular de manera idéntica la respuesta de los servidores web del <strong>SRI</strong> (Servicio de Rentas Internas de Ecuador). 
+                    No requiere que tengas un certificado de firma digital real `.p12` cargado y funciona sin conexión externa al SRI.
+                  </p>
+                  <div style={{ marginTop: '15px', background: 'rgba(6, 182, 212, 0.05)', border: '1px solid rgba(6, 182, 212, 0.2)', padding: '12px', borderRadius: '6px' }}>
+                    💡 <strong>Beneficio:</strong> Ideal para entrenamiento de personal o demostraciones inmediatas sin demoras de red ni errores de validación legal.
+                  </div>
+                </div>
+              )}
+
+              {tutorialStep === 2 && (
+                <div className="fade-in">
+                  <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', fontSize: '15px' }}>
+                    Paso 2 de 5: Cómo emitir facturas de prueba
+                  </h4>
+                  <p>
+                    Para interactuar con el simulador SOAP:
+                  </p>
+                  <ol style={{ paddingLeft: '1.25rem', margin: '10px 0', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <li>Ve a la pestaña <strong>📈 Control de Ventas</strong> en el menú de navegación principal.</li>
+                    <li>Usa el formulario lateral derecho <strong>Emitir Factura de Venta</strong>.</li>
+                    <li>Escribe el nombre de un cliente ficticio (ej. <code>Consumidor Final</code>) y un monto.</li>
+                    <li>Marca o desmarca <strong>Desglosar 15% IVA</strong> según prefieras.</li>
+                    <li>Haz clic en el botón <strong>Firmar y Transmitir al SRI</strong>.</li>
+                  </ol>
+                </div>
+              )}
+
+              {tutorialStep === 3 && (
+                <div className="fade-in">
+                  <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', fontSize: '15px' }}>
+                    Paso 3 de 5: Proceso de Firma y SOAP simulado
+                  </h4>
+                  <p>
+                    Cuando presionas el botón de emitir en modo simulación, el sistema ejecuta en segundo plano lo siguiente:
+                  </p>
+                  <ul style={{ paddingLeft: '1.25rem', margin: '10px 0', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <li><strong>Generación del XML:</strong> Genera la estructura oficial offline del comprobante.</li>
+                    <li><strong>Firma Digital:</strong> Firma digitalmente el archivo XML usando un certificado mock en memoria.</li>
+                    <li><strong>Transmisión SOAP:</strong> Se conecta al servicio local, el cual devuelve el estado <strong>RECIBIDO</strong> y posteriormente <strong>AUTORIZADO</strong> con un número de autorización y clave de acceso simulada de 49 dígitos de manera inmediata.</li>
+                  </ul>
+                </div>
+              )}
+
+              {tutorialStep === 4 && (
+                <div className="fade-in">
+                  <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', fontSize: '15px' }}>
+                    Paso 4 de 5: Reportes e Impuestos (Formulario 104)
+                  </h4>
+                  <p>
+                    Al autorizarse la factura de pruebas:
+                  </p>
+                  <p style={{ marginTop: '10px' }}>
+                    Los valores de la base imponible y el IVA desglosado se acumulan de inmediato en la contabilidad general de la empresa.
+                  </p>
+                  <p style={{ marginTop: '10px' }}>
+                    Puedes dirigirte a la pestaña <strong>🏛️ Reportes SRI Form 104</strong> y ver cómo se actualizan los casilleros 411 y 412 (ventas gravadas) y se calcula en tiempo real el impuesto a pagar o crédito fiscal, simulando una declaración de IVA real.
+                  </p>
+                </div>
+              )}
+
+              {tutorialStep === 5 && (
+                <div className="fade-in">
+                  <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', fontSize: '15px' }}>
+                    Paso 5 de 5: Configuración para el Entorno Real
+                  </h4>
+                  <p>
+                    Cuando decidas iniciar a facturar electrónicamente de forma real:
+                  </p>
+                  <ol style={{ paddingLeft: '1.25rem', margin: '10px 0', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <li>Regresa a la pestaña <strong>⚙️ Configuración SRI & Firma</strong>.</li>
+                    <li>Selecciona la opción <strong>Sistema Real SRI SOAP</strong>.</li>
+                    <li>Carga tu archivo de firma electrónica <code>.p12</code> real y digita su contraseña.</li>
+                    <li>Selecciona el ambiente deseado: <strong>Pruebas</strong> (para verificar que tu firma firme bien y el SRI responda) o <strong>Producción</strong> (para facturación oficial legal).</li>
+                  </ol>
+                </div>
+              )}
+            </div>
+
+            {/* Step indicator */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', margin: '1.5rem 0 0.5rem 0' }}>
+              {[1, 2, 3, 4, 5].map((step) => (
+                <div 
+                  key={step} 
+                  style={{ 
+                    width: '10px', 
+                    height: '10px', 
+                    borderRadius: '50%', 
+                    background: tutorialStep === step ? 'var(--cyan)' : 'rgba(255,255,255,0.1)',
+                    boxShadow: tutorialStep === step ? '0 0 8px var(--cyan)' : 'none',
+                    transition: 'all 0.3s ease'
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Footer Navigation Buttons */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem', borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
+              <button 
+                type="button" 
+                className="btn" 
+                onClick={() => setTutorialStep(prev => Math.max(1, prev - 1))}
+                disabled={tutorialStep === 1}
+                style={{ border: '1px solid var(--border)', background: 'transparent', color: tutorialStep === 1 ? 'var(--text-muted)' : 'var(--text-primary)', padding: '8px 16px', borderRadius: '6px', cursor: tutorialStep === 1 ? 'not-allowed' : 'pointer' }}
+              >
+                Anterior
+              </button>
+
+              {tutorialStep < 5 ? (
+                <button 
+                  type="button" 
+                  className="btn btn-cyan" 
+                  onClick={() => setTutorialStep(prev => Math.min(5, prev + 1))}
+                  style={{ padding: '8px 20px', borderRadius: '6px' }}
+                >
+                  Siguiente
+                </button>
+              ) : (
+                <button 
+                  type="button" 
+                  className="btn btn-cyan" 
+                  onClick={() => setShowTutorial(false)}
+                  style={{ padding: '8px 20px', borderRadius: '6px', boxShadow: '0 0 10px var(--cyan-glow)' }}
+                >
+                  Finalizar tutorial
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
