@@ -159,7 +159,7 @@ export default function App() {
   const { user, token, loading, login, signup, logout, error: authError } = useAuth();
 
   // Navigation State
-  const [activeTab, setActiveTab] = useState<'kardex' | 'ventas' | 'proveedores' | 'caja' | 'contabilidad' | 'sri' | 'assets' | 'gantt'>('kardex');
+  const [activeTab, setActiveTab] = useState<'kardex' | 'ventas' | 'proveedores' | 'caja' | 'contabilidad' | 'sri' | 'assets'>('kardex');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Auto-collapse sidebar on smaller laptop viewports on mount & resize
@@ -1082,9 +1082,6 @@ export default function App() {
               <button className={`tab-btn ${activeTab === 'assets' ? 'active' : ''}`} onClick={() => setActiveTab('assets')}>
                 <span className="icon">📉</span> {!isSidebarCollapsed && 'Activos Fijos'}
               </button>
-              <button className={`tab-btn ${activeTab === 'gantt' ? 'active' : ''}`} onClick={() => setActiveTab('gantt')}>
-                <span className="icon">📅</span> {!isSidebarCollapsed && 'Gantt'}
-              </button>
             </nav>
             
             <div className="sidebar-footer">
@@ -1118,8 +1115,7 @@ export default function App() {
                    activeTab === 'proveedores' ? '🤝 Gestión de Proveedores' :
                    activeTab === 'caja' ? '💵 Caja & Conciliación' :
                    activeTab === 'contabilidad' ? '⚖️ Libro Diario Contable' :
-                   activeTab === 'sri' ? '🏛️ Reportes SRI Form 104' :
-                   activeTab === 'assets' ? '📉 Depreciación de Activos Fijos' : '📅 Cronograma Gantt'}
+                   activeTab === 'sri' ? '🏛️ Reportes SRI Form 104' : '📉 Depreciación de Activos Fijos'}
                 </h2>
               </div>
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
@@ -2348,16 +2344,7 @@ export default function App() {
               </div>
             )}
 
-            {/* TAB: GANTT */}
-            {activeTab === 'gantt' && (
-              <div className="fade-in glass-panel" style={{ padding: '0.5rem', height: '800px', overflow: 'hidden' }}>
-                <iframe
-                  src="/cronograma-gantt/index.html"
-                  style={{ width: '100%', height: '100%', border: 'none', borderRadius: '12px', background: 'transparent' }}
-                  title="Cronograma de Gantt"
-                />
-              </div>
-            )}
+
 
           </main>
           <footer style={{ marginTop: 'auto', paddingTop: '2rem', paddingBottom: '1rem', textAlign: 'center', opacity: 0.6, fontSize: '11px' }}>
