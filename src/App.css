@@ -297,6 +297,7 @@ h1 {
 .card {
   padding: 2rem;
   height: 100%;
+  text-align: left;
 }
 
 .card.border-cyan { border-color: rgba(6, 182, 212, 0.15); }

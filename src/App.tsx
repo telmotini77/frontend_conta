@@ -2365,21 +2365,21 @@ export default function App() {
                         Detalles sobre los endpoints y pruebas de conexión física con el SRI.
                       </p>
 
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem', flex: 1 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
-                          <span>WSDL Recepción:</span>
-                          <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', opacity: 0.8 }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem', flex: 1, maxWidth: '700px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                          <span style={{ fontWeight: '600' }}>WSDL Recepción:</span>
+                          <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', opacity: 0.8, wordBreak: 'break-all' }}>
                             {sriSimulate ? 'Simulador Local (N/A)' : (sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...')}
                           </span>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
-                          <span>WSDL Autorización:</span>
-                          <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', opacity: 0.8 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                          <span style={{ fontWeight: '600' }}>WSDL Autorización:</span>
+                          <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', opacity: 0.8, wordBreak: 'break-all' }}>
                             {sriSimulate ? 'Simulador Local (N/A)' : (sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...')}
                           </span>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
-                          <span>Conexión SRI SOAP:</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                          <span style={{ fontWeight: '600' }}>Conexión SRI SOAP:</span>
                           <span>
                             {sriSimulate ? (
                               <span className="badge-status status-aura">MOCK SIMULADO</span>
@@ -2390,8 +2390,8 @@ export default function App() {
                             )}
                           </span>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px' }}>
-                          <span>Certificado XAdES-BES:</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                          <span style={{ fontWeight: '600' }}>Certificado XAdES-BES:</span>
                           <span>
                             {sriSimulate ? (
                               <span className="badge-status status-aura">MOCK EN MEMORIA</span>
@@ -2404,9 +2404,9 @@ export default function App() {
                         </div>
                       </div>
 
-                      <div style={{ marginTop: '2rem', padding: '1rem', borderRadius: '8px', background: 'rgba(0,0,0,0.2)', fontSize: '12px', border: '1px solid var(--border)' }}>
-                        <strong>Guía de Comprobación:</strong>
-                        <ol style={{ paddingLeft: '1.25rem', marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <div style={{ marginTop: '2rem', padding: '1.25rem', borderRadius: '8px', background: 'rgba(0,0,0,0.02)', fontSize: '12px', border: '1px solid var(--border)', maxWidth: '700px' }}>
+                        <strong style={{ display: 'block', marginBottom: '8px', color: 'var(--text-primary)' }}>Guía de Comprobación:</strong>
+                        <ol style={{ paddingLeft: '1.25rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                           {sriSimulate ? (
                             <>
                               <li>Asegúrate de que la configuración esté guardada.</li>
