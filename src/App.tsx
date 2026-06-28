@@ -1266,7 +1266,7 @@ export default function App() {
                               <label>Stock Inicial:</label>
                               <input type="number" required min={0} value={newProductStock} onChange={e => setNewProductStock(parseInt(e.target.value) || 0)} />
                             </div>
-                            <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '0.4rem', marginLeft: '1rem' }}>
+                            <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '0.4rem', paddingLeft: '1rem' }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <input type="checkbox" id="newProductIva" checked={newProductIva} onChange={e => setNewProductIva(e.target.checked)} />
                                 <label htmlFor="newProductIva" style={{ margin: 0, cursor: 'pointer' }}>Graba IVA</label>
