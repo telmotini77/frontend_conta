@@ -1070,7 +1070,7 @@ export default function App() {
   }, null, 2);
 
   return (
-    <div className={user ? `app-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}` : 'container'} style={user ? {} : { maxWidth: '450px', padding: '2rem 1rem', margin: '0 auto', width: '100%' }}>
+    <div className={user ? `app-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}` : 'container'} style={user ? {} : { maxWidth: '450px', padding: '2rem 1rem', margin: '0 auto', width: '90%' }}>
       {user ? (
         <>
           {/* Sidebar Nav */}
