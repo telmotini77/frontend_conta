@@ -1159,7 +1159,7 @@ export default function App() {
           {/* Main Content Area */}
           <div className="main-content">
             <header className="top-bar glass-panel animate-slideup">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px', height: '120px' }}>
                 {isSidebarCollapsed && (
                   <button className="sidebar-toggle" onClick={() => setIsSidebarCollapsed(false)}>
                     ☰
