@@ -539,7 +539,8 @@ select {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 6px;
-  padding: 8px 10px 8px;
+  padding: 8px 10px;
+  padding-left: 15px;
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-size: 13.5px;
