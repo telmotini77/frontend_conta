@@ -231,7 +231,17 @@ export default function App() {
   const [newProductPrice, setNewProductPrice] = useState(0);
   const [newProductStock, setNewProductStock] = useState(0);
   const [newProductIva, setNewProductIva] = useState(true);
+  const [globalIvaRate, setGlobalIvaRate] = useState<number>(() => {
+    const saved = localStorage.getItem('globalIvaRate');
+    return saved ? parseInt(saved, 10) : 15;
+  });
+  const [newProductIvaRate, setNewProductIvaRate] = useState<number>(() => {
+    const saved = localStorage.getItem('globalIvaRate');
+    return saved ? parseInt(saved, 10) : 15;
+  });
+  const [setAsDefault, setSetAsDefault] = useState<boolean>(false);
   const [ivaFilter, setIvaFilter] = useState<'all' | 'with' | 'without'>('all');
+
 
   // Form States (New Transaction)
   const [selectedProductId, setSelectedProductId] = useState('');
@@ -519,6 +529,11 @@ export default function App() {
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      if (newProductIva && setAsDefault) {
+        localStorage.setItem('globalIvaRate', String(newProductIvaRate));
+        setGlobalIvaRate(newProductIvaRate);
+      }
+
       const res = await fetch(`${API_BASE}/products`, {
         method: 'POST',
         headers: {
@@ -547,6 +562,9 @@ export default function App() {
       setNewProductPrice(0);
       setNewProductStock(0);
       setNewProductIva(true);
+      const savedRate = localStorage.getItem('globalIvaRate');
+      setNewProductIvaRate(savedRate ? parseInt(savedRate, 10) : 15);
+      setSetAsDefault(false);
       fetchProducts();
     } catch (err) {
       console.error(err);
@@ -613,6 +631,7 @@ export default function App() {
           clientName: newClientName,
           amount: newInvoiceAmount,
           hasIva: newInvoiceIva,
+          ivaRate: globalIvaRate,
         }),
       });
 
@@ -739,6 +758,7 @@ export default function App() {
           amount: newPurAmount,
           date: newPurDate,
           hasIva: newPurIva,
+          ivaRate: globalIvaRate,
           items,
         }),
       });
@@ -1172,7 +1192,7 @@ export default function App() {
                       <h3 style={{ margin: 0 }}>Catálogo de Productos e IVA</h3>
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <button className={`btn-sm ${ivaFilter === 'all' ? 'status-aura' : ''}`} onClick={() => setIvaFilter('all')}>Todos</button>
-                        <button className={`btn-sm ${ivaFilter === 'with' ? 'status-yes' : ''}`} onClick={() => setIvaFilter('with')}>Con IVA (15%)</button>
+                        <button className={`btn-sm ${ivaFilter === 'with' ? 'status-yes' : ''}`} onClick={() => setIvaFilter('with')}>Con IVA ({globalIvaRate}%)</button>
                         <button className={`btn-sm ${ivaFilter === 'without' ? 'status-no' : ''}`} onClick={() => setIvaFilter('without')}>Sin IVA (0%)</button>
                       </div>
                     </div>
@@ -1207,7 +1227,7 @@ export default function App() {
                               <td>${p.price.toFixed(2)}</td>
                               <td>
                                 <button className={`badge-status ${p.hasIva ? 'status-yes' : 'status-no'}`} onClick={() => handleToggleProductIva(p.id)} title="Haz clic para alternar IVA">
-                                  {p.hasIva ? '15% IVA' : '0% IVA'}
+                                  {p.hasIva ? `${globalIvaRate}% IVA` : '0% IVA'}
                                 </button>
                               </td>
                               <td style={{ fontWeight: '600' }}>${(p.stock * p.cost).toFixed(2)}</td>
@@ -1241,14 +1261,42 @@ export default function App() {
                             <input type="number" required min={0} step="0.01" value={newProductPrice} onChange={e => setNewProductPrice(parseFloat(e.target.value) || 0)} />
                           </div>
                         </div>
-                        <div className="grid-2-form" style={{ alignItems: 'center' }}>
+                        <div className="grid-2-form" style={{ alignItems: 'flex-start' }}>
                           <div className="form-group">
                             <label>Stock Inicial:</label>
                             <input type="number" required min={0} value={newProductStock} onChange={e => setNewProductStock(parseInt(e.target.value) || 0)} />
                           </div>
-                          <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '1.5rem' }}>
-                            <input type="checkbox" id="newProductIva" checked={newProductIva} onChange={e => setNewProductIva(e.target.checked)} />
-                            <label htmlFor="newProductIva" style={{ margin: 0, cursor: 'pointer' }}>Graba IVA (15%)</label>
+                          <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '0.4rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <input type="checkbox" id="newProductIva" checked={newProductIva} onChange={e => setNewProductIva(e.target.checked)} />
+                              <label htmlFor="newProductIva" style={{ margin: 0, cursor: 'pointer' }}>Graba IVA</label>
+                            </div>
+                            {newProductIva && (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <label style={{ margin: 0, fontSize: '11px', whiteSpace: 'nowrap' }}>IVA (%):</label>
+                                  <input 
+                                    type="number" 
+                                    min={0} 
+                                    max={100} 
+                                    style={{ width: '60px', padding: '4px 6px', fontSize: '12px' }}
+                                    value={newProductIvaRate} 
+                                    onChange={e => setNewProductIvaRate(parseInt(e.target.value) || 0)} 
+                                  />
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                  <input 
+                                    type="checkbox" 
+                                    id="setAsDefault" 
+                                    checked={setAsDefault} 
+                                    onChange={e => setSetAsDefault(e.target.checked)} 
+                                  />
+                                  <label htmlFor="setAsDefault" style={{ margin: 0, fontSize: '10px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                                    Predeterminar valor
+                                  </label>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                         <button type="submit" className="btn btn-cyan w-full">Crear Producto</button>
@@ -1349,7 +1397,7 @@ export default function App() {
                       <span>🏛️</span>
                     </div>
                     <h3 style={{ margin: '8px 0', fontSize: '20px', color: 'var(--indigo)' }}>${totalIvaCollected.toFixed(2)}</h3>
-                    <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>15% IVA acumulado para declarar al SRI</p>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{globalIvaRate}% IVA acumulado para declarar al SRI</p>
                   </div>
                   <div className="card glass-panel" style={{ padding: '1.25rem' }}>
                     <div className="card-header">
@@ -1376,7 +1424,7 @@ export default function App() {
                             <th>Fecha</th>
                             <th>Cliente</th>
                             <th>Subtotal</th>
-                            <th>IVA (15%)</th>
+                            <th>IVA ({globalIvaRate}%)</th>
                             <th>Total ($)</th>
                             <th>Estado SRI</th>
                             <th>Envío</th>
@@ -1426,7 +1474,7 @@ export default function App() {
                       </div>
                       <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '1rem 0' }}>
                         <input type="checkbox" id="newInvoiceIva" checked={newInvoiceIva} onChange={e => setNewInvoiceIva(e.target.checked)} />
-                        <label htmlFor="newInvoiceIva" style={{ margin: 0, cursor: 'pointer' }}>Desglosar 15% IVA</label>
+                        <label htmlFor="newInvoiceIva" style={{ margin: 0, cursor: 'pointer' }}>Desglosar {globalIvaRate}% IVA</label>
                       </div>
                       <button type="submit" className="btn btn-cyan w-full">Firmar y Transmitir al SRI</button>
                     </form>
@@ -1556,7 +1604,7 @@ export default function App() {
                       </div>
                       <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0.75rem 0' }}>
                         <input type="checkbox" id="newPurIva" checked={newPurIva} onChange={e => setNewPurIva(e.target.checked)} />
-                        <label htmlFor="newPurIva" style={{ margin: 0, cursor: 'pointer' }}>Tiene IVA (15%)</label>
+                        <label htmlFor="newPurIva" style={{ margin: 0, cursor: 'pointer' }}>Tiene IVA ({globalIvaRate}%)</label>
                       </div>
 
                       {/* Optional Stock Sync */}
@@ -2034,13 +2082,13 @@ export default function App() {
                           <th>Casillero</th>
                           <th>Descripción del Rubro</th>
                           <th style={{ textAlign: 'right' }}>Valor Base Imponible</th>
-                          <th style={{ textAlign: 'right' }}>Impuesto Generado (IVA 15%)</th>
+                          <th style={{ textAlign: 'right' }}>Impuesto Generado (IVA {globalIvaRate}%)</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
                           <td>411</td>
-                          <td>Ventas Locales gravadas con tarifa 15% IVA</td>
+                          <td>Ventas Locales gravadas con tarifa {globalIvaRate}% IVA</td>
                           <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>${salesWithIva.toFixed(2)}</td>
                           <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: 'var(--cyan)' }}>${salesTaxCollected.toFixed(2)}</td>
                         </tr>
@@ -2059,7 +2107,7 @@ export default function App() {
                         <tr style={{ height: '15px' }}><td colSpan={4} style={{ border: 'none' }}></td></tr>
                         <tr>
                           <td>511</td>
-                          <td>Adquisiciones locales gravadas con tarifa 15% IVA</td>
+                          <td>Adquisiciones locales gravadas con tarifa {globalIvaRate}% IVA</td>
                           <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>${purchasesWithIva.toFixed(2)}</td>
                           <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: 'var(--emerald)' }}>${purchasesTaxPaid.toFixed(2)}</td>
                         </tr>
@@ -2707,7 +2755,7 @@ export default function App() {
                     <li>Ve a la pestaña <strong>📈 Control de Ventas</strong> en el menú de navegación principal.</li>
                     <li>Usa el formulario lateral derecho <strong>Emitir Factura de Venta</strong>.</li>
                     <li>Escribe el nombre de un cliente ficticio (ej. <code>Consumidor Final</code>) y un monto.</li>
-                    <li>Marca o desmarca <strong>Desglosar 15% IVA</strong> según prefieras.</li>
+                    <li>Marca o desmarca <strong>Desglosar {globalIvaRate}% IVA</strong> según prefieras.</li>
                     <li>Haz clic en el botón <strong>Firmar y Transmitir al SRI</strong>.</li>
                   </ol>
                 </div>
