@@ -1383,7 +1383,7 @@ export default function App() {
                 <div className="fade-in">
                   {/* Metrics Row */}
                   <div className="grid-3" style={{ marginBottom: '1.5rem' }}>
-                    <div className="card glass-panel" style={{ padding: '1.25rem' }}>
+                    <div className="card glass-panel" style={{ padding: '1.25rem', marginBottom: '2rem' }}>
                       <div className="card-header">
                         <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Venta Total Bruta</span>
                         <span>📈</span>
