@@ -1334,7 +1334,7 @@ export default function App() {
                   </div>
 
                   {/* Kardex logs */}
-                  <div className="table-container glass-panel" style={{ padding: '1.5rem', marginTop: '1.5rem' }}>
+                  <div className="table-container glass-panel" style={{ padding: '1.5rem', paddingTop: '2rem', marginTop: '1.5rem' }}>
                     <h3>Últimos Movimientos de Kárdex</h3>
                     {recentTransactions.length === 0 ? (
                       <p>No se han registrado movimientos de inventario.</p>
