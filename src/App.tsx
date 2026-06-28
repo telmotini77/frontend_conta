@@ -1187,7 +1187,7 @@ export default function App() {
                 <div className="fade-in">
                   <div className="dashboard-grid">
                     {/* Products Table */}
-                    <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                    <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: '2rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                         <h3 style={{ margin: 0 }}>Catálogo de Productos e IVA</h3>
                         <div style={{ display: 'flex', gap: '8px' }}>
