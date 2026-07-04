@@ -123,7 +123,7 @@ const DEFAULT_TASKS = [
     name: 'Módulo de Proveedores y Carga de Compras',
     startWeek: 4,
     endWeek: 5,
-    progress: 60,
+    progress: 100,
     color: 'var(--task-color-6)',
     desc: 'Gestión de catálogo de proveedores y carga de facturas físicas/electrónicas de compras.',
     dependency: 'task-5'
@@ -133,7 +133,7 @@ const DEFAULT_TASKS = [
     name: 'Módulo de Caja (Ingresos/Egresos de Efectivo)',
     startWeek: 5,
     endWeek: 6,
-    progress: 50,
+    progress: 100,
     color: 'var(--task-color-1)',
     desc: 'Control diario de caja chica, conciliaciones de flujo neto de caja, e ingresos/egresos manuales.',
     dependency: 'task-6'
@@ -143,7 +143,7 @@ const DEFAULT_TASKS = [
     name: 'Clasificación de Productos (Análisis de IVA)',
     startWeek: 6,
     endWeek: 7,
-    progress: 40,
+    progress: 100,
     color: 'var(--task-color-2)',
     desc: 'Revisión y análisis de productos para clasificar cuáles aplican y cuáles no aplican el IVA (0%, 12%, 15%).',
     dependency: 'task-3'
@@ -153,7 +153,7 @@ const DEFAULT_TASKS = [
     name: 'Sincronización Automática con el SRI',
     startWeek: 7,
     endWeek: 8,
-    progress: 30,
+    progress: 100,
     color: 'var(--task-color-3)',
     desc: 'Módulo de integración para subir compras pendientes y sincronizar en tiempo real el estado tributario con el SRI.',
     dependency: 'task-6'
@@ -289,10 +289,10 @@ function init() {
     saveState();
   } else {
     tasks = migrateLegacyTasks(loadedTasks);
-    // Auto-update completed tasks (task-3, task-4, task-5) to 100% if they were cached at lower progress
+    // Auto-update completed tasks (task-3 to task-9) to 100% if they were cached at lower progress
     let modified = false;
     tasks = tasks.map(t => {
-      if ((t.id === 'task-3' || t.id === 'task-4' || t.id === 'task-5') && t.progress < 100) {
+      if ((t.id === 'task-3' || t.id === 'task-4' || t.id === 'task-5' || t.id === 'task-6' || t.id === 'task-7' || t.id === 'task-8' || t.id === 'task-9') && t.progress < 100) {
         t.progress = 100;
         modified = true;
       }
