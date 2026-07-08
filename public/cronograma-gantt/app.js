@@ -163,7 +163,7 @@ const DEFAULT_TASKS = [
     name: 'Descarga Instantánea y Envío de Facturas',
     startWeek: 8,
     endWeek: 9,
-    progress: 15,
+    progress: 100,
     color: 'var(--task-color-4)',
     desc: 'Descarga automatizada de facturas del SRI de proveedor a cliente y envío instantáneo por email al destinatario.',
     dependency: 'task-9'
@@ -292,7 +292,7 @@ function init() {
     // Auto-update completed tasks (task-3 to task-9) to 100% if they were cached at lower progress
     let modified = false;
     tasks = tasks.map(t => {
-      if ((t.id === 'task-3' || t.id === 'task-4' || t.id === 'task-5' || t.id === 'task-6' || t.id === 'task-7' || t.id === 'task-8' || t.id === 'task-9') && t.progress < 100) {
+      if ((t.id === 'task-3' || t.id === 'task-4' || t.id === 'task-5' || t.id === 'task-6' || t.id === 'task-7' || t.id === 'task-8' || t.id === 'task-9' || t.id === 'task-10') && t.progress < 100) {
         t.progress = 100;
         modified = true;
       }
