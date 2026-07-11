@@ -12,6 +12,12 @@ interface KardexTransaction {
   date: string;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  userId: string;
+}
+
 interface Product {
   id: string;
   sku: string;
@@ -21,6 +27,8 @@ interface Product {
   price: number;
   hasIva: boolean;
   transactions?: KardexTransaction[];
+  categoryId?: string;
+  category?: Category;
 }
 
 interface Asset {
@@ -241,6 +249,50 @@ export default function App() {
   });
   const [setAsDefault, setSetAsDefault] = useState<boolean>(false);
   const [ivaFilter, setIvaFilter] = useState<'all' | 'with' | 'without'>('all');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+
+  // Form States (New Product & Modification)
+  const [productFormMode, setProductFormMode] = useState<'create' | 'update'>('create');
+  const [searchSku, setSearchSku] = useState('');
+  const [updateProductPrice, setUpdateProductPrice] = useState(0);
+  const [updateProductCategoryId, setUpdateProductCategoryId] = useState('');
+  const [updateProductAddedStock, setUpdateProductAddedStock] = useState(0);
+
+  const foundProduct = React.useMemo(() => {
+    if (!searchSku.trim()) return null;
+    return products.find(p => p.sku.trim().toLowerCase() === searchSku.trim().toLowerCase()) || null;
+  }, [searchSku, products]);
+
+  const skuSuggestions = React.useMemo(() => {
+    if (!searchSku.trim()) return [];
+    return products.filter(p => 
+      p.sku.toLowerCase().includes(searchSku.toLowerCase()) ||
+      p.name.toLowerCase().includes(searchSku.toLowerCase())
+    ).slice(0, 5);
+  }, [searchSku, products]);
+
+  const showSuggestions = React.useMemo(() => {
+    if (!searchSku.trim()) return false;
+    if (foundProduct && foundProduct.sku.toLowerCase() === searchSku.trim().toLowerCase()) return false;
+    return skuSuggestions.length > 0;
+  }, [searchSku, foundProduct, skuSuggestions]);
+
+  React.useEffect(() => {
+    if (foundProduct) {
+      setUpdateProductPrice(foundProduct.price);
+      setUpdateProductCategoryId(foundProduct.categoryId || '');
+      setUpdateProductAddedStock(0);
+    } else {
+      setUpdateProductPrice(0);
+      setUpdateProductCategoryId('');
+      setUpdateProductAddedStock(0);
+    }
+  }, [foundProduct]);
+
+
 
 
   // Form States (New Transaction)
@@ -300,6 +352,21 @@ export default function App() {
       console.error('Error fetching products:', err);
     } finally {
       setProductsLoading(false);
+    }
+  }, [token]);
+
+  const fetchCategories = React.useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/categories`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = (await res.json()) as Category[];
+        setCategories(data);
+      }
+    } catch (err) {
+      console.error('Error fetching categories:', err);
     }
   }, [token]);
 
@@ -443,7 +510,10 @@ export default function App() {
   useEffect(() => {
     if (user && token) {
       const timer = setTimeout(() => {
-        if (activeTab === 'kardex') void fetchProducts();
+        if (activeTab === 'kardex') {
+          void fetchProducts();
+          void fetchCategories();
+        }
         if (activeTab === 'ventas') void fetchInvoices();
         if (activeTab === 'proveedores') {
           void fetchPurchases();
@@ -469,6 +539,7 @@ export default function App() {
     token,
     activeTab,
     fetchProducts,
+    fetchCategories,
     fetchAssets,
     fetchDepreciations,
     fetchInvoices,
@@ -547,6 +618,7 @@ export default function App() {
           price: newProductPrice,
           stock: newProductStock,
           hasIva: newProductIva,
+          categoryId: selectedCategoryId || null,
         }),
       });
 
@@ -565,6 +637,94 @@ export default function App() {
       const savedRate = localStorage.getItem('globalIvaRate');
       setNewProductIvaRate(savedRate ? parseInt(savedRate, 10) : 15);
       setSetAsDefault(false);
+      setSelectedCategoryId('');
+      fetchProducts();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!foundProduct) return;
+    try {
+      const res = await fetch(`${API_BASE}/products/${foundProduct.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          price: updateProductPrice,
+          categoryId: updateProductCategoryId || null,
+          addedStock: updateProductAddedStock,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        alert(errData.message || 'Error al actualizar producto');
+        return;
+      }
+
+      alert('Producto actualizado con éxito');
+      setSearchSku('');
+      setUpdateProductPrice(0);
+      setUpdateProductCategoryId('');
+      setUpdateProductAddedStock(0);
+      fetchProducts();
+    } catch (err) {
+      console.error(err);
+      alert('Error al conectar con el servidor.');
+    }
+  };
+
+  const handleCreateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCategoryName.trim()) return;
+    try {
+      const res = await fetch(`${API_BASE}/categories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: newCategoryName,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        alert(errData.message || 'Error al crear categoría');
+        return;
+      }
+
+      setNewCategoryName('');
+      fetchCategories();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string, productName: string) => {
+    if (!window.confirm(`¿Estás seguro de que deseas eliminar el producto "${productName}" y todos sus movimientos de Kárdex asociados?`)) {
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/products/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        alert(errData.message || 'Error al eliminar producto');
+        return;
+      }
+
       fetchProducts();
     } catch (err) {
       console.error(err);
@@ -983,10 +1143,15 @@ export default function App() {
   });
   recentTransactions.sort((a, b) => new Date(b.tx.date).getTime() - new Date(a.tx.date).getTime());
 
-  // Filter products by IVA
+  // Filter products by IVA & Category
   const filteredProducts = products.filter(p => {
-    if (ivaFilter === 'with') return p.hasIva;
-    if (ivaFilter === 'without') return !p.hasIva;
+    if (ivaFilter === 'with' && !p.hasIva) return false;
+    if (ivaFilter === 'without' && p.hasIva) return false;
+    if (categoryFilter === 'none') {
+      if (p.categoryId) return false;
+    } else if (categoryFilter !== 'all') {
+      if (p.categoryId !== categoryFilter) return false;
+    }
     return true;
   });
 
@@ -1174,8 +1339,52 @@ export default function App() {
                             activeTab === 'sri' ? '🏛️ Reportes SRI Form 104' : '📉 Depreciación de Activos Fijos'}
                 </h2>
               </div>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                 <span style={{ fontSize: '12px', opacity: 0.8 }}>Ecosistema Autónomo AuraContable</span>
+                <button
+                  onClick={() => {
+                    if (activeTab === 'kardex') {
+                      void fetchProducts();
+                      void fetchCategories();
+                    } else if (activeTab === 'ventas') {
+                      void fetchInvoices();
+                    } else if (activeTab === 'proveedores') {
+                      void fetchPurchases();
+                      void fetchProducts();
+                    } else if (activeTab === 'caja') {
+                      void fetchReconciliationSummary();
+                    } else if (activeTab === 'contabilidad') {
+                      void fetchAccountingData();
+                    } else if (activeTab === 'sri') {
+                      void fetchInvoices();
+                      void fetchPurchases();
+                      void fetchReconciliationSummary();
+                      void fetchSriConfig();
+                    } else if (activeTab === 'assets') {
+                      void fetchAssets();
+                      void fetchDepreciations();
+                    }
+                  }}
+                  className="btn-sm"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    padding: '6px 10px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    transition: 'all 0.2s ease',
+                  }}
+                  title="Refrescar Datos"
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'}
+                >
+                  <span style={{ fontSize: '14px' }}>🔄</span> Refrescar
+                </button>
               </div>
             </header>
 
@@ -1196,6 +1405,20 @@ export default function App() {
                           <button className={`btn-sm ${ivaFilter === 'without' ? 'status-no' : ''}`} onClick={() => setIvaFilter('without')}>Sin IVA (0%)</button>
                         </div>
                       </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', marginBottom: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '0.8rem' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 'bold', marginRight: '6px', opacity: 0.8 }}>Categorías:</span>
+                        <button className={`btn-sm ${categoryFilter === 'all' ? 'status-aura' : ''}`} onClick={() => setCategoryFilter('all')}>Todas</button>
+                        <button className={`btn-sm ${categoryFilter === 'none' ? 'status-no' : ''}`} onClick={() => setCategoryFilter('none')}>Sin Categoría</button>
+                        {categories.map(cat => (
+                          <button
+                            key={cat.id}
+                            className={`btn-sm ${categoryFilter === cat.id ? 'status-yes' : ''}`}
+                            onClick={() => setCategoryFilter(cat.id)}
+                          >
+                            {cat.name}
+                          </button>
+                        ))}
+                      </div>
                       {productsLoading ? (
                         <p>Cargando catálogo...</p>
                       ) : filteredProducts.length === 0 ? (
@@ -1211,13 +1434,21 @@ export default function App() {
                               <th>Precio ($)</th>
                               <th>Afecto IVA</th>
                               <th>Valorización ($)</th>
+                              <th>Acciones</th>
                             </tr>
                           </thead>
                           <tbody>
                             {filteredProducts.map(p => (
                               <tr key={p.id}>
                                 <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 'bold' }}>{p.sku}</td>
-                                <td>{p.name}</td>
+                                <td>
+                                  <div>{p.name}</div>
+                                  {p.category && (
+                                    <span style={{ fontSize: '10px', opacity: 0.6, background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', marginTop: '2px', display: 'inline-block' }}>
+                                      📂 {p.category.name}
+                                    </span>
+                                  )}
+                                </td>
                                 <td>
                                   <span className={`badge-status ${p.stock < 10 ? 'status-partial' : 'status-yes'}`}>
                                     {p.stock} uds
@@ -1231,6 +1462,35 @@ export default function App() {
                                   </button>
                                 </td>
                                 <td style={{ fontWeight: '600' }}>${(p.stock * p.cost).toFixed(2)}</td>
+                                <td>
+                                  <button
+                                    onClick={() => handleDeleteProduct(p.id, p.name)}
+                                    className="badge-status status-no"
+                                    style={{
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      padding: '4px 8px',
+                                      gap: '4px',
+                                      borderRadius: '4px',
+                                      fontSize: '11px',
+                                      fontWeight: '600',
+                                      color: '#ef4444',
+                                      background: 'rgba(239, 68, 68, 0.1)',
+                                      transition: 'all 0.2s ease',
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+                                    }}
+                                    title="Eliminar producto y movimientos"
+                                  >
+                                    🗑️ Eliminar
+                                  </button>
+                                </td>
                               </tr>
                             ))}
                           </tbody>
@@ -1241,65 +1501,277 @@ export default function App() {
                     {/* Sidebar forms */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       <div className="card glass-panel" style={{ padding: '1.5rem' }}>
-                        <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Nuevo Producto</h4>
-                        <form onSubmit={handleCreateProduct}>
-                          <div className="form-group">
-                            <label>SKU (Código único):</label>
-                            <input type="text" required value={newProductSku} onChange={e => setNewProductSku(e.target.value)} placeholder="Ej: BOOK-002" />
-                          </div>
-                          <div className="form-group">
-                            <label>Nombre del Producto:</label>
-                            <input type="text" required value={newProductName} onChange={e => setNewProductName(e.target.value)} placeholder="Ej: Cuaderno de Cuentas" />
-                          </div>
-                          <div className="grid-2-form">
-                            <div className="form-group">
-                              <label>Costo ($):</label>
-                              <input type="number" required min={0} step="0.01" value={newProductCost} onChange={e => setNewProductCost(parseFloat(e.target.value) || 0)} />
-                            </div>
-                            <div className="form-group">
-                              <label>Precio Venta ($):</label>
-                              <input type="number" required min={0} step="0.01" value={newProductPrice} onChange={e => setNewProductPrice(parseFloat(e.target.value) || 0)} />
-                            </div>
-                          </div>
-                          <div className="grid-2-form" style={{ alignItems: 'flex-start' }}>
-                            <div className="form-group">
-                              <label>Stock Inicial:</label>
-                              <input type="number" required min={0} value={newProductStock} onChange={e => setNewProductStock(parseInt(e.target.value) || 0)} />
-                            </div>
-                            <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '0.4rem', paddingLeft: '1rem' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <input type="checkbox" id="newProductIva" checked={newProductIva} onChange={e => setNewProductIva(e.target.checked)} />
-                                <label htmlFor="newProductIva" style={{ margin: 0, cursor: 'pointer' }}>Graba IVA</label>
+                        <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '1rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => setProductFormMode('create')}
+                            style={{
+                              flex: 1,
+                              padding: '8px',
+                              background: 'none',
+                              border: 'none',
+                              borderBottom: productFormMode === 'create' ? '2px solid var(--accent-cyan, #06b6d4)' : '2px solid transparent',
+                              color: productFormMode === 'create' ? '#fff' : 'var(--text-secondary)',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              fontSize: '0.9rem',
+                            }}
+                          >
+                            Crear Nuevo
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setProductFormMode('update')}
+                            style={{
+                              flex: 1,
+                              padding: '8px',
+                              background: 'none',
+                              border: 'none',
+                              borderBottom: productFormMode === 'update' ? '2px solid var(--accent-cyan, #06b6d4)' : '2px solid transparent',
+                              color: productFormMode === 'update' ? '#fff' : 'var(--text-secondary)',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              fontSize: '0.9rem',
+                            }}
+                          >
+                            Modificar Existente
+                          </button>
+                        </div>
+
+                        {productFormMode === 'create' ? (
+                          <>
+                            <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Nuevo Producto</h4>
+                            <form onSubmit={handleCreateProduct}>
+                              <div className="form-group">
+                                <label>SKU (Código único):</label>
+                                <input type="text" required value={newProductSku} onChange={e => setNewProductSku(e.target.value)} placeholder="Ej: BOOK-002" />
                               </div>
-                              {newProductIva && (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
+                              <div className="form-group">
+                                <label>Nombre del Producto:</label>
+                                <input type="text" required value={newProductName} onChange={e => setNewProductName(e.target.value)} placeholder="Ej: Cuaderno de Cuentas" />
+                              </div>
+                              <div className="grid-2-form">
+                                <div className="form-group">
+                                  <label>Costo ($):</label>
+                                  <input type="number" required min={0} step="0.01" value={newProductCost} onChange={e => setNewProductCost(parseFloat(e.target.value) || 0)} />
+                                </div>
+                                <div className="form-group">
+                                  <label>Precio Venta ($):</label>
+                                  <input type="number" required min={0} step="0.01" value={newProductPrice} onChange={e => setNewProductPrice(parseFloat(e.target.value) || 0)} />
+                                </div>
+                              </div>
+                              <div className="grid-2-form" style={{ alignItems: 'flex-start' }}>
+                                <div className="form-group">
+                                  <label>Stock Inicial:</label>
+                                  <input type="number" required min={0} value={newProductStock} onChange={e => setNewProductStock(parseInt(e.target.value) || 0)} />
+                                </div>
+                                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '0.4rem', paddingLeft: '1rem' }}>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <label style={{ margin: 0, fontSize: '11px', whiteSpace: 'nowrap' }}>IVA (%):</label>
+                                    <input type="checkbox" id="newProductIva" checked={newProductIva} onChange={e => setNewProductIva(e.target.checked)} />
+                                    <label htmlFor="newProductIva" style={{ margin: 0, cursor: 'pointer' }}>Graba IVA</label>
+                                  </div>
+                                  {newProductIva && (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <label style={{ margin: 0, fontSize: '11px', whiteSpace: 'nowrap' }}>IVA (%):</label>
+                                        <input
+                                          type="number"
+                                          min={0}
+                                          max={100}
+                                          style={{ width: '60px', padding: '4px 6px', fontSize: '12px' }}
+                                          value={newProductIvaRate}
+                                          onChange={e => setNewProductIvaRate(parseInt(e.target.value) || 0)}
+                                        />
+                                      </div>
+                                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <input
+                                          type="checkbox"
+                                          id="setAsDefault"
+                                          checked={setAsDefault}
+                                          onChange={e => setSetAsDefault(e.target.checked)}
+                                        />
+                                        <label htmlFor="setAsDefault" style={{ margin: 0, fontSize: '10px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                                          Predeterminar valor
+                                        </label>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="form-group">
+                                <label>Categoría (Opcional):</label>
+                                <select value={selectedCategoryId} onChange={e => setSelectedCategoryId(e.target.value)}>
+                                  <option value="">Sin Categoría</option>
+                                  {categories.map(cat => (
+                                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <button type="submit" className="btn btn-cyan w-full">Crear Producto</button>
+                            </form>
+                          </>
+                        ) : (
+                          <>
+                            <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Modificar Producto Existente</h4>
+                            <form onSubmit={handleUpdateProduct}>
+                               <div className="form-group" style={{ position: 'relative' }}>
+                                 <label>Buscar por SKU:</label>
+                                 <input
+                                   type="text"
+                                   required
+                                   value={searchSku}
+                                   onChange={e => setSearchSku(e.target.value)}
+                                   placeholder="Ej: MON-41d5"
+                                   autoComplete="off"
+                                 />
+                                 {showSuggestions && (
+                                   <div
+                                     style={{
+                                       position: 'absolute',
+                                       zIndex: 1000,
+                                       background: '#1e293b',
+                                       border: '1px solid rgba(255,255,255,0.1)',
+                                       borderRadius: '6px',
+                                       width: '100%',
+                                       maxHeight: '200px',
+                                       overflowY: 'auto',
+                                       boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
+                                       marginTop: '4px'
+                                     }}
+                                   >
+                                     {skuSuggestions.map(p => (
+                                       <div
+                                         key={p.id}
+                                         onClick={() => {
+                                           setSearchSku(p.sku);
+                                         }}
+                                         style={{
+                                           padding: '8px 12px',
+                                           cursor: 'pointer',
+                                           borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                           fontSize: '13px',
+                                           color: '#fff',
+                                           transition: 'background 0.2s'
+                                         }}
+                                         onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(6, 182, 212, 0.2)'}
+                                         onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                                       >
+                                         <strong>{p.sku}</strong> - {p.name}
+                                       </div>
+                                     ))}
+                                   </div>
+                                 )}
+                               </div>
+
+                              {searchSku.trim() && (
+                                <>
+                                  {foundProduct ? (
+                                    <div
+                                      style={{
+                                        background: 'rgba(6, 182, 212, 0.1)',
+                                        border: '1px solid rgba(6, 182, 212, 0.2)',
+                                        padding: '10px',
+                                        borderRadius: '6px',
+                                        marginBottom: '1rem',
+                                        fontSize: '12px',
+                                      }}
+                                    >
+                                      <div style={{ color: '#fff', fontWeight: 'bold', marginBottom: '4px' }}>
+                                        ✓ Producto Identificado:
+                                      </div>
+                                      <div style={{ color: 'var(--text-secondary)' }}>
+                                        <strong>Nombre:</strong> {foundProduct.name}
+                                      </div>
+                                      <div style={{ color: 'var(--text-secondary)' }}>
+                                        <strong>Costo:</strong> ${foundProduct.cost.toFixed(2)}
+                                      </div>
+                                      <div style={{ color: 'var(--text-secondary)' }}>
+                                        <strong>Stock Actual:</strong> {foundProduct.stock} uds
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div
+                                      style={{
+                                        background: 'rgba(239, 68, 68, 0.1)',
+                                        border: '1px solid rgba(239, 68, 68, 0.2)',
+                                        padding: '10px',
+                                        borderRadius: '6px',
+                                        marginBottom: '1rem',
+                                        fontSize: '12px',
+                                        color: '#f87171',
+                                        fontWeight: '500',
+                                      }}
+                                    >
+                                      ⚠ No se encontró ningún producto con este SKU en el catálogo.
+                                    </div>
+                                  )}
+                                </>
+                              )}
+
+                              {foundProduct && (
+                                <>
+                                  <div className="form-group">
+                                    <label>Precio Venta ($):</label>
+                                    <input
+                                      type="number"
+                                      required
+                                      min={0}
+                                      step="0.01"
+                                      value={updateProductPrice}
+                                      onChange={e => setUpdateProductPrice(parseFloat(e.target.value) || 0)}
+                                    />
+                                  </div>
+
+                                  <div className="form-group">
+                                    <label>Añadir Stock (Cantidad):</label>
                                     <input
                                       type="number"
                                       min={0}
-                                      max={100}
-                                      style={{ width: '60px', padding: '4px 6px', fontSize: '12px' }}
-                                      value={newProductIvaRate}
-                                      onChange={e => setNewProductIvaRate(parseInt(e.target.value) || 0)}
+                                      value={updateProductAddedStock}
+                                      onChange={e => setUpdateProductAddedStock(parseInt(e.target.value) || 0)}
                                     />
+                                    <small style={{ fontSize: '10px', color: 'var(--text-secondary)', display: 'block', marginTop: '2px' }}>
+                                      Se registrará un ingreso en Kárdex por esta cantidad.
+                                    </small>
                                   </div>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                    <input
-                                      type="checkbox"
-                                      id="setAsDefault"
-                                      checked={setAsDefault}
-                                      onChange={e => setSetAsDefault(e.target.checked)}
-                                    />
-                                    <label htmlFor="setAsDefault" style={{ margin: 0, fontSize: '10px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                                      Predeterminar valor
-                                    </label>
+
+                                  <div className="form-group">
+                                    <label>Categoría:</label>
+                                    <select
+                                      value={updateProductCategoryId}
+                                      onChange={e => setUpdateProductCategoryId(e.target.value)}
+                                    >
+                                      <option value="">Sin Categoría</option>
+                                      {categories.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                      ))}
+                                    </select>
                                   </div>
-                                </div>
+
+                                  <button type="submit" className="btn btn-cyan w-full">
+                                    Actualizar Producto
+                                  </button>
+                                </>
                               )}
-                            </div>
+                            </form>
+                          </>
+                        )}
+                      </div>
+
+                      <div className="card glass-panel" style={{ padding: '1.5rem' }}>
+                        <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Nueva Categoría</h4>
+                        <form onSubmit={handleCreateCategory}>
+                          <div className="form-group">
+                            <label>Nombre de la Categoría:</label>
+                            <input
+                              type="text"
+                              required
+                              value={newCategoryName}
+                              onChange={e => setNewCategoryName(e.target.value)}
+                              placeholder="Ej: Electrónica, Servicios..."
+                            />
                           </div>
-                          <button type="submit" className="btn btn-cyan w-full">Crear Producto</button>
+                          <button type="submit" className="btn btn-cyan w-full">Crear Categoría</button>
                         </form>
                       </div>
 
