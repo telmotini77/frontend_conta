@@ -162,6 +162,7 @@ interface JournalEntry {
 }
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const BILLING_API_BASE = import.meta.env.VITE_BILLING_API_URL || 'http://localhost:3001';
 
 export default function App() {
   const { user, token, loading, login, signup, logout, error: authError } = useAuth();
@@ -271,7 +272,7 @@ export default function App() {
     return products.filter(p => 
       p.sku.toLowerCase().includes(searchSku.toLowerCase()) ||
       p.name.toLowerCase().includes(searchSku.toLowerCase())
-    ).slice(0, 5);
+    ).slice(0, 100);
   }, [searchSku, products]);
 
   const showSuggestions = React.useMemo(() => {
@@ -299,6 +300,22 @@ export default function App() {
   const [selectedProductId, setSelectedProductId] = useState('');
   const [txType, setTxType] = useState<'INGRESS' | 'EGRESS'>('INGRESS');
   const [txQty, setTxQty] = useState(1);
+  const [kardexFilterCategoryId, setKardexFilterCategoryId] = useState('all');
+
+  const filteredKardexProducts = React.useMemo(() => {
+    if (kardexFilterCategoryId === 'all') return products;
+    return products.filter(p => p.categoryId === kardexFilterCategoryId);
+  }, [products, kardexFilterCategoryId]);
+
+  React.useEffect(() => {
+    if (filteredKardexProducts.length > 0) {
+      if (!filteredKardexProducts.some(p => p.id === selectedProductId)) {
+        setSelectedProductId(filteredKardexProducts[0].id);
+      }
+    } else {
+      setSelectedProductId('');
+    }
+  }, [filteredKardexProducts, selectedProductId]);
 
   // Form States (New Asset)
   const [newAssetName, setNewAssetName] = useState('');
@@ -308,8 +325,36 @@ export default function App() {
 
   // Form States (New Invoice)
   const [newClientName, setNewClientName] = useState('');
-  const [newInvoiceAmount, setNewInvoiceAmount] = useState(0);
-  const [newInvoiceIva, setNewInvoiceIva] = useState(true);
+  const [invoiceItems, setInvoiceItems] = useState<{ productId: string; quantity: number }[]>([
+    { productId: '', quantity: 1 }
+  ]);
+
+  const calculatedInvoiceTotals = React.useMemo(() => {
+    let subtotal = 0;
+    let iva = 0;
+    let total = 0;
+
+    invoiceItems.forEach(item => {
+      const prod = products.find(p => p.id === item.productId);
+      if (prod) {
+        const lineTotal = prod.price * item.quantity;
+        total += lineTotal;
+        if (prod.hasIva) {
+          const lineSubtotal = lineTotal / (1 + globalIvaRate / 100);
+          subtotal += lineSubtotal;
+          iva += (lineTotal - lineSubtotal);
+        } else {
+          subtotal += lineTotal;
+        }
+      }
+    });
+
+    return {
+      subtotal: Number(subtotal.toFixed(2)),
+      iva: Number(iva.toFixed(2)),
+      total: Number(total.toFixed(2))
+    };
+  }, [invoiceItems, products, globalIvaRate]);
 
   // Form States (New Purchase)
   const [newPurInvoiceNum, setNewPurInvoiceNum] = useState('');
@@ -389,11 +434,13 @@ export default function App() {
   }, [token]);
 
   const fetchInvoices = React.useCallback(async () => {
-    if (!token) return;
+    if (!token || !user) return;
     setInvoicesLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/invoices`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`${BILLING_API_BASE}/invoices`, {
+        headers: {
+          'x-user-id': user.id,
+        },
       });
       if (res.ok) {
         const data = (await res.json()) as Invoice[];
@@ -404,7 +451,7 @@ export default function App() {
     } finally {
       setInvoicesLoading(false);
     }
-  }, [token]);
+  }, [token, user]);
 
   const fetchDepreciations = React.useCallback(async () => {
     if (!token) return;
@@ -780,18 +827,34 @@ export default function App() {
   // Actions - Ventas
   const handleCreateInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
+    const validItems = invoiceItems.filter(item => item.productId !== '');
+    if (validItems.length === 0) {
+      alert('Debe agregar al menos un producto a la factura');
+      return;
+    }
+
     try {
-      const res = await fetch(`${API_BASE}/invoices`, {
+      const res = await fetch(`${BILLING_API_BASE}/invoices`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           clientName: newClientName,
-          amount: newInvoiceAmount,
-          hasIva: newInvoiceIva,
+          amount: calculatedInvoiceTotals.total,
+          hasIva: calculatedInvoiceTotals.iva > 0,
           ivaRate: globalIvaRate,
+          items: validItems,
+          user: {
+            id: user.id,
+            ruc: user.ruc || '1792455894001',
+            name: user.name || 'Aura Contable User',
+            sriEnvironment: sriEnvironment || '1',
+            signatureBase64: sriSignatureBase64 || '',
+            signaturePassword: sriSignaturePassword || '',
+            sriSimulate: sriSimulate !== undefined ? sriSimulate : true,
+          }
         }),
       });
 
@@ -802,9 +865,9 @@ export default function App() {
       }
 
       setNewClientName('');
-      setNewInvoiceAmount(0);
-      setNewInvoiceIva(true);
+      setInvoiceItems([{ productId: '', quantity: 1 }]);
       fetchInvoices();
+      fetchProducts(); // Refresh products catalog to show updated stock
     } catch (err) {
       console.error(err);
     }
@@ -812,9 +875,8 @@ export default function App() {
 
   const handleSendInvoice = async (invoiceId: string) => {
     try {
-      const res = await fetch(`${API_BASE}/invoices/${invoiceId}/send`, {
+      const res = await fetch(`${BILLING_API_BASE}/invoices/${invoiceId}/send`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         alert('Factura firmada y autorizada enviada con éxito al correo del cliente.');
@@ -829,9 +891,7 @@ export default function App() {
 
   const handleDownloadXml = async (invoiceId: string) => {
     try {
-      const res = await fetch(`${API_BASE}/invoices/${invoiceId}/xml`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(`${BILLING_API_BASE}/invoices/${invoiceId}/xml?userId=${user?.id || ''}`);
       if (res.ok) {
         const data = await res.json();
         setActiveXml(data.xml);
@@ -1500,7 +1560,7 @@ export default function App() {
 
                     {/* Sidebar forms */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                      <div className="card glass-panel" style={{ padding: '1.5rem' }}>
+                      <div className="card glass-panel" style={{ padding: '1.5rem', overflow: 'visible', zIndex: 10 }}>
                         <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '1rem' }}>
                           <button
                             type="button"
@@ -1633,7 +1693,7 @@ export default function App() {
                                        border: '1px solid rgba(255,255,255,0.1)',
                                        borderRadius: '6px',
                                        width: '100%',
-                                       maxHeight: '200px',
+                                       maxHeight: '250px',
                                        overflowY: 'auto',
                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
                                        marginTop: '4px'
@@ -1779,11 +1839,24 @@ export default function App() {
                         <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Registrar Movimiento Kárdex</h4>
                         <form onSubmit={handleCreateTransaction}>
                           <div className="form-group">
+                            <label>Filtrar por Categoría:</label>
+                            <select value={kardexFilterCategoryId} onChange={e => setKardexFilterCategoryId(e.target.value)}>
+                              <option value="all">Todas las Categorías</option>
+                              {categories.map(cat => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="form-group">
                             <label>Seleccionar Producto:</label>
                             <select value={selectedProductId} onChange={e => setSelectedProductId(e.target.value)}>
-                              {products.map(p => (
-                                <option key={p.id} value={p.id}>{p.name} ({p.sku}) - Stock: {p.stock}</option>
-                              ))}
+                              {filteredKardexProducts.length === 0 ? (
+                                <option value="">No hay productos en esta categoría</option>
+                              ) : (
+                                filteredKardexProducts.map(p => (
+                                  <option key={p.id} value={p.id}>{p.name} ({p.sku}) - Stock: {p.stock}</option>
+                                ))
+                              )}
                             </select>
                           </div>
                           <div className="grid-2-form">
@@ -1933,21 +2006,114 @@ export default function App() {
                     </div>
 
                     {/* Sidebar Create Invoice */}
-                    <div className="card glass-panel" style={{ padding: '1.5rem' }}>
+                    <div className="card glass-panel" style={{ padding: '1.5rem', overflow: 'visible', zIndex: 10 }}>
                       <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Emitir Factura de Venta</h4>
                       <form onSubmit={handleCreateInvoice}>
                         <div className="form-group">
                           <label>Cliente (Nombre o Razón Social):</label>
                           <input type="text" required value={newClientName} onChange={e => setNewClientName(e.target.value)} placeholder="Ej: CORPORACION EL ROSADO S.A." />
                         </div>
-                        <div className="form-group">
-                          <label>Monto Total ($):</label>
-                          <input type="number" required min={0.01} step="0.01" value={newInvoiceAmount} onChange={e => setNewInvoiceAmount(parseFloat(e.target.value) || 0)} placeholder="Total cobrado al cliente" />
+
+                        <div style={{ marginBottom: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '0.8rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                            <label style={{ fontSize: '12px', fontWeight: 'bold' }}>Detalle de Productos:</label>
+                            <button
+                              type="button"
+                              className="btn-sm btn-cyan"
+                              style={{ padding: '2px 8px', fontSize: '11px' }}
+                              onClick={() => setInvoiceItems([...invoiceItems, { productId: '', quantity: 1 }])}
+                            >
+                              + Agregar Ítem
+                            </button>
+                          </div>
+
+                          {invoiceItems.map((item, idx) => {
+                            const selectedProd = products.find(p => p.id === item.productId);
+                            return (
+                              <div key={idx} style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
+                                <select
+                                  value={item.productId}
+                                  required
+                                  onChange={e => {
+                                    const updated = [...invoiceItems];
+                                    updated[idx].productId = e.target.value;
+                                    setInvoiceItems(updated);
+                                  }}
+                                  style={{ flex: 2, padding: '4px 6px', fontSize: '12px' }}
+                                >
+                                  <option value="">-- Elegir Producto --</option>
+                                  {products.map(p => (
+                                    <option key={p.id} value={p.id}>{p.name} (${p.price.toFixed(2)})</option>
+                                  ))}
+                                </select>
+
+                                <input
+                                  type="number"
+                                  required
+                                  min={1}
+                                  value={item.quantity}
+                                  onChange={e => {
+                                    const updated = [...invoiceItems];
+                                    updated[idx].quantity = parseInt(e.target.value) || 1;
+                                    setInvoiceItems(updated);
+                                  }}
+                                  style={{ width: '60px', padding: '4px 6px', fontSize: '12px' }}
+                                  placeholder="Cant"
+                                />
+
+                                <span style={{ fontSize: '12px', width: '60px', textAlign: 'right', opacity: 0.8 }}>
+                                  ${selectedProd ? (selectedProd.price * item.quantity).toFixed(2) : '0.00'}
+                                </span>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (invoiceItems.length === 1) {
+                                      setInvoiceItems([{ productId: '', quantity: 1 }]);
+                                    } else {
+                                      setInvoiceItems(invoiceItems.filter((_, i) => i !== idx));
+                                    }
+                                  }}
+                                  style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    color: 'var(--red, #f87171)',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    padding: '4px'
+                                  }}
+                                  title="Eliminar ítem"
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            );
+                          })}
                         </div>
-                        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '1rem 0' }}>
-                          <input type="checkbox" id="newInvoiceIva" checked={newInvoiceIva} onChange={e => setNewInvoiceIva(e.target.checked)} />
-                          <label htmlFor="newInvoiceIva" style={{ margin: 0, cursor: 'pointer' }}>Desglosar {globalIvaRate}% IVA</label>
+
+                        {/* Breakdown Totals */}
+                        <div style={{
+                          background: 'rgba(255,255,255,0.02)',
+                          padding: '10px',
+                          borderRadius: '8px',
+                          marginBottom: '1rem',
+                          fontSize: '12px',
+                          border: '1px solid rgba(255,255,255,0.05)'
+                        }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                            <span style={{ color: 'var(--text-secondary)' }}>Subtotal:</span>
+                            <strong>${calculatedInvoiceTotals.subtotal.toFixed(2)}</strong>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                            <span style={{ color: 'var(--text-secondary)' }}>IVA ({globalIvaRate}%):</span>
+                            <strong>${calculatedInvoiceTotals.iva.toFixed(2)}</strong>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '4px', fontWeight: 'bold' }}>
+                            <span>Total a Cobrar:</span>
+                            <span style={{ color: 'var(--cyan)' }}>${calculatedInvoiceTotals.total.toFixed(2)}</span>
+                          </div>
                         </div>
+
                         <button type="submit" className="btn btn-cyan w-full">Firmar y Transmitir al SRI</button>
                       </form>
                     </div>

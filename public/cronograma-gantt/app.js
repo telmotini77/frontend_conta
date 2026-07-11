@@ -173,7 +173,7 @@ const DEFAULT_TASKS = [
     name: 'Reportes de Ventas y de Clientes',
     startWeek: 9,
     endWeek: 10,
-    progress: 0,
+    progress: 100,
     color: 'var(--task-color-5)',
     desc: 'Desarrollo del submódulo de reportes estadísticos para analizar ventas históricas y comportamiento de clientes.',
     dependency: 'task-5'
@@ -183,7 +183,7 @@ const DEFAULT_TASKS = [
     name: 'Generación de Reportes Tributarios para SRI',
     startWeek: 9,
     endWeek: 10,
-    progress: 0,
+    progress: 100,
     color: 'var(--task-color-6)',
     desc: 'Formatos exportables listos para la declaración de retenciones, IVA y anexos transaccionales simplificados.',
     dependency: 'task-9'
@@ -193,7 +193,7 @@ const DEFAULT_TASKS = [
     name: 'Pruebas de Integración y Ajustes UX/UI',
     startWeek: 10,
     endWeek: 11,
-    progress: 0,
+    progress: 100,
     color: 'var(--task-color-1)',
     desc: 'Pruebas E2E del sistema integrado AuraContable, pulido de la interfaz amigable y corrección de bugs visuales.',
     dependency: 'task-10'
@@ -203,10 +203,20 @@ const DEFAULT_TASKS = [
     name: 'Despliegue Final en Contenedores Docker',
     startWeek: 11,
     endWeek: 11,
-    progress: 0,
+    progress: 100,
     color: 'var(--task-color-2)',
     desc: 'Montaje del entorno de producción utilizando Docker y Docker Compose, entrega final y capacitación.',
     dependency: 'task-13'
+  },
+  {
+    id: 'task-15',
+    name: 'Sistema de Facturación Integrado con Aura',
+    startWeek: 9,
+    endWeek: 10,
+    progress: 100,
+    color: 'var(--task-color-3)',
+    desc: 'Crear un sistema de facturación conectado al sistema Aura para registrar ventas en la contabilidad, cantidad de ventas, cantidad de ingresos registrados y más.',
+    dependency: 'task-5'
   }
 ];
 
@@ -292,12 +302,28 @@ function init() {
     // Auto-update completed tasks (task-3 to task-9) to 100% if they were cached at lower progress
     let modified = false;
     tasks = tasks.map(t => {
-      if ((t.id === 'task-3' || t.id === 'task-4' || t.id === 'task-5' || t.id === 'task-6' || t.id === 'task-7' || t.id === 'task-8' || t.id === 'task-9' || t.id === 'task-10') && t.progress < 100) {
+      if ((t.id === 'task-3' || t.id === 'task-4' || t.id === 'task-5' || t.id === 'task-6' || t.id === 'task-7' || t.id === 'task-8' || t.id === 'task-9' || t.id === 'task-10' || t.id === 'task-11' || t.id === 'task-12' || t.id === 'task-13' || t.id === 'task-14' || t.id === 'task-15') && t.progress < 100) {
         t.progress = 100;
         modified = true;
       }
       return t;
     });
+
+    // Check if new task-15 billing integration is present, if not add it
+    if (!tasks.some(t => t.id === 'task-15')) {
+      tasks.push({
+        id: 'task-15',
+        name: 'Sistema de Facturación Integrado con Aura',
+        startWeek: 9,
+        endWeek: 10,
+        progress: 100,
+        color: 'var(--task-color-3)',
+        desc: 'Crear un sistema de facturación conectado al sistema Aura para registrar ventas en la contabilidad, cantidad de ventas, cantidad de ingresos registrados y más.',
+        dependency: 'task-5'
+      });
+      modified = true;
+    }
+
     if (modified) {
       saveState();
     }
