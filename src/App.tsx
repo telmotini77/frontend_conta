@@ -101,6 +101,13 @@ interface CashTransaction {
   purchaseId?: string;
 }
 
+interface Employee {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+}
+
 interface ReconciliationInvoice {
   id: string;
   claveAcceso: string;
@@ -202,7 +209,15 @@ export default function App() {
   const [sriSignatureBase64, setSriSignatureBase64] = useState('');
   const [sriSignaturePassword, setSriSignaturePassword] = useState('');
   const [sriConfigHasSignature, setSriConfigHasSignature] = useState(false);
+  const [sriIsBranch, setSriIsBranch] = useState(false);
+  const [sriParentCompanyRuc, setSriParentCompanyRuc] = useState('');
+  const [sriEstablishmentCode, setSriEstablishmentCode] = useState('001');
+  const [sriEmissionPoint, setSriEmissionPoint] = useState('002');
+  const [sriEstablishmentAddress, setSriEstablishmentAddress] = useState('Av. de los Granados N45 y Eloy Alfaro, Quito');
   const [sriConfigLoading, setSriConfigLoading] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState<'login' | 'signup' | null>(null);
+  const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'landing' | 'app'>('landing');
   const [sriSaving, setSriSaving] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(1);
@@ -254,6 +269,16 @@ export default function App() {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+
+  // Employee management states
+  const [ventasSubTab, setVentasSubTab] = useState<'facturas' | 'empleados'>('facturas');
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [employeesLoading, setEmployeesLoading] = useState(false);
+  const [empName, setEmpName] = useState('');
+  const [empEmail, setEmpEmail] = useState('');
+  const [empPassword, setEmpPassword] = useState('');
+  const [empConfirmPassword, setEmpConfirmPassword] = useState('');
+
 
   // Form States (New Product & Modification)
   const [productFormMode, setProductFormMode] = useState<'create' | 'update'>('create');
@@ -489,6 +514,24 @@ export default function App() {
     }
   }, [token]);
 
+  const fetchEmployees = React.useCallback(async () => {
+    if (!token) return;
+    setEmployeesLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/employees`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = (await res.json()) as Employee[];
+        setEmployees(data);
+      }
+    } catch (err) {
+      console.error('Error fetching employees:', err);
+    } finally {
+      setEmployeesLoading(false);
+    }
+  }, [token]);
+
   const fetchReconciliationSummary = React.useCallback(async () => {
     if (!token) return;
     setRecoLoading(true);
@@ -545,6 +588,11 @@ export default function App() {
         setSriSimulate(data.sriSimulate);
         setSriEnvironment(data.sriEnvironment);
         setSriConfigHasSignature(data.hasSignature);
+        setSriIsBranch(data.isBranch || false);
+        setSriParentCompanyRuc(data.parentCompanyRuc || '');
+        setSriEstablishmentCode(data.establishmentCode || '001');
+        setSriEmissionPoint(data.emissionPoint || '002');
+        setSriEstablishmentAddress(data.establishmentAddress || 'Av. de los Granados N45 y Eloy Alfaro, Quito');
       }
     } catch (err) {
       console.error('Error fetching SRI config:', err);
@@ -596,6 +644,13 @@ export default function App() {
     fetchSriConfig,
   ]);
 
+  // Load employees when on Ventas -> Employees tab
+  useEffect(() => {
+    if (user && token && activeTab === 'ventas' && ventasSubTab === 'empleados') {
+      void fetchEmployees();
+    }
+  }, [user, token, activeTab, ventasSubTab, fetchEmployees]);
+
   // Periodic polling for invoices to update SRI authorization status
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | undefined;
@@ -618,6 +673,13 @@ export default function App() {
     setAuthFormError(null);
   }, [isLoginView, user]);
 
+  // Auto-redirect to dashboard if user has active session
+  useEffect(() => {
+    if (user && viewMode === 'landing') {
+      setViewMode('app');
+    }
+  }, [user]);
+
   if (loading) {
     return (
       <div className="flex-center loading-screen">
@@ -637,6 +699,7 @@ export default function App() {
       } else {
         await signup(nameInput, rucInput, emailInput, passwordInput);
       }
+      setViewMode('app');
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
       setAuthFormError(errMsg || 'Error en la autenticación');
@@ -854,6 +917,11 @@ export default function App() {
             signatureBase64: sriSignatureBase64 || '',
             signaturePassword: sriSignaturePassword || '',
             sriSimulate: sriSimulate !== undefined ? sriSimulate : true,
+            isBranch: sriIsBranch,
+            parentCompanyRuc: sriParentCompanyRuc,
+            establishmentCode: sriEstablishmentCode,
+            emissionPoint: sriEmissionPoint,
+            establishmentAddress: sriEstablishmentAddress,
           }
         }),
       });
@@ -925,6 +993,11 @@ export default function App() {
       const body: any = {
         sriSimulate,
         sriEnvironment,
+        isBranch: sriIsBranch,
+        parentCompanyRuc: sriIsBranch ? sriParentCompanyRuc : null,
+        establishmentCode: sriEstablishmentCode,
+        emissionPoint: sriEmissionPoint,
+        establishmentAddress: sriEstablishmentAddress,
       };
       if (sriSignatureBase64) {
         body.signatureBase64 = sriSignatureBase64;
@@ -1134,6 +1207,66 @@ export default function App() {
     }
   };
 
+  // Actions - Employees
+  const handleCreateEmployee = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (empPassword !== empConfirmPassword) {
+      alert('Las contraseñas no coinciden.');
+      return;
+    }
+    if (empPassword.length < 6) {
+      alert('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/employees`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: empName,
+          email: empEmail,
+          password: empPassword,
+        }),
+      });
+
+      if (res.ok) {
+        alert('Empleado registrado exitosamente.');
+        setEmpName('');
+        setEmpEmail('');
+        setEmpPassword('');
+        setEmpConfirmPassword('');
+        void fetchEmployees();
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Error al registrar empleado.');
+      }
+    } catch (err) {
+      console.error('Error creating employee:', err);
+    }
+  };
+
+  const handleDeleteEmployee = async (id: string) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar este empleado? Ya no podrá ingresar al sistema de facturación.')) return;
+    try {
+      const res = await fetch(`${API_BASE}/employees/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        alert('Empleado eliminado.');
+        void fetchEmployees();
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Error al eliminar empleado.');
+      }
+    } catch (err) {
+      console.error('Error deleting employee:', err);
+    }
+  };
+
   // Actions - Assets
   const handleCreateAsset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1295,8 +1428,8 @@ export default function App() {
   }, null, 2);
 
   return (
-    <div className={user ? `app-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}` : 'container'} style={user ? {} : { maxWidth: '450px', padding: '2rem 1rem', margin: '0 auto', width: '90%' }}>
-      {user ? (
+    <div className={viewMode === 'app' && user ? `app-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}` : ''} style={viewMode === 'app' && user ? {} : { width: '100%' }}>
+      {viewMode === 'app' && user ? (
         <>
           {/* Sidebar Nav */}
           <aside className="sidebar glass-panel">
@@ -1384,7 +1517,7 @@ export default function App() {
           {/* Main Content Area */}
           <div className="main-content">
             <header className="top-bar glass-panel animate-slideup">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '15px', height: '120px' }}>
+              <div className="top-bar-left" style={{ display: 'flex', alignItems: 'center', gap: '15px', height: '120px' }}>
                 {isSidebarCollapsed && (
                   <button className="sidebar-toggle" onClick={() => setIsSidebarCollapsed(false)}>
                     ☰
@@ -1400,7 +1533,7 @@ export default function App() {
                 </h2>
               </div>
               <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                <span style={{ fontSize: '12px', opacity: 0.8 }}>Ecosistema Autónomo AuraContable</span>
+                <span className="top-bar-text" style={{ fontSize: '12px', opacity: 0.8 }}>Ecosistema Autónomo AuraContable</span>
                 <button
                   onClick={() => {
                     if (activeTab === 'kardex') {
@@ -1456,7 +1589,7 @@ export default function App() {
                 <div className="fade-in">
                   <div className="dashboard-grid">
                     {/* Products Table */}
-                    <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: '2rem' }}>
+                    <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                         <h3 style={{ margin: 0 }}>Catálogo de Productos e IVA</h3>
                         <div style={{ display: 'flex', gap: '8px' }}>
@@ -1926,235 +2059,348 @@ export default function App() {
               {/* TAB: VENTAS */}
               {activeTab === 'ventas' && (
                 <div className="fade-in">
-                  {/* Metrics Row */}
-                  <div className="grid-3" style={{ marginBottom: '1.5rem' }}>
-                    <div className="card glass-panel" style={{ padding: '1.25rem', marginBottom: '2rem' }}>
-                      <div className="card-header">
-                        <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Venta Total Bruta</span>
-                        <span>📈</span>
-                      </div>
-                      <h3 style={{ margin: '8px 0', fontSize: '20px', color: 'var(--cyan)' }}>${totalSales.toFixed(2)}</h3>
-                      <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Venta Neta (sin IVA): ${netSales.toFixed(2)}</p>
-                    </div>
-                    <div className="card glass-panel" style={{ padding: '1.25rem' }}>
-                      <div className="card-header">
-                        <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>IVA Ventas Cobrado</span>
-                        <span>🏛️</span>
-                      </div>
-                      <h3 style={{ margin: '8px 0', fontSize: '20px', color: 'var(--indigo)' }}>${totalIvaCollected.toFixed(2)}</h3>
-                      <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{globalIvaRate}% IVA acumulado para declarar al SRI</p>
-                    </div>
-                    <div className="card glass-panel" style={{ padding: '1.25rem' }}>
-                      <div className="card-header">
-                        <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Venta Promedio / Factura</span>
-                        <span>💰</span>
-                      </div>
-                      <h3 style={{ margin: '8px 0', fontSize: '20px', color: 'var(--emerald)' }}>${avgTicket.toFixed(2)}</h3>
-                      <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Ticket promedio para {invoices.length} facturas</p>
-                    </div>
+                  {/* Ventas Sub-navigation tabs */}
+                  <div style={{ display: 'flex', gap: '10px', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem' }}>
+                    <button className={`btn-sm ${ventasSubTab === 'facturas' ? 'status-aura' : ''}`} onClick={() => setVentasSubTab('facturas')}>
+                      📈 Registro de Ventas y Clientes
+                    </button>
+                    <button className={`btn-sm ${ventasSubTab === 'empleados' ? 'status-aura' : ''}`} onClick={() => setVentasSubTab('empleados')}>
+                      👥 Administrar Empleados
+                    </button>
                   </div>
 
-                  <div className="dashboard-grid">
-                    {/* Invoices List */}
-                    <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
-                      <h3 style={{ marginTop: 0 }}>Facturas Electrónicas Emitidas</h3>
-                      {invoicesLoading && invoices.length === 0 ? (
-                        <p>Cargando facturas...</p>
-                      ) : invoices.length === 0 ? (
-                        <p>No se han emitido facturas de ventas.</p>
-                      ) : (
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Fecha</th>
-                              <th>Cliente</th>
-                              <th>Subtotal</th>
-                              <th>IVA ({globalIvaRate}%)</th>
-                              <th>Total ($)</th>
-                              <th>Estado SRI</th>
-                              <th>Envío</th>
-                              <th>Acciones</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {invoices.map(inv => (
-                              <tr key={inv.id}>
-                                <td style={{ fontSize: '12px' }}>{new Date(inv.createdAt).toLocaleDateString()}</td>
-                                <td><strong>{inv.clientName}</strong></td>
-                                <td>${inv.subtotal.toFixed(2)}</td>
-                                <td>${inv.iva.toFixed(2)}</td>
-                                <td style={{ fontWeight: 'bold', color: 'var(--cyan)' }}>${inv.amount.toFixed(2)}</td>
-                                <td>
-                                  <span className={`badge-status ${inv.status === 'AUTHORIZED' ? 'status-yes' : inv.status === 'RECEIVED' ? 'status-partial' : 'status-no'}`}>
-                                    {inv.status === 'AUTHORIZED' ? 'AUTORIZADO' : inv.status === 'RECEIVED' ? 'RECIBIDO' : 'RECHAZADO'}
-                                  </span>
-                                </td>
-                                <td>
-                                  <span className={`badge-status ${inv.sentToClient ? 'status-yes' : 'status-no'}`}>
-                                    {inv.sentToClient ? 'ENVIADO' : 'PENDIENTE'}
-                                  </span>
-                                </td>
-                                <td style={{ whiteSpace: 'nowrap' }}>
-                                  <button className="btn-sm btn-cyan" onClick={() => handleDownloadXml(inv.id)} style={{ marginRight: '6px' }}>XML</button>
-                                  <button className="btn-sm btn-indigo" onClick={() => handleSendInvoice(inv.id)} disabled={inv.status !== 'AUTHORIZED'}>Enviar</button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      )}
-                    </div>
+                  {ventasSubTab === 'facturas' && (
+                    <div className="fade-in">
+                      {/* Metrics Row */}
+                      <div className="grid-3" style={{ marginBottom: '1.5rem' }}>
+                        <div className="card glass-panel" style={{ padding: '1.25rem', marginBottom: '2rem' }}>
+                          <div className="card-header">
+                            <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Venta Total Bruta</span>
+                            <span>📈</span>
+                          </div>
+                          <h3 style={{ margin: '8px 0', fontSize: '20px', color: 'var(--cyan)' }}>${totalSales.toFixed(2)}</h3>
+                          <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Venta Neta (sin IVA): ${netSales.toFixed(2)}</p>
+                        </div>
+                        <div className="card glass-panel" style={{ padding: '1.25rem' }}>
+                          <div className="card-header">
+                            <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>IVA Ventas Cobrado</span>
+                            <span>🏛️</span>
+                          </div>
+                          <h3 style={{ margin: '8px 0', fontSize: '20px', color: 'var(--indigo)' }}>${totalIvaCollected.toFixed(2)}</h3>
+                          <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{globalIvaRate}% IVA acumulado para declarar al SRI</p>
+                        </div>
+                        <div className="card glass-panel" style={{ padding: '1.25rem' }}>
+                          <div className="card-header">
+                            <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Venta Promedio / Factura</span>
+                            <span>💰</span>
+                          </div>
+                          <h3 style={{ margin: '8px 0', fontSize: '20px', color: 'var(--emerald)' }}>${avgTicket.toFixed(2)}</h3>
+                          <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Ticket promedio para {invoices.length} facturas</p>
+                        </div>
+                      </div>
 
-                    {/* Sidebar Create Invoice */}
-                    <div className="card glass-panel" style={{ padding: '1.5rem', overflow: 'visible', zIndex: 10 }}>
-                      <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Emitir Factura de Venta</h4>
-                      <form onSubmit={handleCreateInvoice}>
-                        <div className="form-group">
-                          <label>Cliente (Nombre o Razón Social):</label>
-                          <input type="text" required value={newClientName} onChange={e => setNewClientName(e.target.value)} placeholder="Ej: CORPORACION EL ROSADO S.A." />
+                      <div className="dashboard-grid">
+                        {/* Invoices List */}
+                        <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                          <h3 style={{ marginTop: 0 }}>Facturas Electrónicas Emitidas</h3>
+                          {invoicesLoading && invoices.length === 0 ? (
+                            <p>Cargando facturas...</p>
+                          ) : invoices.length === 0 ? (
+                            <p>No se han emitido facturas de ventas.</p>
+                          ) : (
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Fecha</th>
+                                  <th>Cliente</th>
+                                  <th>Subtotal</th>
+                                  <th>IVA ({globalIvaRate}%)</th>
+                                  <th>Total ($)</th>
+                                  <th>Estado SRI</th>
+                                  <th>Envío</th>
+                                  <th>Acciones</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {invoices.map(inv => (
+                                  <tr key={inv.id}>
+                                    <td style={{ fontSize: '12px' }}>{new Date(inv.createdAt).toLocaleDateString()}</td>
+                                    <td><strong>{inv.clientName}</strong></td>
+                                    <td>${inv.subtotal.toFixed(2)}</td>
+                                    <td>${inv.iva.toFixed(2)}</td>
+                                    <td style={{ fontWeight: 'bold', color: 'var(--cyan)' }}>${inv.amount.toFixed(2)}</td>
+                                    <td>
+                                      <span className={`badge-status ${inv.status === 'AUTHORIZED' ? 'status-yes' : inv.status === 'RECEIVED' ? 'status-partial' : 'status-no'}`}>
+                                        {inv.status === 'AUTHORIZED' ? 'AUTORIZADO' : inv.status === 'RECEIVED' ? 'RECIBIDO' : 'RECHAZADO'}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <span className={`badge-status ${inv.sentToClient ? 'status-yes' : 'status-no'}`}>
+                                        {inv.sentToClient ? 'ENVIADO' : 'PENDIENTE'}
+                                      </span>
+                                    </td>
+                                    <td style={{ whiteSpace: 'nowrap' }}>
+                                      <button className="btn-sm btn-cyan" onClick={() => handleDownloadXml(inv.id)} style={{ marginRight: '6px' }}>XML</button>
+                                      <button className="btn-sm btn-indigo" onClick={() => handleSendInvoice(inv.id)} disabled={inv.status !== 'AUTHORIZED'}>Enviar</button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          )}
                         </div>
 
-                        <div style={{ marginBottom: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '0.8rem' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                            <label style={{ fontSize: '12px', fontWeight: 'bold' }}>Detalle de Productos:</label>
-                            <button
-                              type="button"
-                              className="btn-sm btn-cyan"
-                              style={{ padding: '2px 8px', fontSize: '11px' }}
-                              onClick={() => setInvoiceItems([...invoiceItems, { productId: '', quantity: 1 }])}
-                            >
-                              + Agregar Ítem
-                            </button>
-                          </div>
+                        {/* Sidebar Create Invoice */}
+                        <div className="card glass-panel" style={{ padding: '1.5rem', overflow: 'visible', zIndex: 10 }}>
+                          <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Emitir Factura de Venta</h4>
+                          <form onSubmit={handleCreateInvoice}>
+                            <div className="form-group">
+                              <label>Cliente (Nombre o Razón Social):</label>
+                              <input type="text" required value={newClientName} onChange={e => setNewClientName(e.target.value)} placeholder="Ej: CORPORACION EL ROSADO S.A." />
+                            </div>
 
-                          {invoiceItems.map((item, idx) => {
-                            const selectedProd = products.find(p => p.id === item.productId);
-                            return (
-                              <div key={idx} style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
-                                <select
-                                  value={item.productId}
-                                  required
-                                  onChange={e => {
-                                    const updated = [...invoiceItems];
-                                    updated[idx].productId = e.target.value;
-                                    setInvoiceItems(updated);
-                                  }}
-                                  style={{ flex: 2, padding: '4px 6px', fontSize: '12px' }}
-                                >
-                                  <option value="">-- Elegir Producto --</option>
-                                  {products.map(p => (
-                                    <option key={p.id} value={p.id}>{p.name} (${p.price.toFixed(2)})</option>
-                                  ))}
-                                </select>
-
-                                <input
-                                  type="number"
-                                  required
-                                  min={1}
-                                  value={item.quantity}
-                                  onChange={e => {
-                                    const updated = [...invoiceItems];
-                                    updated[idx].quantity = parseInt(e.target.value) || 1;
-                                    setInvoiceItems(updated);
-                                  }}
-                                  style={{ width: '60px', padding: '4px 6px', fontSize: '12px' }}
-                                  placeholder="Cant"
-                                />
-
-                                <span style={{ fontSize: '12px', width: '60px', textAlign: 'right', opacity: 0.8 }}>
-                                  ${selectedProd ? (selectedProd.price * item.quantity).toFixed(2) : '0.00'}
-                                </span>
-
+                            <div style={{ marginBottom: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '0.8rem' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                <label style={{ fontSize: '12px', fontWeight: 'bold' }}>Detalle de Productos:</label>
                                 <button
                                   type="button"
-                                  onClick={() => {
-                                    if (invoiceItems.length === 1) {
-                                      setInvoiceItems([{ productId: '', quantity: 1 }]);
-                                    } else {
-                                      setInvoiceItems(invoiceItems.filter((_, i) => i !== idx));
-                                    }
-                                  }}
-                                  style={{
-                                    background: 'none',
-                                    border: 'none',
-                                    color: 'var(--red, #f87171)',
-                                    cursor: 'pointer',
-                                    fontSize: '14px',
-                                    padding: '4px'
-                                  }}
-                                  title="Eliminar ítem"
+                                  className="btn-sm btn-cyan"
+                                  style={{ padding: '2px 8px', fontSize: '11px' }}
+                                  onClick={() => setInvoiceItems([...invoiceItems, { productId: '', quantity: 1 }])}
                                 >
-                                  🗑️
+                                  + Agregar Ítem
                                 </button>
                               </div>
-                            );
-                          })}
-                        </div>
 
-                        {/* Breakdown Totals */}
-                        <div style={{
-                          background: 'rgba(255,255,255,0.02)',
-                          padding: '10px',
-                          borderRadius: '8px',
-                          marginBottom: '1rem',
-                          fontSize: '12px',
-                          border: '1px solid rgba(255,255,255,0.05)'
-                        }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                            <span style={{ color: 'var(--text-secondary)' }}>Subtotal:</span>
-                            <strong>${calculatedInvoiceTotals.subtotal.toFixed(2)}</strong>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                            <span style={{ color: 'var(--text-secondary)' }}>IVA ({globalIvaRate}%):</span>
-                            <strong>${calculatedInvoiceTotals.iva.toFixed(2)}</strong>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '4px', fontWeight: 'bold' }}>
-                            <span>Total a Cobrar:</span>
-                            <span style={{ color: 'var(--cyan)' }}>${calculatedInvoiceTotals.total.toFixed(2)}</span>
-                          </div>
-                        </div>
+                              {invoiceItems.map((item, idx) => {
+                                const selectedProd = products.find(p => p.id === item.productId);
+                                return (
+                                  <div key={idx} style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
+                                    <select
+                                      value={item.productId}
+                                      required
+                                      onChange={e => {
+                                        const updated = [...invoiceItems];
+                                        updated[idx].productId = e.target.value;
+                                        setInvoiceItems(updated);
+                                      }}
+                                      style={{ flex: 2, padding: '4px 6px', fontSize: '12px' }}
+                                    >
+                                      <option value="">-- Elegir Producto --</option>
+                                      {products.map(p => (
+                                        <option key={p.id} value={p.id}>{p.name} (${p.price.toFixed(2)})</option>
+                                      ))}
+                                    </select>
 
-                        <button type="submit" className="btn btn-cyan w-full">Firmar y Transmitir al SRI</button>
-                      </form>
+                                    <input
+                                      type="number"
+                                      required
+                                      min={1}
+                                      value={item.quantity}
+                                      onChange={e => {
+                                        const updated = [...invoiceItems];
+                                        updated[idx].quantity = parseInt(e.target.value) || 1;
+                                        setInvoiceItems(updated);
+                                      }}
+                                      style={{ width: '60px', padding: '4px 6px', fontSize: '12px' }}
+                                      placeholder="Cant"
+                                    />
+
+                                    <span style={{ fontSize: '12px', width: '60px', textAlign: 'right', opacity: 0.8 }}>
+                                      ${selectedProd ? (selectedProd.price * item.quantity).toFixed(2) : '0.00'}
+                                    </span>
+
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        if (invoiceItems.length === 1) {
+                                          setInvoiceItems([{ productId: '', quantity: 1 }]);
+                                        } else {
+                                          setInvoiceItems(invoiceItems.filter((_, i) => i !== idx));
+                                        }
+                                      }}
+                                      style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        color: 'var(--red, #f87171)',
+                                        cursor: 'pointer',
+                                        fontSize: '14px',
+                                        padding: '4px'
+                                      }}
+                                      title="Eliminar ítem"
+                                    >
+                                      🗑️
+                                    </button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+
+                            {/* Breakdown Totals */}
+                            <div style={{
+                              background: 'rgba(255,255,255,0.02)',
+                              padding: '10px',
+                              borderRadius: '8px',
+                              marginBottom: '1rem',
+                              fontSize: '12px',
+                              border: '1px solid rgba(255,255,255,0.05)'
+                            }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                <span style={{ color: 'var(--text-secondary)' }}>Subtotal:</span>
+                                <strong>${calculatedInvoiceTotals.subtotal.toFixed(2)}</strong>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                <span style={{ color: 'var(--text-secondary)' }}>IVA ({globalIvaRate}%):</span>
+                                <strong>${calculatedInvoiceTotals.iva.toFixed(2)}</strong>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '4px', fontWeight: 'bold' }}>
+                                <span>Total a Cobrar:</span>
+                                <span style={{ color: 'var(--cyan)' }}>${calculatedInvoiceTotals.total.toFixed(2)}</span>
+                              </div>
+                            </div>
+
+                            <button type="submit" className="btn btn-cyan w-full">Firmar y Transmitir al SRI</button>
+                          </form>
+                        </div>
+                      </div>
+
+                      {/* Clients Ledger Directory */}
+                      <div className="table-container glass-panel" style={{ padding: '1.5rem', marginTop: '1.5rem' }}>
+                        <h3>Directorio de Clientes y Volumen de Ventas</h3>
+                        {clientList.length === 0 ? (
+                          <p>No hay registro de clientes.</p>
+                        ) : (
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Cliente</th>
+                                <th>Nº Facturas</th>
+                                <th>Total Comprado ($)</th>
+                                <th>Saldo Pendiente de Cobro ($)</th>
+                                <th>Estado General</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {clientList.map((c, idx) => (
+                                <tr key={idx}>
+                                  <td><strong>{c.name}</strong></td>
+                                  <td>{c.count} facturas</td>
+                                  <td style={{ fontWeight: 'bold', color: 'var(--cyan)' }}>${c.total.toFixed(2)}</td>
+                                  <td style={{ fontWeight: 'bold', color: c.unpaid > 0 ? 'var(--amber)' : 'var(--emerald)' }}>
+                                    ${c.unpaid.toFixed(2)}
+                                  </td>
+                                  <td>
+                                    <span className={`badge-status ${c.unpaid <= 0 ? 'status-yes' : 'status-partial'}`}>
+                                      {c.unpaid <= 0 ? 'AL DÍA' : 'SALDO PENDIENTE'}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  {/* Clients Ledger Directory */}
-                  <div className="table-container glass-panel" style={{ padding: '1.5rem', marginTop: '1.5rem' }}>
-                    <h3>Directorio de Clientes y Volumen de Ventas</h3>
-                    {clientList.length === 0 ? (
-                      <p>No hay registro de clientes.</p>
-                    ) : (
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>Cliente</th>
-                            <th>Nº Facturas</th>
-                            <th>Total Comprado ($)</th>
-                            <th>Saldo Pendiente de Cobro ($)</th>
-                            <th>Estado General</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {clientList.map((c, idx) => (
-                            <tr key={idx}>
-                              <td><strong>{c.name}</strong></td>
-                              <td>{c.count} facturas</td>
-                              <td style={{ fontWeight: 'bold', color: 'var(--cyan)' }}>${c.total.toFixed(2)}</td>
-                              <td style={{ fontWeight: 'bold', color: c.unpaid > 0 ? 'var(--amber)' : 'var(--emerald)' }}>
-                                ${c.unpaid.toFixed(2)}
-                              </td>
-                              <td>
-                                <span className={`badge-status ${c.unpaid <= 0 ? 'status-yes' : 'status-partial'}`}>
-                                  {c.unpaid <= 0 ? 'AL DÍA' : 'SALDO PENDIENTE'}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
-                  </div>
+                  {ventasSubTab === 'empleados' && (
+                    <div className="fade-in">
+                      <div className="dashboard-grid">
+                        {/* List of employees */}
+                        <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                          <h3 style={{ marginTop: 0 }}>Empleados Registrados</h3>
+                          <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+                            Estos son los usuarios autorizados para facturar a nombre de tu empresa en el **Sistema de Facturación**.
+                          </p>
+
+                          {employeesLoading && employees.length === 0 ? (
+                            <p>Cargando empleados...</p>
+                          ) : employees.length === 0 ? (
+                            <p>No has registrado ningún empleado. Agrega uno a la derecha para permitir el acceso a Facturación.</p>
+                          ) : (
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Nombre</th>
+                                  <th>Email (Usuario de Acceso)</th>
+                                  <th>Fecha Registro</th>
+                                  <th style={{ textAlign: 'center' }}>Acción</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {employees.map(emp => (
+                                  <tr key={emp.id}>
+                                    <td><strong>{emp.name}</strong></td>
+                                    <td style={{ fontFamily: 'var(--font-mono)' }}>{emp.email}</td>
+                                    <td>{new Date(emp.createdAt).toLocaleDateString()}</td>
+                                    <td style={{ textAlign: 'center' }}>
+                                      <button 
+                                        className="btn-sm btn-cyan" 
+                                        onClick={() => handleDeleteEmployee(emp.id)}
+                                        style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239,68,68,0.4)' }}
+                                      >
+                                        🗑️ Eliminar
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+
+                        {/* Add Employee Form */}
+                        <div className="card glass-panel" style={{ padding: '1.5rem' }}>
+                          <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Agregar Nuevo Empleado</h4>
+                          <form onSubmit={handleCreateEmployee}>
+                            <div className="form-group">
+                              <label>Nombre Completo:</label>
+                              <input 
+                                type="text" 
+                                required 
+                                value={empName} 
+                                onChange={e => setEmpName(e.target.value)} 
+                                placeholder="Ej: Juan Pérez" 
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label>Correo Electrónico:</label>
+                              <input 
+                                type="email" 
+                                required 
+                                value={empEmail} 
+                                onChange={e => setEmpEmail(e.target.value)} 
+                                placeholder="Ej: juan@miempresa.com" 
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label>Contraseña:</label>
+                              <input 
+                                type="password" 
+                                required 
+                                value={empPassword} 
+                                onChange={e => setEmpPassword(e.target.value)} 
+                                placeholder="Mínimo 6 caracteres" 
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label>Confirmar Contraseña:</label>
+                              <input 
+                                type="password" 
+                                required 
+                                value={empConfirmPassword} 
+                                onChange={e => setEmpConfirmPassword(e.target.value)} 
+                                placeholder="Repite la contraseña" 
+                              />
+                            </div>
+                            <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '1.25rem' }}>
+                              Registrar Empleado
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -2622,7 +2868,7 @@ export default function App() {
                         <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px', marginTop: '8px' }}>
                           <label style={{ fontSize: '11px', color: 'var(--indigo)', marginBottom: '8px', display: 'block' }}>Líneas de Asiento (Deben cuadrar):</label>
                           {manualEntryLines.map((line, idx) => (
-                            <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '6px', marginBottom: '8px' }}>
+                            <div key={idx} className="journal-entry-line-form">
                               <select value={line.accountCode} onChange={e => {
                                 const code = e.target.value;
                                 const names: Record<string, string> = {
@@ -3026,6 +3272,66 @@ export default function App() {
                                     style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
                                   />
                                 </div>
+
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+                                  <div className="form-group">
+                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>Código de Establecimiento:</label>
+                                    <input
+                                      type="text"
+                                      value={sriEstablishmentCode}
+                                      onChange={(e) => setSriEstablishmentCode(e.target.value.slice(0, 3))}
+                                      placeholder="001"
+                                      style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                                    />
+                                  </div>
+                                  <div className="form-group">
+                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>Punto de Emisión:</label>
+                                    <input
+                                      type="text"
+                                      value={sriEmissionPoint}
+                                      onChange={(e) => setSriEmissionPoint(e.target.value.slice(0, 3))}
+                                      placeholder="002"
+                                      style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                                    />
+                                  </div>
+                                </div>
+
+                                <div className="form-group" style={{ marginTop: '1rem' }}>
+                                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>Dirección de la Sucursal/Matriz:</label>
+                                  <input
+                                    type="text"
+                                    value={sriEstablishmentAddress}
+                                    onChange={(e) => setSriEstablishmentAddress(e.target.value)}
+                                    placeholder="Av. de los Granados N45 y Eloy Alfaro, Quito"
+                                    style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                                  />
+                                </div>
+
+                                <div style={{ marginTop: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <input
+                                    type="checkbox"
+                                    id="isBranchCheckbox"
+                                    checked={sriIsBranch}
+                                    onChange={(e) => setSriIsBranch(e.target.checked)}
+                                    style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                                  />
+                                  <label htmlFor="isBranchCheckbox" style={{ fontSize: '13px', cursor: 'pointer', color: 'var(--text-primary)' }}>
+                                    ¿Es una sucursal de una empresa principal?
+                                  </label>
+                                </div>
+
+                                {sriIsBranch && (
+                                  <div className="form-group" style={{ marginTop: '1rem' }}>
+                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>RUC de la Empresa Principal/Matriz:</label>
+                                    <input
+                                      type="text"
+                                      value={sriParentCompanyRuc}
+                                      onChange={(e) => setSriParentCompanyRuc(e.target.value.slice(0, 13))}
+                                      placeholder="1792455894001"
+                                      style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                                    />
+                                  </div>
+                                )}
                               </div>
 
                               <button
@@ -3252,67 +3558,639 @@ export default function App() {
           </div>
         </>
       ) : (
-        /* AUTHENTICATION VIEW */
-        <div className="auth-container glass-panel animate-slideup" style={{ padding: '2.5rem 2rem' }}>
-          <div className="header-glow"></div>
-          <div className="auth-header text-center">
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-              {isLoginView ? 'Iniciar Sesión' : 'Registrar Contribuyente'}
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '13.5px', marginTop: '6px' }}>
-              Acceso al Ecosistema Contable Autónomo — AuraContable
+        /* LANDING PAGE VIEW */
+        <div style={{ background: '#070a13', color: '#e2e8f0', minHeight: '100vh', display: 'flex', flexDirection: 'column', width: '100%', boxSizing: 'border-box' }}>
+          
+          {/* NAV BAR */}
+          <nav className="landing-nav" style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '1rem 2rem',
+            background: 'rgba(10, 15, 30, 0.75)',
+            backdropFilter: 'blur(12px)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            position: 'sticky',
+            top: 0,
+            zIndex: 500,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '24px', filter: 'drop-shadow(0 0 8px var(--cyan))' }}>✨</span>
+              <strong style={{
+                fontSize: '18px',
+                fontWeight: 'bold',
+                letterSpacing: '1px',
+                background: 'linear-gradient(90deg, #22d3ee, #818cf8)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                filter: 'drop-shadow(0 0 10px rgba(6, 182, 212, 0.3))'
+              }}>
+                AURA CONTABLE
+              </strong>
+            </div>
+
+            <div className="landing-nav-links" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+              <a href="#hero" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: '14px', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}>Inicio</a>
+              
+              {/* PRODUCT DROP DOWN */}
+              <div 
+                style={{ position: 'relative' }}
+                onMouseEnter={() => setIsProductsDropdownOpen(true)}
+                onMouseLeave={() => setIsProductsDropdownOpen(false)}
+              >
+                <button style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#94a3b8',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: '4px 0',
+                }}>
+                  Productos <span style={{ fontSize: '10px' }}>▼</span>
+                </button>
+
+                {isProductsDropdownOpen && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    width: '240px',
+                    background: '#0d1326',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '8px',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                    padding: '8px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px',
+                    zIndex: 600,
+                  }}>
+                    <a 
+                      href="#products-aura"
+                      onClick={() => setIsProductsDropdownOpen(false)}
+                      style={{
+                        padding: '10px',
+                        borderRadius: '6px',
+                        textDecoration: 'none',
+                        color: '#e2e8f0',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        transition: 'background 0.2s',
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <strong style={{ fontSize: '13px', color: '#22d3ee' }}>🏛️ Aura Contable</strong>
+                      <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>Gestión de diarios, Kardex y reportes.</span>
+                    </a>
+                    <a 
+                      href="#products-billing"
+                      onClick={() => setIsProductsDropdownOpen(false)}
+                      style={{
+                        padding: '10px',
+                        borderRadius: '6px',
+                        textDecoration: 'none',
+                        color: '#e2e8f0',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        transition: 'background 0.2s',
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <strong style={{ fontSize: '13px', color: '#818cf8' }}>⚡ Facturación Electrónica</strong>
+                      <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>Microservicio de emisión y firmas SRI.</span>
+                    </a>
+                    {/* Direct access to billing frontend */}
+                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', margin: '4px 0', paddingTop: '6px' }}>
+                      <a
+                        href="http://localhost:5174"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setIsProductsDropdownOpen(false)}
+                        style={{
+                          padding: '9px 12px',
+                          borderRadius: '6px',
+                          textDecoration: 'none',
+                          color: '#0b0f19',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          background: 'linear-gradient(90deg, #818cf8, #6366f1)',
+                          fontWeight: '700',
+                          fontSize: '12.5px',
+                          boxShadow: '0 0 12px rgba(129,140,248,0.4)',
+                          transition: 'all 0.2s',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.boxShadow = '0 0 20px rgba(129,140,248,0.7)';
+                          e.currentTarget.style.transform = 'scale(1.02)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.boxShadow = '0 0 12px rgba(129,140,248,0.4)';
+                          e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                      >
+                        <span style={{ fontSize: '14px' }}>⚡</span>
+                        Iniciar Sesión — Facturación
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <a href="#features" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: '14px', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}>Características</a>
+            </div>
+
+            <div className="landing-nav-auth" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              {user ? (
+                <>
+                  <span style={{ fontSize: '13.5px', color: '#cbd5e1' }}>Hola, <strong style={{ color: '#22d3ee' }}>{user.name}</strong></span>
+                  <button 
+                    className="btn btn-cyan" 
+                    onClick={() => setViewMode('app')}
+                    style={{
+                      padding: '8px 18px',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      boxShadow: '0 0 15px rgba(6, 182, 212, 0.4)',
+                    }}
+                  >
+                    Ir al Sistema
+                  </button>
+                  <button 
+                    className="btn" 
+                    onClick={async () => {
+                      await logout();
+                      setViewMode('landing');
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: '1px solid rgba(239, 68, 68, 0.4)',
+                      color: '#f87171',
+                      padding: '8px 16px',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Cerrar Sesión
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button 
+                    className="btn" 
+                    onClick={() => {
+                      setIsLoginView(true);
+                      setShowAuthModal('login');
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: '1px solid rgba(6, 182, 212, 0.4)',
+                      color: '#22d3ee',
+                      padding: '8px 16px',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(6, 182, 212, 0.1)';
+                      e.currentTarget.style.boxShadow = '0 0 10px rgba(6, 182, 212, 0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    Iniciar Sesión
+                  </button>
+                  <button 
+                    className="btn btn-cyan" 
+                    onClick={() => {
+                      setIsLoginView(false);
+                      setShowAuthModal('signup');
+                    }}
+                    style={{
+                      padding: '8px 18px',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      boxShadow: '0 0 15px rgba(6, 182, 212, 0.4)',
+                    }}
+                  >
+                    Registrarse
+                  </button>
+                </>
+              )}
+            </div>
+          </nav>
+
+          {/* HERO SECTION */}
+          <section id="hero" style={{
+            padding: '5rem 2rem',
+            textAlign: 'center',
+            background: 'radial-gradient(circle at top, rgba(99, 102, 241, 0.15), transparent 60%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+          }}>
+            <h1 className="landing-hero-title" style={{
+              fontSize: '3.2rem',
+              fontWeight: '800',
+              lineHeight: '1.2',
+              maxWidth: '800px',
+              margin: '0 0 1.5rem 0',
+              background: 'linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              letterSpacing: '-1.5px',
+            }}>
+              Ecosistema Contable y Facturación Electrónica Autónoma
+            </h1>
+            <p className="landing-hero-subtitle" style={{
+              fontSize: '1.1rem',
+              color: '#94a3b8',
+              maxWidth: '650px',
+              lineHeight: '1.6',
+              margin: '0 0 2.5rem 0',
+            }}>
+              La suite integral diseñada para el control diario de tu contabilidad, conciliaciones de caja, inventarios Kárdex y facturación oficial ante el SRI.
             </p>
-          </div>
-
-          <form onSubmit={handleAuthSubmit}>
-            {!isLoginView && (
-              <>
-                <div className="form-group">
-                  <label>Nombre de la Empresa o Contribuyente:</label>
-                  <input type="text" required value={nameInput} placeholder="Ej. Corporación Equinox S.A." onChange={(e) => setNameInput(e.target.value)} />
-                </div>
-                <div className="form-group">
-                  <label>Número de RUC:</label>
-                  <input type="text" required value={rucInput} placeholder="Ej. 1792455894001" onChange={(e) => setRucInput(e.target.value)} />
-                </div>
-              </>
-            )}
-
-            <div className="form-group">
-              <label>Correo Electrónico:</label>
-              <input type="email" required value={emailInput} placeholder="ejemplo@aura.com" onChange={(e) => setEmailInput(e.target.value)} />
-            </div>
-
-            <div className="form-group">
-              <label>Contraseña:</label>
-              <input type="password" required value={passwordInput} placeholder="••••••••" onChange={(e) => setPasswordInput(e.target.value)} />
-            </div>
-
-            {authFormError && <div className="error-alert">{authFormError}</div>}
-            {authError && <div className="error-alert">{authError}</div>}
-
-            <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '1rem' }}>
-              {isLoginView ? 'Ingresar al Sistema' : 'Crear Cuenta'}
-            </button>
-          </form>
-
-          <div className="auth-toggle" style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '13px' }}>
-            {isLoginView ? (
-              <p>
-                ¿No tienes una cuenta registrada?{' '}
-                <button type="button" onClick={() => setIsLoginView(false)} style={{ background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontWeight: '600', textDecoration: 'underline' }}>
-                  Crea una cuenta aquí
+            <div style={{ display: 'flex', gap: '1.2rem', justifyContent: 'center' }}>
+              {user ? (
+                <button 
+                  className="btn btn-cyan" 
+                  onClick={() => setViewMode('app')}
+                  style={{
+                    padding: '12px 28px',
+                    borderRadius: '8px',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    boxShadow: '0 0 20px rgba(6, 182, 212, 0.5)',
+                  }}
+                >
+                  Ir al Sistema
                 </button>
-              </p>
-            ) : (
-              <p>
-                ¿Ya posees una cuenta activa?{' '}
-                <button type="button" onClick={() => setIsLoginView(true)} style={{ background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontWeight: '600', textDecoration: 'underline' }}>
-                  Inicia sesión aquí
+              ) : (
+                <button 
+                  className="btn btn-cyan" 
+                  onClick={() => {
+                    setIsLoginView(false);
+                    setShowAuthModal('signup');
+                  }}
+                  style={{
+                    padding: '12px 28px',
+                    borderRadius: '8px',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    boxShadow: '0 0 20px rgba(6, 182, 212, 0.5)',
+                  }}
+                >
+                  Comenzar Gratis
                 </button>
-              </p>
-            )}
-          </div>
+              )}
+              <a 
+                href="#products"
+                style={{
+                  padding: '12px 28px',
+                  borderRadius: '8px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  color: '#cbd5e1',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+              >
+                Ver Soluciones
+              </a>
+            </div>
+          </section>
+
+          {/* PRODUCTS SECTION */}
+          <section id="products" style={{
+            padding: '5rem 2rem',
+            background: 'rgba(10, 15, 30, 0.4)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          }}>
+            <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+              <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+                <span style={{ color: '#22d3ee', textTransform: 'uppercase', fontSize: '12px', fontWeight: 'bold', letterSpacing: '2px' }}>Portafolio de Aplicaciones</span>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: '700', color: '#fff', marginTop: '8px' }}>Nuestras Soluciones Integradas</h2>
+                <p style={{ color: '#94a3b8', fontSize: '15px', marginTop: '10px' }}>Ecosistemas desacoplados y diseñados para trabajar en armonía.</p>
+              </div>
+
+              <div className="landing-products-grid" style={{ gap: '2.5rem' }}>
+                
+                {/* PRODUCT 1: AURA CONTABLE */}
+                <div id="products-aura" className="glass-panel" style={{
+                  padding: '2.5rem',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(6, 182, 212, 0.15)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.2rem',
+                  textAlign: 'left',
+                  background: 'linear-gradient(135deg, rgba(6,182,212,0.05) 0%, transparent 100%)',
+                }}>
+                  <div style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '10px',
+                    background: 'rgba(6, 182, 212, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '24px',
+                    color: '#22d3ee',
+                    boxShadow: '0 0 15px rgba(6, 182, 212, 0.2)',
+                  }}>
+                    🏛️
+                  </div>
+                  <h3 style={{ fontSize: '1.5rem', margin: 0, color: '#fff', fontWeight: 'bold' }}>Aura Contable</h3>
+                  <p style={{ color: '#94a3b8', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
+                    La herramienta completa para el control financiero. Administra el libro diario con asientos automáticos desencadenados de tus actividades de venta y compra, controla el stock mediante movimientos de Kárdex y amortiza activos fijos en segundos. Genera reportes listos para la declaración mensual de IVA del SRI.
+                  </p>
+                  <ul style={{ color: '#cbd5e1', fontSize: '12.5px', paddingLeft: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <li>Asientos contables automáticos (Debe/Haber).</li>
+                    <li>Libro Mayor y balances al instante.</li>
+                    <li>Kárdex de stock y valorización de inventario.</li>
+                    <li>Simulador de Formulario 104 del SRI.</li>
+                  </ul>
+                  {/* CTA Button — Aura Contable */}
+                  <div style={{ marginTop: 'auto', paddingTop: '0.5rem' }}>
+                    <button
+                      onClick={() => { if (user) { setViewMode('app'); } else { setIsLoginView(true); setShowAuthModal('login'); } }}
+                      style={{
+                        width: '100%',
+                        padding: '10px 0',
+                        borderRadius: '8px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        background: 'linear-gradient(90deg, #06b6d4, #22d3ee)',
+                        color: '#0b0f19',
+                        fontWeight: '700',
+                        fontSize: '13.5px',
+                        letterSpacing: '0.4px',
+                        boxShadow: '0 0 14px rgba(6,182,212,0.4)',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 22px rgba(6,182,212,0.7)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 14px rgba(6,182,212,0.4)'; e.currentTarget.style.transform = 'scale(1)'; }}
+                    >
+                      🏛️ {user ? 'Ir al Sistema Contable' : 'Iniciar en Aura Contable'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* PRODUCT 2: BILLING SERVICE */}
+                <div id="products-billing" className="glass-panel" style={{
+                  padding: '2.5rem',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(129, 140, 248, 0.15)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.2rem',
+                  textAlign: 'left',
+                  background: 'linear-gradient(135deg, rgba(129,140,248,0.05) 0%, transparent 100%)',
+                }}>
+                  <div style={{
+                    width: '50px',
+                    height: '50px',
+                    borderRadius: '10px',
+                    background: 'rgba(129, 140, 248, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '24px',
+                    color: '#818cf8',
+                    boxShadow: '0 0 15px rgba(129, 140, 248, 0.2)',
+                  }}>
+                    ⚡
+                  </div>
+                  <h3 style={{ fontSize: '1.5rem', margin: 0, color: '#fff', fontWeight: 'bold' }}>Sistema de Facturación</h3>
+                  <p style={{ color: '#94a3b8', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
+                    Un microservicio desacoplado y altamente reutilizable para facturación electrónica en el Ecuador. Firma digitalmente archivos XML de comprobantes con certificados PKCS#12 (.p12), se comunica de forma segura mediante SOAP con el SRI y gestiona sucursales y puntos de emisión dinámicamente.
+                  </p>
+                  <ul style={{ color: '#cbd5e1', fontSize: '12.5px', paddingLeft: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <li>Firma XML independiente con certificados .p12.</li>
+                    <li>Conectividad SOAP directa con el SRI (Real y Simulado).</li>
+                    <li>Soporte para múltiples sucursales y puntos de emisión.</li>
+                    <li>Control de estado y reintentos automáticos de autorización.</li>
+                  </ul>
+                  {/* CTA Button — Sistema de Facturación */}
+                  <div style={{ marginTop: 'auto', paddingTop: '0.5rem' }}>
+                    <a
+                      href="http://localhost:5174"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '10px 0',
+                        borderRadius: '8px',
+                        textDecoration: 'none',
+                        textAlign: 'center',
+                        background: 'linear-gradient(90deg, #818cf8, #6366f1)',
+                        color: '#0b0f19',
+                        fontWeight: '700',
+                        fontSize: '13.5px',
+                        letterSpacing: '0.4px',
+                        boxShadow: '0 0 14px rgba(129,140,248,0.4)',
+                        transition: 'all 0.2s',
+                        cursor: 'pointer',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 22px rgba(129,140,248,0.7)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 14px rgba(129,140,248,0.4)'; e.currentTarget.style.transform = 'scale(1)'; }}
+                    >
+                      ⚡ Iniciar en Facturación
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* FEATURES SECTION */}
+          <section id="features" style={{ padding: '5rem 2rem' }}>
+            <div style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
+              <div style={{ marginBottom: '3.5rem' }}>
+                <span style={{ color: '#22d3ee', textTransform: 'uppercase', fontSize: '12px', fontWeight: 'bold', letterSpacing: '2px' }}>Características Clave</span>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: '700', color: '#fff', marginTop: '8px' }}>Potencia Contable en un Solo Lugar</h2>
+              </div>
+
+              <div className="landing-features-grid" style={{ gap: '2rem' }}>
+                <div style={{ padding: '1.5rem', textAlign: 'center' }}>
+                  <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>⚙️</span>
+                  <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Automatización</h4>
+                  <p style={{ color: '#94a3b8', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Tus libros y balances contables se generan en tiempo real al emitir facturas y compras.</p>
+                </div>
+                <div style={{ padding: '1.5rem', textAlign: 'center' }}>
+                  <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>🔒</span>
+                  <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Seguridad Criptográfica</h4>
+                  <p style={{ color: '#94a3b8', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Cifrado y firmas digitales PKCS#12 con contraseñas seguras y protegidas en el backend.</p>
+                </div>
+                <div style={{ padding: '1.5rem', textAlign: 'center' }}>
+                  <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>⚖️</span>
+                  <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Cumplimiento Legal</h4>
+                  <p style={{ color: '#94a3b8', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Adaptado al 100% de la normativa ecuatoriana de retenciones e IVA diferenciado.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* LANDING FOOTER */}
+          <footer style={{
+            padding: '3rem 2rem',
+            textAlign: 'center',
+            borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+            background: 'rgba(5, 8, 20, 0.4)',
+            marginTop: 'auto',
+          }}>
+            <p style={{ color: '#64748b', fontSize: '13px' }}>AuraContable — Ecosistema Contable y Facturación Electrónica &copy; 2026</p>
+            <p style={{ color: '#475569', fontSize: '11px', marginTop: '6px' }}>Tecnologías: React Single-Page Application, NestJS, Prisma, PostgreSQL y SQLite</p>
+          </footer>
+
+          {/* AUTH MODAL DIALOG */}
+          {showAuthModal && (
+            <div 
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                background: 'rgba(5, 8, 20, 0.85)',
+                backdropFilter: 'blur(8px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1000,
+              }}
+              onClick={() => setShowAuthModal(null)}
+            >
+              <div 
+                className="auth-container glass-panel animate-slideup" 
+                style={{ 
+                  padding: '2.5rem 2rem', 
+                  position: 'relative', 
+                  maxWidth: '440px',
+                  width: '90%',
+                  margin: 0,
+                  boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
+                  border: '1px solid rgba(6, 182, 212, 0.2)',
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Close Button */}
+                <button 
+                  onClick={() => setShowAuthModal(null)}
+                  style={{
+                    position: 'absolute',
+                    top: '16px',
+                    right: '16px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#94a3b8',
+                    fontSize: '18px',
+                    cursor: 'pointer',
+                    transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}
+                >
+                  ✕
+                </button>
+
+                <div className="header-glow"></div>
+                <div className="auth-header text-center" style={{ marginBottom: '1.5rem' }}>
+                  <h2 style={{ fontSize: '1.6rem', fontWeight: 'bold', color: 'var(--text-primary)', margin: 0 }}>
+                    {isLoginView ? 'Iniciar Sesión' : 'Registrar Contribuyente'}
+                  </h2>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '6px', margin: 0 }}>
+                    Acceso al Ecosistema Contable Autónomo — AuraContable
+                  </p>
+                </div>
+
+                <form onSubmit={async (e) => {
+                  await handleAuthSubmit(e);
+                  // Close modal if login succeeds
+                  if (!authError && !authFormError) {
+                    setShowAuthModal(null);
+                  }
+                }}>
+                  {!isLoginView && (
+                    <>
+                      <div className="form-group">
+                        <label>Nombre de la Empresa o Contribuyente:</label>
+                        <input type="text" required value={nameInput} placeholder="Ej. Corporación Equinox S.A." onChange={(e) => setNameInput(e.target.value)} />
+                      </div>
+                      <div className="form-group">
+                        <label>Número de RUC:</label>
+                        <input type="text" required value={rucInput} placeholder="Ej. 1792455894001" onChange={(e) => setRucInput(e.target.value)} />
+                      </div>
+                    </>
+                  )}
+
+                  <div className="form-group">
+                    <label>Correo Electrónico:</label>
+                    <input type="email" required value={emailInput} placeholder="ejemplo@aura.com" onChange={(e) => setEmailInput(e.target.value)} />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Contraseña:</label>
+                    <input type="password" required value={passwordInput} placeholder="••••••••" onChange={(e) => setPasswordInput(e.target.value)} />
+                  </div>
+
+                  {authFormError && <div className="error-alert">{authFormError}</div>}
+                  {authError && <div className="error-alert">{authError}</div>}
+
+                  <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '1rem' }}>
+                    {isLoginView ? 'Ingresar al Sistema' : 'Crear Cuenta'}
+                  </button>
+                </form>
+
+                <div className="auth-toggle" style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '13px' }}>
+                  {isLoginView ? (
+                    <p>
+                      ¿No tienes una cuenta registrada?{' '}
+                      <button type="button" onClick={() => {
+                        setIsLoginView(false);
+                        setShowAuthModal('signup');
+                      }} style={{ background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontWeight: '600', textDecoration: 'underline' }}>
+                        Crea una cuenta aquí
+                      </button>
+                    </p>
+                  ) : (
+                    <p>
+                      ¿Ya posees una cuenta activa?{' '}
+                      <button type="button" onClick={() => {
+                        setIsLoginView(true);
+                        setShowAuthModal('login');
+                      }} style={{ background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontWeight: '600', textDecoration: 'underline' }}>
+                        Inicia sesión aquí
+                      </button>
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       )}
 
