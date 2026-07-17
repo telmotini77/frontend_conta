@@ -171,11 +171,290 @@ interface JournalEntry {
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const BILLING_API_BASE = import.meta.env.VITE_BILLING_API_URL || 'http://localhost:3001';
 
+const AVAILABLE_BUSINESS_TYPES = [
+  "Industrias Manufactureras y Producción",
+  "Comercio al Por Mayor y Por Menor de Viveres en General",
+  "Comercio al Por Mayor y Por Menor de Productos en General",
+  "Industrias de Extracción, Cultivo, Explotación, Conservación, etc",
+  "Hoteleria y Turismo",
+  "Restaurantes, Cafeterias o Similares",
+  "Servicios de Contabilidad",
+  "Actividades Profesionales",
+  "Servicios Sociales y de Salud",
+  "Servicios en General",
+  "Servicios de Transporte",
+  "Servicios de Reparación de Automotores y Motocicletas"
+];
+
+const ECUADOR_PROVINCES: Record<string, string[]> = {
+  "Pichincha": ["Quito", "Cayambe", "Mejía", "Rumiñahui", "Pedro Moncayo", "San Miguel de los Bancos", "Pedro Vicente Maldonado", "Puerto Quito"],
+  "Guayas": ["Guayaquil", "Durán", "Samborondón", "Milagro", "Daule", "Playas", "Naranjal", "Empalme", "Balzar", "Yaguachi"],
+  "Azuay": ["Cuenca", "Gualaceo", "Paute", "Girón", "Santa Isabel", "Chordeleg", "Sígsig"],
+  "Manabí": ["Manta", "Portoviejo", "Chone", "Montecristi", "Bahía de Caráquez", "Jipijapa", "Pedernales", "El Carmen"],
+  "Loja": ["Loja", "Catamayo", "Cariamanga", "Macará", "Saraguro", "Alamor"],
+  "Tungurahua": ["Ambato", "Baños", "Pelileo", "Píllaro", "Quero"],
+  "El Oro": ["Machala", "Pasaje", "Santa Rosa", "Huaquillas", "Arenillas", "Zaruma", "Piñas"],
+  "Santo Domingo de los Tsáchilas": ["Santo Domingo"],
+  "Los Ríos": ["Babahoyo", "Quevedo", "Vinces", "Ventanas", "Buena Fe"],
+  "Esmeraldas": ["Esmeraldas", "Atacames", "Quinindé", "San Lorenzo", "Muisne"],
+  "Imbabura": ["Ibarra", "Otavalo", "Cotacachi", "Atuntaqui", "Pimampiro"],
+  "Chimborazo": ["Riobamba", "Guano", "Chambo", "Alausí", "Colta"],
+  "Cotopaxi": ["Latacunga", "Salcedo", "Pujilí", "La Maná", "Saquisilí"],
+  "Santa Elena": ["Santa Elena", "Salinas", "La Libertad", "Montañita"],
+  "Carchi": ["Tulcán", "San Gabriel", "Bolívar"],
+  "Cañar": ["Azogues", "La Troncal", "Cañar", "Biblián"],
+  "Bolívar": ["Guaranda", "San Miguel", "Chimbo"],
+  "Morona Santiago": ["Macas", "Gualaquiza", "Sucúa"],
+  "Napo": ["Tena", "Archidona", "El Chaco"],
+  "Pastaza": ["Puyo", "Mera", "Santa Clara"],
+  "Zamora Chinchipe": ["Zamora", "Yantzaza", "El Pangui"],
+  "Galápagos": ["Puerto Ayora", "Puerto Baquerizo Moreno", "Puerto Villamil"],
+  "Orellana": ["El Coca", "Joyas de los Sachas", "Loreto"],
+  "Sucumbíos": ["Nueva Loja (Lago Agrio)", "Shushufindi", "Caspiscal"]
+};
+
+const BUSINESS_THEMES: Record<string, {
+  name: string;
+  accent: string;
+  accentGlow: string;
+  accentSecondary: string;
+  gradient: string;
+  icon: string;
+  banner: string;
+  bgDark: string;
+  panelDark: string;
+  textPrimary: string;
+  metrics: { title: string; value: string; icon: string }[];
+}> = {
+  'Industrias Manufactureras y Producción': {
+    name: 'Manufactura y Producción',
+    accent: '#f59e0b',
+    accentGlow: 'rgba(245, 158, 11, 0.25)',
+    accentSecondary: '#d97706',
+    gradient: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '🏭',
+    banner: 'Consola de Control de Producción y Manufactura',
+    bgDark: '#0f172a',
+    panelDark: '#1e293b',
+    textPrimary: '#f8fafc',
+    metrics: [
+      { title: 'Lotes Producidos', value: '42 Lotes', icon: '📦' },
+      { title: 'Eficiencia de Planta', value: '94.2%', icon: '⚡' },
+      { title: 'Materia Prima Disponible', value: '82%', icon: '🧱' }
+    ]
+  },
+  'Comercio al Por Mayor y Por Menor de Viveres en General': {
+    name: 'Comercio de Víveres',
+    accent: '#10b981',
+    accentGlow: 'rgba(16, 185, 129, 0.25)',
+    accentSecondary: '#059669',
+    gradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '🛒',
+    banner: 'Portal Comercial y Control de Víveres en General',
+    bgDark: '#022c22',
+    panelDark: '#064e3b',
+    textPrimary: '#f0fdf4',
+    metrics: [
+      { title: 'Stock Crítico Víveres', value: '3 SKU', icon: '⚠️' },
+      { title: 'Venta POS Rápida', value: '$1,245.50', icon: '⚡' },
+      { title: 'Margen Promedio', value: '18.5%', icon: '📈' }
+    ]
+  },
+  'Comercio al Por Mayor y Por Menor de Productos en General': {
+    name: 'Comercio General',
+    accent: '#a855f7',
+    accentGlow: 'rgba(168, 85, 247, 0.25)',
+    accentSecondary: '#7c3aed',
+    gradient: 'linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '📦',
+    banner: 'Ecosistema de Inventario y Distribución de Productos',
+    bgDark: '#1e1b4b',
+    panelDark: '#312e81',
+    textPrimary: '#e0e7ff',
+    metrics: [
+      { title: 'Rotación de Inventario', value: '14.8 días', icon: '🔄' },
+      { title: 'Productos Bajo Umbral', value: '12 ítems', icon: '🛑' },
+      { title: 'Pedidos Despachados', value: '89 Hoy', icon: '🚚' }
+    ]
+  },
+  'Industrias de Extracción, Cultivo, Explotación, Conservación, etc': {
+    name: 'Extracción y Cultivo',
+    accent: '#22c55e',
+    accentGlow: 'rgba(34, 197, 94, 0.25)',
+    accentSecondary: '#15803d',
+    gradient: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '🚜',
+    banner: 'Terminal de Gestión Agrícola, Cultivo y Conservación',
+    bgDark: '#052e16',
+    panelDark: '#14532d',
+    textPrimary: '#f0fdf4',
+    metrics: [
+      { title: 'Cosecha Estimada', value: '12.5 Toneladas', icon: '🌾' },
+      { title: 'Humedad de Suelo', value: '62.4%', icon: '💧' },
+      { title: 'Costo de Operación', value: '$840.00 / Ha', icon: '💵' }
+    ]
+  },
+  'Hoteleria y Turismo': {
+    name: 'Hotelería y Turismo',
+    accent: '#eab308',
+    accentGlow: 'rgba(234, 179, 8, 0.25)',
+    accentSecondary: '#ca8a04',
+    gradient: 'linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '🏨',
+    banner: 'Plataforma Hotelera y Servicios Turísticos',
+    bgDark: '#1c1917',
+    panelDark: '#292524',
+    textPrimary: '#fafaf9',
+    metrics: [
+      { title: 'Ocupación de Habitaciones', value: '78.5%', icon: '🔑' },
+      { title: 'Check-ins Pendientes', value: '6 hoy', icon: '🚪' },
+      { title: 'Servicios de Hospedaje', value: '$450.00 extra', icon: '🍽️' }
+    ]
+  },
+  'Restaurantes, Cafeterias o Similares': {
+    name: 'Restaurantes y Cafeterías',
+    accent: '#f97316',
+    accentGlow: 'rgba(249, 115, 22, 0.25)',
+    accentSecondary: '#ea580c',
+    gradient: 'linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '🍔',
+    banner: 'Consola Operativa Gastronómica y Restaurantes',
+    bgDark: '#2a1a15',
+    panelDark: '#3e2723',
+    textPrimary: '#efebe9',
+    metrics: [
+      { title: 'Mesas Ocupadas', value: '14 / 20', icon: '🪑' },
+      { title: 'Ticket Promedio', value: '$22.40', icon: '💰' },
+      { title: 'Ventas del Turno', value: '$856.20', icon: '🔥' }
+    ]
+  },
+  'Servicios de Contabilidad': {
+    name: 'Servicios Contables',
+    accent: '#06b6d4',
+    accentGlow: 'rgba(6, 182, 212, 0.25)',
+    accentSecondary: '#0891b2',
+    gradient: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '💼',
+    banner: 'Escritorio de Gestión Contable y Tributaria Profesional',
+    bgDark: '#082f49',
+    panelDark: '#0c4a6e',
+    textPrimary: '#f0f9ff',
+    metrics: [
+      { title: 'Reportes Firmados', value: '18 / 24', icon: '📝' },
+      { title: 'Impuestos Declarados', value: '100% Completado', icon: '🏛️' },
+      { title: 'Clientes Activos', value: '54 Empresas', icon: '🤝' }
+    ]
+  },
+  'Actividades Profesionales': {
+    name: 'Actividades Profesionales',
+    accent: '#3b82f6',
+    accentGlow: 'rgba(59, 130, 246, 0.25)',
+    accentSecondary: '#2563eb',
+    gradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '🎓',
+    banner: 'Escritorio de Consultoría y Servicios Profesionales',
+    bgDark: '#0f172a',
+    panelDark: '#1e293b',
+    textPrimary: '#f8fafc',
+    metrics: [
+      { title: 'Horas Facturables', value: '38.5 hrs', icon: '⏳' },
+      { title: 'Honorarios del Mes', value: '$4,800.00', icon: '💵' },
+      { title: 'Casos/Proyectos Activos', value: '9 pendientes', icon: '📂' }
+    ]
+  },
+  'Servicios Sociales y de Salud': {
+    name: 'Servicios de Salud',
+    accent: '#0d9488',
+    accentGlow: 'rgba(13, 148, 136, 0.25)',
+    accentSecondary: '#0f766e',
+    gradient: 'linear-gradient(135deg, rgba(13, 148, 136, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '🩺',
+    banner: 'Portal de Servicios de Salud y Bienestar Social',
+    bgDark: '#042f2e',
+    panelDark: '#115e59',
+    textPrimary: '#f0fdfa',
+    metrics: [
+      { title: 'Pacientes Atendidos', value: '15 Hoy', icon: '🧑‍⚕️' },
+      { title: 'Consultas Reservadas', value: '28 de esta semana', icon: '🗓️' },
+      { title: 'Historiales Clínicos', value: '412 Guardados', icon: '🗂️' }
+    ]
+  },
+  'Servicios en General': {
+    name: 'Servicios Generales',
+    accent: '#6366f1',
+    accentGlow: 'rgba(99, 102, 241, 0.25)',
+    accentSecondary: '#4f46e5',
+    gradient: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '🔧',
+    banner: 'Consola General de Gestión de Servicios',
+    bgDark: '#111827',
+    panelDark: '#1f2937',
+    textPrimary: '#f9fafb',
+    metrics: [
+      { title: 'Servicios Completados', value: '344 órdenes', icon: '✅' },
+      { title: 'Calificación Promedio', value: '4.9 ⭐', icon: '⭐' },
+      { title: 'Órdenes en Progreso', value: '5 activas', icon: '🛠️' }
+    ]
+  },
+  'Servicios de Transporte': {
+    name: 'Servicios de Transporte',
+    accent: '#ef4444',
+    accentGlow: 'rgba(239, 68, 68, 0.25)',
+    accentSecondary: '#dc2626',
+    gradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '🚚',
+    banner: 'Terminal Logístico y Despacho de Transporte',
+    bgDark: '#450a0a',
+    panelDark: '#7f1d1d',
+    textPrimary: '#fef2f2',
+    metrics: [
+      { title: 'Vehículos en Ruta', value: '5 Activos', icon: '🚛' },
+      { title: 'Rutas Despachadas', value: '12 Hoy', icon: '🗺️' },
+      { title: 'Costo Combustible', value: '$384.20', icon: '⛽' }
+    ]
+  },
+  'Servicios de Reparación de Automotores y Motocicletas': {
+    name: 'Reparación Automotriz',
+    accent: '#84cc16',
+    accentGlow: 'rgba(132, 204, 22, 0.25)',
+    accentSecondary: '#65a30d',
+    gradient: 'linear-gradient(135deg, rgba(132, 204, 22, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '🏍️',
+    banner: 'Consola Operativa de Taller Automotriz y Motos',
+    bgDark: '#1c1d17',
+    panelDark: '#2d2e24',
+    textPrimary: '#f7fee7',
+    metrics: [
+      { title: 'Vehículos en Taller', value: '8 en Reparación', icon: '🚗' },
+      { title: 'Trabajos Entregados', value: '14 esta semana', icon: '🔧' },
+      { title: 'Repuestos Utilizados', value: '38 Unidades', icon: '⚙️' }
+    ]
+  },
+  'default': {
+    name: 'General',
+    accent: '#213993',
+    accentGlow: 'rgba(33, 57, 147, 0.25)',
+    accentSecondary: '#3b53a4',
+    gradient: 'linear-gradient(135deg, rgba(33, 57, 147, 0.1) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    icon: '💻',
+    banner: 'Consola General de Control y Contabilidad',
+    bgDark: '#E8EAE9',
+    panelDark: '#FFFFFF',
+    textPrimary: '#111827',
+    metrics: [
+      { title: 'Estado del Sistema', value: 'Operativo', icon: '✔️' },
+      { title: 'SRI Integración', value: 'Simulador Local', icon: '🔌' },
+      { title: 'Última Actividad', value: 'Hace un momento', icon: '⏳' }
+    ]
+  }
+};
+
 export default function App() {
   const { user, token, loading, login, signup, logout, error: authError } = useAuth();
 
   // Navigation State
-  const [activeTab, setActiveTab] = useState<'kardex' | 'ventas' | 'proveedores' | 'caja' | 'contabilidad' | 'sri' | 'assets'>('kardex');
+  // Navigation State
+  const [activeTab, setActiveTab] = useState<'kardex' | 'ventas' | 'proveedores' | 'caja' | 'contabilidad' | 'sri' | 'assets' | 'admin'>('kardex');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Auto-collapse sidebar on smaller laptop viewports on mount & resize
@@ -223,13 +502,56 @@ export default function App() {
   const [tutorialStep, setTutorialStep] = useState(1);
 
 
-  // Auth State
   const [isLoginView, setIsLoginView] = useState(true);
   const [nameInput, setNameInput] = useState('');
   const [rucInput, setRucInput] = useState('');
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [authFormError, setAuthFormError] = useState<string | null>(null);
+
+  // New signup fields
+  const [addressInput, setAddressInput] = useState('');
+  const [provinceInput, setProvinceInput] = useState('');
+  const [cityInput, setCityInput] = useState('');
+  const [whatsappInput, setWhatsappInput] = useState('');
+  const [businessTypesInput, setBusinessTypesInput] = useState<string[]>([]);
+  const [businessTypesSearch, setBusinessTypesSearch] = useState('');
+  const [businessTypesDropdownOpen, setBusinessTypesDropdownOpen] = useState(false);
+  const [activeEnvironment, setActiveEnvironment] = useState<string>('default');
+
+  // Company management and Administration states
+  const [isAdministrationExpanded, setIsAdministrationExpanded] = useState(false);
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [companiesLoading, setCompaniesLoading] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<any | null>(null);
+  const [companyViewMode, setCompanyViewMode] = useState<'list' | 'form'>('list');
+  const [companyFormAction, setCompanyFormAction] = useState<'create' | 'edit'>('create');
+  const [adminSubTab, setAdminSubTab] = useState<'empresas' | 'sucursales' | 'integraciones' | 'actividades'>('empresas');
+
+  // Company Form fields
+  const [compType, setCompType] = useState('RUC');
+  const [compIdentificacion, setCompIdentificacion] = useState('');
+  const [compRazonSocial, setCompRazonSocial] = useState('');
+  const [compDescripcion, setCompDescripcion] = useState('');
+  const [compNombreDB, setCompNombreDB] = useState('');
+  const [isBannerClosed, setIsBannerClosed] = useState(false);
+
+  // Expanded/collapsed states for sidebar dropdown sub-menus
+  const [isCreatingCompany, setIsCreatingCompany] = useState(false);
+  const [isVentasExpanded, setIsVentasExpanded] = useState(false);
+  const [isComprasExpanded, setIsComprasExpanded] = useState(false);
+  const [isTesoreriaExpanded, setIsTesoreriaExpanded] = useState(false);
+  const [isCarteraExpanded, setIsCarteraExpanded] = useState(false);
+  const [isPagosExpanded, setIsPagosExpanded] = useState(false);
+  const [isNominaExpanded, setIsNominaExpanded] = useState(false);
+  const [isActivosExpanded, setIsActivosExpanded] = useState(false);
+  const [isContabilidadExpanded, setIsContabilidadExpanded] = useState(false);
+  const [isProduccionExpanded, setIsProduccionExpanded] = useState(false);
+  const [isGarantiasExpanded, setIsGarantiasExpanded] = useState(false);
+  const [isTalleresExpanded, setIsTalleresExpanded] = useState(false);
+  const [isRestauranteExpanded, setIsRestauranteExpanded] = useState(false);
+  const [isInformesExpanded, setIsInformesExpanded] = useState(false);
+  const [simulatedModule, setSimulatedModule] = useState<string | null>(null);
 
   // Data States
   const [products, setProducts] = useState<Product[]>([]);
@@ -601,6 +923,43 @@ export default function App() {
     }
   }, [token]);
 
+  const fetchCompanies = React.useCallback(async () => {
+    if (!token) return;
+    setCompaniesLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/companies`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setCompanies(data);
+      }
+    } catch (err) {
+      console.error('Error fetching companies:', err);
+    } finally {
+      setCompaniesLoading(false);
+    }
+  }, [token]);
+
+  // Autogenerate DB Name
+  useEffect(() => {
+    if (companyFormAction === 'create') {
+      const cleanName = compRazonSocial
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '_')
+        .replace(/_+/g, '_')
+        .replace(/(^_|_$)/g, '');
+      setCompNombreDB((cleanName || compIdentificacion) ? `db_${cleanName}_${compIdentificacion}` : '');
+    }
+  }, [compRazonSocial, compIdentificacion, companyFormAction]);
+
+  // Initial fetch of companies to check for banner
+  useEffect(() => {
+    if (user && token) {
+      void fetchCompanies();
+    }
+  }, [user, token, fetchCompanies]);
+
   // Load active tab data
   useEffect(() => {
     if (user && token) {
@@ -626,6 +985,10 @@ export default function App() {
           void fetchAssets();
           void fetchDepreciations();
         }
+        if (activeTab === 'admin') {
+          void fetchCompanies();
+          void fetchSriConfig();
+        }
       }, 0);
       return () => clearTimeout(timer);
     }
@@ -642,6 +1005,7 @@ export default function App() {
     fetchReconciliationSummary,
     fetchAccountingData,
     fetchSriConfig,
+    fetchCompanies,
   ]);
 
   // Load employees when on Ventas -> Employees tab
@@ -670,8 +1034,68 @@ export default function App() {
     setRucInput('');
     setEmailInput('');
     setPasswordInput('');
+    setAddressInput('');
+    setProvinceInput('');
+    setCityInput('');
+    setWhatsappInput('');
+    setBusinessTypesInput([]);
+    setBusinessTypesSearch('');
+    setBusinessTypesDropdownOpen(false);
     setAuthFormError(null);
   }, [isLoginView, user]);
+
+  // Active Environment switcher effect
+  useEffect(() => {
+    if (user?.businessTypes && user.businessTypes.length > 0) {
+      const savedEnv = localStorage.getItem(`aura_active_env_${user.id}`);
+      if (savedEnv && user.businessTypes.includes(savedEnv)) {
+        setActiveEnvironment(savedEnv);
+      } else {
+        setActiveEnvironment(user.businessTypes[0]);
+      }
+    } else {
+      setActiveEnvironment('default');
+    }
+  }, [user]);
+
+  const handleSwitchEnvironment = (env: string) => {
+    setActiveEnvironment(env);
+    if (user?.id) {
+      localStorage.setItem(`aura_active_env_${user.id}`, env);
+    }
+  };
+
+  // Environment styling overrides
+  useEffect(() => {
+    const theme = BUSINESS_THEMES[activeEnvironment] || BUSINESS_THEMES.default;
+    const root = document.documentElement;
+    root.style.setProperty('--cyan', theme.accent);
+    root.style.setProperty('--cyan-glow', theme.accentGlow);
+    root.style.setProperty('--border-hover', theme.accent);
+
+    if (user) {
+      root.style.setProperty('--bg-gradient-start', theme.bgDark);
+      root.style.setProperty('--bg-gradient-end', '#090d1a');
+      root.style.setProperty('--bg-main', theme.bgDark);
+      root.style.setProperty('--bg-card', theme.panelDark);
+      root.style.setProperty('--bg-card-hover', 'rgba(255, 255, 255, 0.05)');
+      root.style.setProperty('--text-primary', theme.textPrimary);
+      root.style.setProperty('--text-secondary', 'rgba(255, 255, 255, 0.7)');
+      root.style.setProperty('--text-muted', 'rgba(255, 255, 255, 0.45)');
+      root.style.setProperty('--border', 'rgba(255, 255, 255, 0.1)');
+    } else {
+      // Reset variables on landing page/logout
+      root.style.setProperty('--bg-gradient-start', '#E8EAE9');
+      root.style.setProperty('--bg-gradient-end', '#F5F7F6');
+      root.style.setProperty('--bg-main', '#E8EAE9');
+      root.style.setProperty('--bg-card', '#FFFFFF');
+      root.style.setProperty('--bg-card-hover', '#F3F5F4');
+      root.style.setProperty('--text-primary', '#111827');
+      root.style.setProperty('--text-secondary', '#374151');
+      root.style.setProperty('--text-muted', '#6B7280');
+      root.style.setProperty('--border', '#D8DCDB');
+    }
+  }, [activeEnvironment, user]);
 
   // Auto-redirect to dashboard if user has active session
   useEffect(() => {
@@ -697,13 +1121,137 @@ export default function App() {
       if (isLoginView) {
         await login(emailInput, passwordInput);
       } else {
-        await signup(nameInput, rucInput, emailInput, passwordInput);
+        if (businessTypesInput.length === 0) {
+          throw new Error('Debe elegir al menos 1 tipo de negocio.');
+        }
+        await signup(
+          nameInput,
+          rucInput,
+          emailInput,
+          passwordInput,
+          addressInput || 'Av. de los Granados N45 y Eloy Alfaro, Quito',
+          provinceInput || 'Pichincha',
+          cityInput || 'Quito',
+          whatsappInput || '',
+          businessTypesInput
+        );
       }
       setViewMode('app');
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
       setAuthFormError(errMsg || 'Error en la autenticación');
     }
+  };
+
+  // Actions - Companies
+  const handleSaveCompany = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!compIdentificacion || !compRazonSocial) {
+      alert('Por favor complete la identificación y razón social.');
+      return;
+    }
+
+    setIsCreatingCompany(true);
+    try {
+      const url = companyFormAction === 'create'
+        ? `${API_BASE}/companies`
+        : `${API_BASE}/companies/${selectedCompany?.id}`;
+      const method = companyFormAction === 'create' ? 'POST' : 'PUT';
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          type: compType,
+          identification: compIdentificacion,
+          name: compRazonSocial,
+          description: compDescripcion,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || 'Error al guardar la empresa');
+        setIsCreatingCompany(false);
+        return;
+      }
+
+      // Sutil retraso artificial para visualizar la barra de progreso
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      alert(companyFormAction === 'create' ? 'Empresa creada con éxito' : 'Empresa modificada con éxito');
+      setCompType('RUC');
+      setCompIdentificacion('');
+      setCompRazonSocial('');
+      setCompDescripcion('');
+      setCompNombreDB('');
+      setSelectedCompany(null);
+      setCompanyViewMode('list');
+      void fetchCompanies();
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión con el servidor.');
+    } finally {
+      setIsCreatingCompany(false);
+    }
+  };
+
+  const handleDeleteCompany = async (id: string, name: string) => {
+    if (!confirm(`¿Está seguro de eliminar la empresa "${name}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/companies/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.message || 'Error al eliminar la empresa');
+        return;
+      }
+
+      alert('Empresa eliminada con éxito');
+      if (selectedCompany?.id === id) {
+        setSelectedCompany(null);
+      }
+      void fetchCompanies();
+    } catch (err) {
+      console.error(err);
+      alert('Error de conexión con el servidor.');
+    }
+  };
+
+  const handleEditCompanySelect = () => {
+    if (!selectedCompany) {
+      alert('Por favor seleccione una empresa de la lista para modificar.');
+      return;
+    }
+    setCompType(selectedCompany.type);
+    setCompIdentificacion(selectedCompany.identification);
+    setCompRazonSocial(selectedCompany.name);
+    setCompDescripcion(selectedCompany.description || '');
+    setCompNombreDB(selectedCompany.dbName);
+    setCompanyFormAction('edit');
+    setCompanyViewMode('form');
+  };
+
+  const handleNewCompanyClick = () => {
+    setCompType('RUC');
+    setCompIdentificacion('');
+    setCompRazonSocial('');
+    setCompDescripcion('');
+    setCompNombreDB('');
+    setCompanyFormAction('create');
+    setCompanyViewMode('form');
   };
 
   // Actions - Kardex
@@ -1427,6 +1975,98 @@ export default function App() {
     }
   }, null, 2);
 
+  const renderAccordion = (
+    _id: string,
+    icon: string,
+    label: string,
+    isExpanded: boolean,
+    setIsExpanded: (expanded: boolean) => void,
+    subItems: { label: string; icon: string; onClick: () => void; isActive?: boolean }[]
+  ) => {
+    const isAnyActive = subItems.some(item => item.isActive);
+    return (
+      <div className="admin-menu-accordion" style={{ display: 'flex', flexDirection: 'column' }}>
+        <button
+          type="button"
+          className={`tab-btn ${isAnyActive ? 'active' : ''}`}
+          onClick={() => {
+            setIsExpanded(!isExpanded);
+            if (isSidebarCollapsed) {
+              setIsSidebarCollapsed(false);
+            }
+          }}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '10px 15px',
+            color: isAnyActive ? 'var(--cyan)' : 'var(--text-primary)',
+            fontSize: '14px',
+            textAlign: 'left'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span className="icon" style={{ fontSize: '1.2rem' }}>{icon}</span>
+            {!isSidebarCollapsed && <span>{label}</span>}
+          </div>
+          {!isSidebarCollapsed && (
+            <span style={{
+              fontSize: '10px',
+              transform: isExpanded ? 'rotate(90deg)' : 'none',
+              transition: 'transform 0.2s',
+              opacity: 0.5
+            }}>
+              ▶
+            </span>
+          )}
+        </button>
+
+        {isExpanded && !isSidebarCollapsed && (
+          <div className="admin-sub-menu" style={{
+            paddingLeft: '15px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '2px',
+            margin: '2px 0 6px 0',
+            borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
+            maxHeight: '260px',
+            overflowY: 'auto'
+          }}>
+            {subItems.map((item, idx) => (
+              <button
+                key={idx}
+                type="button"
+                className={`sub-tab-btn ${item.isActive ? 'active' : ''}`}
+                onClick={item.onClick}
+                style={{
+                  background: item.isActive ? 'var(--bg-pill, rgba(6, 182, 212, 0.1))' : 'transparent',
+                  border: 'none',
+                  color: item.isActive ? 'var(--cyan)' : 'var(--text-secondary)',
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  textAlign: 'left',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontWeight: item.isActive ? 'bold' : 'normal',
+                  transition: 'all 0.15s ease'
+                }}
+              >
+                <span style={{ fontSize: '1rem' }}>{item.icon}</span> {!isSidebarCollapsed && item.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className={viewMode === 'app' && user ? `app-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}` : ''} style={viewMode === 'app' && user ? {} : { width: '100%' }}>
       {viewMode === 'app' && user ? (
@@ -1440,28 +2080,125 @@ export default function App() {
               </button>
             </div>
 
-            <nav className="sidebar-nav">
-              <button className={`tab-btn ${activeTab === 'kardex' ? 'active' : ''}`} onClick={() => setActiveTab('kardex')}>
-                <span className="icon">📦</span> {!isSidebarCollapsed && 'Inventario (Kárdex)'}
-              </button>
-              <button className={`tab-btn ${activeTab === 'ventas' ? 'active' : ''}`} onClick={() => setActiveTab('ventas')}>
-                <span className="icon">📈</span> {!isSidebarCollapsed && 'Ventas (Clientes)'}
-              </button>
-              <button className={`tab-btn ${activeTab === 'proveedores' ? 'active' : ''}`} onClick={() => setActiveTab('proveedores')}>
-                <span className="icon">🤝</span> {!isSidebarCollapsed && 'Compras (Proveedores)'}
-              </button>
-              <button className={`tab-btn ${activeTab === 'caja' ? 'active' : ''}`} onClick={() => setActiveTab('caja')}>
-                <span className="icon">💵</span> {!isSidebarCollapsed && 'Caja y Conciliación'}
-              </button>
-              <button className={`tab-btn ${activeTab === 'contabilidad' ? 'active' : ''}`} onClick={() => setActiveTab('contabilidad')}>
-                <span className="icon">⚖️</span> {!isSidebarCollapsed && 'Contabilidad (Diario)'}
-              </button>
-              <button className={`tab-btn ${activeTab === 'sri' ? 'active' : ''}`} onClick={() => setActiveTab('sri')}>
-                <span className="icon">🏛️</span> {!isSidebarCollapsed && 'SRI Reportes'}
-              </button>
-              <button className={`tab-btn ${activeTab === 'assets' ? 'active' : ''}`} onClick={() => setActiveTab('assets')}>
-                <span className="icon">📉</span> {!isSidebarCollapsed && 'Activos Fijos'}
-              </button>
+            <nav className="sidebar-nav" style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 180px)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              {renderAccordion('admin', '⚙️', 'Administración', isAdministrationExpanded, setIsAdministrationExpanded, [
+                { label: 'Gestión Empresas', icon: '🏢', onClick: () => { setActiveTab('admin'); setAdminSubTab('empresas'); }, isActive: activeTab === 'admin' && adminSubTab === 'empresas' },
+                { label: 'Administrador Sucursales', icon: '🏪', onClick: () => { setActiveTab('admin'); setAdminSubTab('sucursales'); }, isActive: activeTab === 'admin' && adminSubTab === 'sucursales' },
+                { label: 'Integraciones', icon: '🔌', onClick: () => { setActiveTab('admin'); setAdminSubTab('integraciones'); }, isActive: activeTab === 'admin' && adminSubTab === 'integraciones' },
+                { label: 'Actividades Sistema', icon: '⚙️', onClick: () => { setActiveTab('admin'); setAdminSubTab('actividades'); }, isActive: activeTab === 'admin' && adminSubTab === 'actividades' }
+              ])}
+
+              {renderAccordion('ventas', '🛒', 'Ventas', isVentasExpanded, setIsVentasExpanded, [
+                { label: 'Facturación', icon: '🛒', onClick: () => { setActiveTab('ventas'); setVentasSubTab('facturas'); }, isActive: activeTab === 'ventas' && ventasSubTab === 'facturas' },
+                { label: 'Proformas', icon: '📃', onClick: () => setSimulatedModule('Proformas') },
+                { label: 'Pedidos', icon: '📦', onClick: () => setSimulatedModule('Pedidos de Clientes') },
+                { label: 'Entregas por Facturar', icon: '🚚', onClick: () => setSimulatedModule('Entregas por Facturar') },
+                { label: 'Entregas Parciales', icon: '🚛', onClick: () => setSimulatedModule('Entregas Parciales') },
+                { label: 'Autorizar Documentos', icon: '✉️', onClick: () => setSimulatedModule('Autorizar Documentos SRI') },
+                { label: 'Clientes', icon: '🙂', onClick: () => setSimulatedModule('Directorio de Clientes') },
+                { label: 'Prospecto', icon: '🎯', onClick: () => setSimulatedModule('Prospectos y Leads') },
+                { label: 'Marketing Whatsapp', icon: '💬', onClick: () => setSimulatedModule('Marketing Whatsapp') },
+                { label: 'Grupo Clientes', icon: '👥', onClick: () => setSimulatedModule('Grupos de Clientes') },
+                { label: 'Zonas Clientes', icon: '📌', onClick: () => setSimulatedModule('Zonas de Cobertura') },
+                { label: 'Rutas Clientes', icon: '📍', onClick: () => setSimulatedModule('Rutas de Despacho') },
+                { label: 'Secuencias', icon: '🔢', onClick: () => setSimulatedModule('Secuencias de Facturación') },
+                { label: 'Agentes Ventas', icon: '👤', onClick: () => setSimulatedModule('Vendedores y Comisiones') },
+                { label: 'Tarjetas de Crédito', icon: '💳', onClick: () => setSimulatedModule('Tarjetas de Crédito y POS') },
+                { label: 'Facturación por Lotes', icon: '🛒', onClick: () => setSimulatedModule('Facturación Masiva') },
+                { label: 'Facturas Servicios', icon: '📄', onClick: () => setSimulatedModule('Facturas de Servicios') },
+                { label: 'Localizar Vendedores', icon: '🗺️', onClick: () => setSimulatedModule('Localización GPS Vendedores') },
+                { label: 'Despacho', icon: '📦', onClick: () => setSimulatedModule('Módulo de Despacho') },
+                { label: 'Recepción', icon: '📥', onClick: () => setSimulatedModule('Módulo de Recepción') }
+              ])}
+
+              {renderAccordion('compras', '🚚', 'Compras', isComprasExpanded, setIsComprasExpanded, [
+                { label: 'Orden Compra', icon: '📋', onClick: () => setSimulatedModule('Órdenes de Compra') },
+                { label: 'Recepción Compra', icon: '🚚', onClick: () => setSimulatedModule('Recepción de Mercaderías') },
+                { label: 'Compras', icon: '🛒', onClick: () => setActiveTab('proveedores'), isActive: activeTab === 'proveedores' },
+                { label: 'Proveedores', icon: '👤', onClick: () => setSimulatedModule('Directorio de Proveedores') },
+                { label: 'Grupo Proveedores', icon: '👥', onClick: () => setSimulatedModule('Grupos de Proveedores') },
+                { label: 'Tarifas', icon: '💵', onClick: () => setSimulatedModule('Tarifas de Precios') },
+                { label: 'Productos', icon: '📦', onClick: () => setActiveTab('kardex'), isActive: activeTab === 'kardex' },
+                { label: 'Servicios', icon: '⚙️', onClick: () => setSimulatedModule('Catálogo de Servicios') },
+                { label: 'Gastos', icon: '📉', onClick: () => setSimulatedModule('Registro de Gastos') },
+                { label: 'Kardex', icon: '📊', onClick: () => setActiveTab('kardex'), isActive: activeTab === 'kardex' },
+                { label: 'Actualizar Existencias', icon: '🔄', onClick: () => setSimulatedModule('Actualización de Existencias') },
+                { label: 'Análisis de Compra', icon: '📈', onClick: () => setSimulatedModule('Análisis de Compras') },
+                { label: 'Línea Productos', icon: '📦', onClick: () => setSimulatedModule('Líneas de Productos') },
+                { label: 'Productos Categorias', icon: '📁', onClick: () => setSimulatedModule('Categorías de Productos') },
+                { label: 'Sub Categorías', icon: '📂', onClick: () => setSimulatedModule('Sub Categorías') },
+                { label: 'Sub Grupos', icon: '👥', onClick: () => setSimulatedModule('Sub Grupos') },
+                { label: 'Almacenes', icon: '🏬', onClick: () => setSimulatedModule('Bodegas y Almacenes') },
+                { label: 'Kits', icon: '📦', onClick: () => setSimulatedModule('Kits de Productos') },
+                { label: 'Medidas', icon: '📏', onClick: () => setSimulatedModule('Unidades de Medida') },
+                { label: 'Movimientos Inventario', icon: '💳', onClick: () => setSimulatedModule('Movimientos de Bodega') },
+                { label: 'Toma Física', icon: '📝', onClick: () => setSimulatedModule('Inventario Físico') },
+                { label: 'Ingresos', icon: '➕', onClick: () => setSimulatedModule('Ingresos de Bodega') },
+                { label: 'Salidas', icon: '➖', onClick: () => setSimulatedModule('Salidas de Bodega') },
+                { label: 'Aprobar Transferencias', icon: '📋', onClick: () => setSimulatedModule('Aprobación de Transferencias') },
+                { label: 'Transferencias de Almacenes', icon: '🔄', onClick: () => setSimulatedModule('Transferencias entre Bodegas') }
+              ])}
+
+              {renderAccordion('tesoreria', '💵', 'Tesorería', isTesoreriaExpanded, setIsTesoreriaExpanded, [
+                { label: 'Cajas', icon: '👛', onClick: () => setActiveTab('caja'), isActive: activeTab === 'caja' },
+                { label: 'Movimientos de Caja', icon: '💵', onClick: () => setSimulatedModule('Movimientos de Caja') },
+                { label: 'Depósitos', icon: '🏛️', onClick: () => setSimulatedModule('Depósitos') },
+                { label: 'Liquidación Vouchers', icon: '💳', onClick: () => setSimulatedModule('Liquidación Vouchers') },
+                { label: 'Bancos', icon: '🏛️', onClick: () => setSimulatedModule('Bancos') },
+                { label: 'Movimientos de Bancos', icon: '💳', onClick: () => setSimulatedModule('Movimientos de Bancos') },
+                { label: 'Cierre Caja', icon: '🔒', onClick: () => setSimulatedModule('Cierre Caja') }
+              ])}
+
+              {renderAccordion('cartera', '💼', 'Cartera', isCarteraExpanded, setIsCarteraExpanded, [
+                { label: 'Control de Cobros', icon: '📑', onClick: () => setSimulatedModule('Control de Cobros') },
+                { label: 'Antigüedad de Cartera', icon: '📊', onClick: () => setSimulatedModule('Antigüedad de Cartera') }
+              ])}
+
+              {renderAccordion('pagos', '👛', 'Pagos', isPagosExpanded, setIsPagosExpanded, [
+                { label: 'Pago a Proveedores', icon: '💸', onClick: () => setSimulatedModule('Pago a Proveedores') },
+                { label: 'Egresos de Caja', icon: '🧾', onClick: () => setSimulatedModule('Egresos de Caja') }
+              ])}
+
+              {renderAccordion('nomina', '👥', 'Nómina', isNominaExpanded, setIsNominaExpanded, [
+                { label: 'Empleados', icon: '👥', onClick: () => { setActiveTab('ventas'); setVentasSubTab('empleados'); }, isActive: activeTab === 'ventas' && ventasSubTab === 'empleados' },
+                { label: 'Roles de Pago', icon: '📄', onClick: () => setSimulatedModule('Roles de Pago') }
+              ])}
+
+              {renderAccordion('activos', '🏠', 'Activos', isActivosExpanded, setIsActivosExpanded, [
+                { label: 'Depreciación Activos', icon: '📉', onClick: () => setActiveTab('assets'), isActive: activeTab === 'assets' },
+                { label: 'Registro de Activos', icon: '📋', onClick: () => setActiveTab('assets'), isActive: activeTab === 'assets' }
+              ])}
+
+              {renderAccordion('contabilidad', '⚖️', 'Contabilidad', isContabilidadExpanded, setIsContabilidadExpanded, [
+                { label: 'Libro Diario', icon: '⚖️', onClick: () => setActiveTab('contabilidad'), isActive: activeTab === 'contabilidad' },
+                { label: 'Balance de Comprobación', icon: '📊', onClick: () => setActiveTab('contabilidad'), isActive: activeTab === 'contabilidad' },
+                { label: 'Asiento Manual', icon: '📝', onClick: () => setActiveTab('contabilidad'), isActive: activeTab === 'contabilidad' }
+              ])}
+
+              {renderAccordion('produccion', '🏭', 'Producción', isProduccionExpanded, setIsProduccionExpanded, [
+                { label: 'Órdenes de Fabricación', icon: '🏭', onClick: () => setSimulatedModule('Órdenes de Fabricación') },
+                { label: 'Fórmulas y Recetas', icon: '📋', onClick: () => setSimulatedModule('Fórmulas y Recetas') }
+              ])}
+
+              {renderAccordion('garantias', '🔧', 'Garantías', isGarantiasExpanded, setIsGarantiasExpanded, [
+                { label: 'Orden de Servicio', icon: '🔧', onClick: () => setSimulatedModule('Orden de Servicio') },
+                { label: 'Control de Equipos', icon: '📦', onClick: () => setSimulatedModule('Control de Equipos') }
+              ])}
+
+              {renderAccordion('talleres', '🚗', 'Talleres Vehículos', isTalleresExpanded, setIsTalleresExpanded, [
+                { label: 'Orden de Trabajo', icon: '🚗', onClick: () => setSimulatedModule('Orden de Trabajo') },
+                { label: 'Historial de Vehículos', icon: '🛠️', onClick: () => setSimulatedModule('Historial de Vehículos') }
+              ])}
+
+              {renderAccordion('restaurante', '🍽️', 'Restaurante', isRestauranteExpanded, setIsRestauranteExpanded, [
+                { label: 'Control de Mesas', icon: '🍽️', onClick: () => setSimulatedModule('Control de Mesas') },
+                { label: 'Menú y Categorías', icon: '🍕', onClick: () => setSimulatedModule('Menú y Categorías') }
+              ])}
+
+              {renderAccordion('informes', '📈', 'Informes', isInformesExpanded, setIsInformesExpanded, [
+                { label: 'SRI Reporte Form 104', icon: '🏛️', onClick: () => { setActiveTab('sri'); setSriSubTab('formulario'); }, isActive: activeTab === 'sri' && sriSubTab === 'formulario' },
+                { label: 'Reportes ATS', icon: '📂', onClick: () => { setActiveTab('sri'); setSriSubTab('ats'); }, isActive: activeTab === 'sri' && sriSubTab === 'ats' }
+              ])}
             </nav>
 
             <div className="sidebar-footer">
@@ -1523,16 +2260,48 @@ export default function App() {
                     ☰
                   </button>
                 )}
-                <h2 style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>
-                  {activeTab === 'kardex' ? '📦 Inventario & Kárdex' :
-                    activeTab === 'ventas' ? '📈 Control de Ventas' :
-                      activeTab === 'proveedores' ? '🤝 Gestión de Proveedores' :
-                        activeTab === 'caja' ? '💵 Caja & Conciliación' :
-                          activeTab === 'contabilidad' ? '⚖️ Libro Diario Contable' :
-                            activeTab === 'sri' ? '🏛️ Reportes SRI Form 104' : '📉 Depreciación de Activos Fijos'}
-                </h2>
+                <div>
+                  <h2 style={{ fontSize: '1.4rem', fontWeight: 'bold', margin: 0 }}>
+                    {activeTab === 'kardex' ? '📦 Inventario & Kárdex' :
+                      activeTab === 'ventas' ? '📈 Control de Ventas' :
+                        activeTab === 'proveedores' ? '🤝 Gestión de Proveedores' :
+                          activeTab === 'caja' ? '💵 Caja & Conciliación' :
+                            activeTab === 'contabilidad' ? '⚖️ Libro Diario Contable' :
+                              activeTab === 'sri' ? '🏛️ Reportes SRI Form 104' : '📉 Depreciación de Activos Fijos'}
+                  </h2>
+                  {activeEnvironment !== 'default' && (
+                    <div style={{ fontSize: '11px', color: 'var(--cyan)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
+                      <span>{BUSINESS_THEMES[activeEnvironment]?.icon} {BUSINESS_THEMES[activeEnvironment]?.banner}</span>
+                    </div>
+                  )}
+                </div>
               </div>
               <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                {user?.businessTypes && user.businessTypes.length > 1 && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase' }}>Entorno:</label>
+                    <select
+                      value={activeEnvironment}
+                      onChange={(e) => handleSwitchEnvironment(e.target.value)}
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '6px',
+                        color: 'var(--text-primary)',
+                        fontSize: '12.5px',
+                        padding: '4px 8px',
+                        cursor: 'pointer',
+                        outline: 'none'
+                      }}
+                    >
+                      {user.businessTypes.map(type => (
+                        <option key={type} value={type} style={{ color: '#000' }}>
+                          {BUSINESS_THEMES[type]?.name || type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 <span className="top-bar-text" style={{ fontSize: '12px', opacity: 0.8 }}>Ecosistema Autónomo AuraContable</span>
                 <button
                   onClick={() => {
@@ -1584,9 +2353,135 @@ export default function App() {
             {/* Main Dashboard Layout */}
             <main className="tab-content">
 
+              {/* Banner de aviso para crear primera empresa */}
+              {companies.length === 0 && !isBannerClosed && (
+                <div className="glass-panel" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px 20px',
+                  margin: '0 0 1.5rem 0',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(6, 182, 212, 0.3)',
+                  background: 'rgba(15, 23, 42, 0.65)',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: '0 8px 32px 0 rgba(6, 182, 212, 0.1)',
+                  position: 'relative',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <img
+                      src="/logo_auracontable.svg"
+                      alt="Aura Logo"
+                      style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                    />
+                    <span
+                      onClick={() => {
+                        setActiveTab('admin');
+                        setAdminSubTab('empresas');
+                        setCompanyViewMode('form');
+                        setCompanyFormAction('create');
+                      }}
+                      style={{
+                        color: '#10b981',
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        fontSize: '14px',
+                        transition: 'color 0.2s',
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = '#34d399'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = '#10b981'}
+                    >
+                      Clic Para Crear una Empresa
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingRight: '20px' }}>
+                    <button
+                      onClick={() => {
+                        setActiveTab('admin');
+                        setAdminSubTab('empresas');
+                        setCompanyViewMode('form');
+                        setCompanyFormAction('create');
+                      }}
+                      style={{
+                        background: 'var(--cyan)',
+                        border: 'none',
+                        color: 'white',
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        fontSize: '16px',
+                        boxShadow: '0 0 10px rgba(6, 182, 212, 0.4)',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => setIsBannerClosed(true)}
+                    style={{
+                      position: 'absolute',
+                      top: '6px',
+                      right: '6px',
+                      background: '#ef4444',
+                      border: 'none',
+                      color: 'white',
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      fontSize: '10px',
+                      fontWeight: 'bold',
+                      transition: 'background 0.2s',
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#dc2626'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#ef4444'}
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+
               {/* TAB: KARDEX */}
               {activeTab === 'kardex' && (
                 <div className="fade-in">
+                  {/* Dynamic Industry Metrics */}
+                  {activeEnvironment !== 'default' && (
+                    <div className="metrics-summary-grid" style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '1.5rem',
+                      marginBottom: '1.5rem'
+                    }}>
+                      {(BUSINESS_THEMES[activeEnvironment]?.metrics || []).map((m, idx) => (
+                        <div key={idx} className="card glass-panel" style={{
+                          padding: '1.2rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '15px',
+                          borderLeft: `4px solid ${BUSINESS_THEMES[activeEnvironment]?.accent || 'var(--cyan)'}`
+                        }}>
+                          <span style={{ fontSize: '24px' }}>{m.icon}</span>
+                          <div>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{m.title}</span>
+                            <strong style={{ fontSize: '16px', color: 'var(--text-primary)', marginTop: '2px', display: 'block' }}>{m.value}</strong>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   <div className="dashboard-grid">
                     {/* Products Table */}
                     <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
@@ -3549,7 +4444,471 @@ export default function App() {
                 </div>
               )}
 
+              {/* TAB: ADMINISTRATION & COMPANY MANAGEMENT */}
+              {activeTab === 'admin' && (
+                <div className="fade-in animate-slideup">
+                  {/* Sub tab content: Gestión Empresas */}
+                  {adminSubTab === 'empresas' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                      {/* Top Action Buttons */}
+                      <div className="glass-panel" style={{
+                        padding: '1rem 1.5rem',
+                        display: 'flex',
+                        gap: '12px',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        borderRadius: '12px',
+                        marginBottom: '1rem',
+                        background: 'rgba(15, 23, 42, 0.45)'
+                      }}>
+                        <button
+                          onClick={() => setCompanyViewMode('list')}
+                          disabled={companyViewMode === 'list'}
+                          className="btn-sm"
+                          style={{
+                            background: companyViewMode === 'list' ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.1)',
+                            border: '1px solid rgba(255,255,255,0.15)',
+                            color: companyViewMode === 'list' ? 'var(--text-muted)' : 'var(--text-primary)',
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            cursor: companyViewMode === 'list' ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontWeight: '600',
+                            fontSize: '13px'
+                          }}
+                        >
+                          ⬅️ Volver
+                        </button>
 
+                        <button
+                          onClick={handleSaveCompany}
+                          disabled={companyViewMode === 'list'}
+                          className="btn-sm"
+                          style={{
+                            background: companyViewMode === 'list' ? 'rgba(255,255,255,0.03)' : 'var(--cyan)',
+                            border: 'none',
+                            color: companyViewMode === 'list' ? 'var(--text-muted)' : '#070a13',
+                            padding: '8px 18px',
+                            borderRadius: '8px',
+                            cursor: companyViewMode === 'list' ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontWeight: '700',
+                            fontSize: '13px',
+                            boxShadow: companyViewMode === 'list' ? 'none' : '0 0 12px rgba(6, 182, 212, 0.3)'
+                          }}
+                        >
+                          💾 Guardar
+                        </button>
+
+                        <button
+                          onClick={handleNewCompanyClick}
+                          disabled={companyViewMode === 'form' && companyFormAction === 'create'}
+                          className="btn-sm"
+                          style={{
+                            background: (companyViewMode === 'form' && companyFormAction === 'create') ? 'rgba(255,255,255,0.03)' : 'rgba(6, 182, 212, 0.15)',
+                            border: '1px solid rgba(6, 182, 212, 0.3)',
+                            color: (companyViewMode === 'form' && companyFormAction === 'create') ? 'var(--text-muted)' : 'var(--cyan)',
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            cursor: (companyViewMode === 'form' && companyFormAction === 'create') ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontWeight: '600',
+                            fontSize: '13px'
+                          }}
+                        >
+                          ➕ Nuevo
+                        </button>
+
+                        <button
+                          onClick={handleEditCompanySelect}
+                          disabled={!selectedCompany || (companyViewMode === 'form' && companyFormAction === 'edit')}
+                          className="btn-sm"
+                          style={{
+                            background: (!selectedCompany || (companyViewMode === 'form' && companyFormAction === 'edit')) ? 'rgba(255,255,255,0.03)' : 'rgba(16, 185, 129, 0.15)',
+                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                            color: (!selectedCompany || (companyViewMode === 'form' && companyFormAction === 'edit')) ? 'var(--text-muted)' : '#10b981',
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            cursor: (!selectedCompany || (companyViewMode === 'form' && companyFormAction === 'edit')) ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontWeight: '600',
+                            fontSize: '13px'
+                          }}
+                        >
+                          ✏️ Modificar
+                        </button>
+                      </div>
+
+                      {/* Main panel for companies */}
+                      {companyViewMode === 'list' ? (
+                        <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                          <h3 style={{ marginTop: 0, marginBottom: '1.5rem' }}>Empresas Registradas</h3>
+                          {companiesLoading ? (
+                            <p>Cargando empresas...</p>
+                          ) : companies.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
+                              <p style={{ color: 'var(--text-secondary)' }}>No hay empresas registradas.</p>
+                              <button onClick={handleNewCompanyClick} className="btn btn-cyan" style={{ marginTop: '1rem', padding: '8px 20px', borderRadius: '8px' }}>
+                                Crear Primera Empresa
+                              </button>
+                            </div>
+                          ) : (
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Razón Social</th>
+                                  <th>Identificación</th>
+                                  <th>Tipo</th>
+                                  <th>Descripción</th>
+                                  <th>Nombre DB</th>
+                                  <th style={{ textAlign: 'right' }}>Acciones</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {companies.map((c) => (
+                                  <tr
+                                    key={c.id}
+                                    onClick={() => setSelectedCompany(c)}
+                                    style={{
+                                      cursor: 'pointer',
+                                      background: selectedCompany?.id === c.id ? 'rgba(6, 182, 212, 0.08)' : 'transparent',
+                                      borderLeft: selectedCompany?.id === c.id ? '3px solid var(--cyan)' : '3px solid transparent'
+                                    }}
+                                  >
+                                    <td><strong>{c.name}</strong></td>
+                                    <td style={{ fontFamily: 'var(--font-mono)' }}>{c.identification}</td>
+                                    <td><span className="badge-status status-yes">{c.type}</span></td>
+                                    <td>{c.description || <span style={{ opacity: 0.4 }}>Sin descripción</span>}</td>
+                                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--cyan)' }}>{c.dbName}</td>
+                                    <td style={{ textAlign: 'right' }}>
+                                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
+                                        <button
+                                          onClick={() => {
+                                            setSelectedCompany(c);
+                                            setCompType(c.type);
+                                            setCompIdentificacion(c.identification);
+                                            setCompRazonSocial(c.name);
+                                            setCompDescripcion(c.description || '');
+                                            setCompNombreDB(c.dbName);
+                                            setCompanyFormAction('edit');
+                                            setCompanyViewMode('form');
+                                          }}
+                                          className="btn-sm"
+                                          style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', cursor: 'pointer' }}
+                                          title="Editar"
+                                        >
+                                          ✏️
+                                        </button>
+                                        <button
+                                          onClick={() => handleDeleteCompany(c.id, c.name)}
+                                          className="btn-sm"
+                                          style={{ padding: '4px 8px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '4px', cursor: 'pointer' }}
+                                          title="Eliminar"
+                                        >
+                                          🗑️
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+                      ) : (
+                        /* Form View */
+                        <div className="card glass-panel" style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
+                          <h3 style={{ marginTop: 0, marginBottom: '1.5rem' }}>
+                            {companyFormAction === 'create' ? '🏢 Registrar Nueva Empresa' : '✏️ Modificar Empresa'}
+                          </h3>
+                          <form onSubmit={handleSaveCompany} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                            <div className="form-group">
+                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Tipo:</label>
+                              <select
+                                value={compType}
+                                onChange={(e) => setCompType(e.target.value)}
+                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
+                              >
+                                <option value="RUC">RUC</option>
+                                <option value="CÉDULA">Cédula</option>
+                                <option value="PASAPORTE">Pasaporte</option>
+                              </select>
+                            </div>
+
+                            <div className="form-group">
+                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Identificación:</label>
+                              <input
+                                type="text"
+                                required
+                                value={compIdentificacion}
+                                onChange={(e) => setCompIdentificacion(e.target.value)}
+                                placeholder="Identificación (RUC o Cédula)"
+                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Razón Social:</label>
+                              <input
+                                type="text"
+                                required
+                                value={compRazonSocial}
+                                onChange={(e) => setCompRazonSocial(e.target.value)}
+                                placeholder="Nombre Oficial o Razón Social"
+                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Descripción:</label>
+                              <input
+                                type="text"
+                                value={compDescripcion}
+                                onChange={(e) => setCompDescripcion(e.target.value)}
+                                placeholder="Nombre Comercial o Descripción"
+                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
+                              />
+                            </div>
+
+                            <div className="form-group">
+                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600', color: 'var(--text-muted)' }}>Nombre DB:</label>
+                              <input
+                                type="text"
+                                disabled
+                                readOnly
+                                value={compNombreDB}
+                                style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--cyan)', outline: 'none', cursor: 'not-allowed', fontFamily: 'var(--font-mono)' }}
+                              />
+                            </div>
+
+                            <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '1rem', padding: '12px', fontWeight: 'bold' }}>
+                              {companyFormAction === 'create' ? 'Registrar Empresa' : 'Guardar Cambios'}
+                            </button>
+                          </form>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Sub tab content: Administrador Sucursales */}
+                  {adminSubTab === 'sucursales' && (
+                    <div className="dashboard-grid">
+                      <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                        <h3 style={{ marginTop: 0, marginBottom: '1.5rem' }}>Establecimiento y Sucursal</h3>
+                        <form onSubmit={handleSaveSriConfig} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                          <div className="form-group">
+                            <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Código Establecimiento (SRI):</label>
+                            <input
+                              type="text"
+                              required
+                              value={sriEstablishmentCode}
+                              onChange={(e) => setSriEstablishmentCode(e.target.value.slice(0, 3))}
+                              placeholder="001"
+                              style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}
+                            />
+                          </div>
+
+                          <div className="form-group">
+                            <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Punto de Emisión (SRI):</label>
+                            <input
+                              type="text"
+                              required
+                              value={sriEmissionPoint}
+                              onChange={(e) => setSriEmissionPoint(e.target.value.slice(0, 3))}
+                              placeholder="002"
+                              style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}
+                            />
+                          </div>
+
+                          <div className="form-group">
+                            <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Dirección de Establecimiento/Sucursal:</label>
+                            <input
+                              type="text"
+                              required
+                              value={sriEstablishmentAddress}
+                              onChange={(e) => setSriEstablishmentAddress(e.target.value)}
+                              placeholder="Av. de los Granados N45 y Eloy Alfaro, Quito"
+                              style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                            />
+                          </div>
+
+                          <div style={{ margin: '0.5rem 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <input
+                              type="checkbox"
+                              id="adminIsBranchCheckbox"
+                              checked={sriIsBranch}
+                              onChange={(e) => setSriIsBranch(e.target.checked)}
+                              style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                            />
+                            <label htmlFor="adminIsBranchCheckbox" style={{ fontSize: '13px', cursor: 'pointer', color: 'var(--text-primary)', fontWeight: '600' }}>
+                              ¿Esta cuenta es una sucursal de una Matriz principal?
+                            </label>
+                          </div>
+
+                          {sriIsBranch && (
+                            <div className="form-group">
+                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>RUC de la Matriz Principal:</label>
+                              <input
+                                type="text"
+                                required
+                                value={sriParentCompanyRuc}
+                                onChange={(e) => setSriParentCompanyRuc(e.target.value.slice(0, 13))}
+                                placeholder="1792455894001"
+                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}
+                              />
+                            </div>
+                          )}
+
+                          <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '1rem', padding: '12px', fontWeight: 'bold' }} disabled={sriSaving}>
+                            {sriSaving ? 'Guardando...' : '💾 Guardar Configuración de Sucursal'}
+                          </button>
+                        </form>
+                      </div>
+
+                      <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+                        <span style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏪</span>
+                        <h4 style={{ margin: '0 0 10px 0' }}>Sincronización de Sucursales</h4>
+                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', maxWidth: '300px', lineHeight: '1.5' }}>
+                          El establecimiento <strong>{sriEstablishmentCode}</strong> y punto de emisión <strong>{sriEmissionPoint}</strong> identifican de forma única esta sucursal física en los comprobantes autorizados por el SRI.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Sub tab content: Integraciones */}
+                  {adminSubTab === 'integraciones' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                      <div className="dashboard-grid">
+                        <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                          <h3 style={{ marginTop: 0 }}>Microservicio de Facturación</h3>
+                          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                            Conexión local independiente para el firmado digital XAdES-BES de XMLs y comunicación SOAP con el SRI.
+                          </p>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                              <span>Endpoint del Servicio:</span>
+                              <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--cyan)' }}>http://localhost:3001</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                              <span>Base de datos:</span>
+                              <span style={{ fontFamily: 'var(--font-mono)' }}>SQLite Local (/app/prisma)</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                              <span>Estado de Conexión:</span>
+                              <span>
+                                <span className="badge-status status-yes" style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--emerald)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>⚡ ONLINE</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                          <h3 style={{ marginTop: 0 }}>Portal SRI (Servicio de Rentas Internas)</h3>
+                          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                            Entorno y certificado configurados para la transmisión oficial de comprobantes tributarios.
+                          </p>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                              <span>Entorno Actual:</span>
+                              <span>
+                                {sriSimulate ? (
+                                  <span className="badge-status status-aura">MOCK SIMULADO</span>
+                                ) : sriEnvironment === '2' ? (
+                                  <span className="badge-status status-yes" style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--emerald)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>PRODUCCIÓN REAL</span>
+                                ) : (
+                                  <span className="badge-status status-yes">PRUEBAS REAL</span>
+                                )}
+                              </span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                              <span>Firma Electrónica (.p12):</span>
+                              <span>
+                                {sriConfigHasSignature ? (
+                                  <span className="badge-status status-yes">CARGADO</span>
+                                ) : (
+                                  <span className="badge-status status-no">FALTA SUBIR</span>
+                                )}
+                              </span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                              <span>Transmisión SOAP:</span>
+                              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px' }}>
+                                {sriSimulate ? 'Desactivado' : 'Activo (celcer.sri.gob.ec)'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Sub tab content: Actividades Sistema */}
+                  {adminSubTab === 'actividades' && (
+                    <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                      <h3 style={{ marginTop: 0, marginBottom: '1.5rem' }}>Bitácora de Actividades del Sistema</h3>
+                      <table style={{ width: '100%' }}>
+                        <thead>
+                          <tr>
+                            <th>Fecha/Hora</th>
+                            <th>Usuario</th>
+                            <th>Módulo</th>
+                            <th>Acción</th>
+                            <th>Estado</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr style={{ background: 'rgba(255,255,255,0.01)' }}>
+                            <td style={{ fontSize: '12px', fontFamily: 'var(--font-mono)' }}>{new Date().toLocaleString()}</td>
+                            <td>{user.email}</td>
+                            <td><span className="badge-status status-aura">ADMINISTRACIÓN</span></td>
+                            <td><strong>Consulta de bitácora de auditoría del sistema</strong></td>
+                            <td><span className="badge-status status-yes">COMPLETADO</span></td>
+                          </tr>
+                          {companies.length > 0 && (
+                            <tr>
+                              <td style={{ fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
+                                {new Date(companies[0].createdAt).toLocaleString()}
+                              </td>
+                              <td>{user.email}</td>
+                              <td><span className="badge-status status-aura">COMPANIES</span></td>
+                              <td>Registro/Acceso a empresa <strong>{companies[0].name}</strong></td>
+                              <td><span className="badge-status status-yes">COMPLETADO</span></td>
+                            </tr>
+                          )}
+                          <tr style={{ background: 'rgba(255,255,255,0.01)' }}>
+                            <td style={{ fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
+                              {new Date(Date.now() - 3600000).toLocaleString()}
+                            </td>
+                            <td>{user.email}</td>
+                            <td><span className="badge-status status-yes">SRI CONFIG</span></td>
+                            <td>Consulta de credenciales y firmas de facturación</td>
+                            <td><span className="badge-status status-yes">COMPLETADO</span></td>
+                          </tr>
+                          <tr>
+                            <td style={{ fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
+                              {new Date(Date.now() - 7200000).toLocaleString()}
+                            </td>
+                            <td>{user.email}</td>
+                            <td><span className="badge-status status-no">AUTH</span></td>
+                            <td>Inicio de sesión exitoso en el sistema principal</td>
+                            <td><span className="badge-status status-yes">EXITOSO</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
 
             </main>
             <footer style={{ marginTop: 'auto', paddingTop: '2rem', paddingBottom: '1rem', textAlign: 'center', opacity: 0.6, fontSize: '11px' }}>
@@ -4135,13 +5494,251 @@ export default function App() {
                 }}>
                   {!isLoginView && (
                     <>
+                      {/* RUC Input */}
                       <div className="form-group">
-                        <label>Nombre de la Empresa o Contribuyente:</label>
-                        <input type="text" required value={nameInput} placeholder="Ej. Corporación Equinox S.A." onChange={(e) => setNameInput(e.target.value)} />
+                        <label>RUC (13 dígitos):</label>
+                        <div style={{ position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>🪪</span>
+                          <input 
+                            type="text" 
+                            required 
+                            maxLength={13}
+                            value={rucInput} 
+                            placeholder="Ej. 1792455894001" 
+                            onChange={(e) => setRucInput(e.target.value.replace(/\D/g, ''))} 
+                            style={{ paddingLeft: '38px', width: '100%' }}
+                          />
+                        </div>
                       </div>
+
+                      {/* Razón Social Input */}
                       <div className="form-group">
-                        <label>Número de RUC:</label>
-                        <input type="text" required value={rucInput} placeholder="Ej. 1792455894001" onChange={(e) => setRucInput(e.target.value)} />
+                        <label>Razón social o nombre completo:</label>
+                        <div style={{ position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>👤</span>
+                          <input 
+                            type="text" 
+                            required 
+                            value={nameInput} 
+                            placeholder="Razón social o nombre completo" 
+                            onChange={(e) => setNameInput(e.target.value)} 
+                            style={{ paddingLeft: '38px', width: '100%' }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Dirección Input */}
+                      <div className="form-group">
+                        <label>Dirección:</label>
+                        <div style={{ position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
+                          <input 
+                            type="text" 
+                            required 
+                            value={addressInput} 
+                            placeholder="Dirección del establecimiento principal" 
+                            onChange={(e) => setAddressInput(e.target.value)} 
+                            style={{ paddingLeft: '38px', width: '100%' }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Provincia & Ciudad (2-col grid) */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                        <div className="form-group">
+                          <label>Provincia:</label>
+                          <div style={{ position: 'relative' }}>
+                            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
+                            <select 
+                              required 
+                              value={provinceInput} 
+                              onChange={(e) => {
+                                const prov = e.target.value;
+                                setProvinceInput(prov);
+                                const cities = ECUADOR_PROVINCES[prov] || [];
+                                setCityInput(cities[0] || '');
+                              }} 
+                              style={{ paddingLeft: '38px', width: '100%', WebkitAppearance: 'none', appearance: 'none' }}
+                            >
+                              <option value="" disabled>Provincia</option>
+                              {Object.keys(ECUADOR_PROVINCES).map(prov => (
+                                <option key={prov} value={prov} style={{ color: '#000' }}>{prov}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="form-group">
+                          <label>Ciudad:</label>
+                          <div style={{ position: 'relative' }}>
+                            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
+                            <select 
+                              required 
+                              value={cityInput} 
+                              onChange={(e) => setCityInput(e.target.value)} 
+                              style={{ paddingLeft: '38px', width: '100%', WebkitAppearance: 'none', appearance: 'none' }}
+                              disabled={!provinceInput}
+                            >
+                              <option value="" disabled>Ciudad</option>
+                              {(ECUADOR_PROVINCES[provinceInput] || []).map(city => (
+                                <option key={city} value={city} style={{ color: '#000' }}>{city}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Tipo de negocio (searchable, up to 4 selected badges) */}
+                      <div className="form-group" style={{ position: 'relative' }}>
+                        <label>Tipo de negocio (Elige de 1 a 4):</label>
+                        <div style={{ position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>🏢</span>
+                          <input
+                            type="text"
+                            placeholder="Buscar tipo..."
+                            value={businessTypesSearch}
+                            onChange={(e) => {
+                              setBusinessTypesSearch(e.target.value);
+                              setBusinessTypesDropdownOpen(true);
+                            }}
+                            onFocus={() => setBusinessTypesDropdownOpen(true)}
+                            style={{ paddingLeft: '38px', width: '100%' }}
+                          />
+                        </div>
+
+                        {/* Selected badges chips container */}
+                        {businessTypesInput.length > 0 && (
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
+                            {businessTypesInput.map(type => (
+                              <span key={type} className="business-type-badge" style={{
+                                background: 'var(--cyan, #213993)',
+                                color: '#ffffff',
+                                padding: '4px 10px',
+                                borderRadius: '16px',
+                                fontSize: '11px',
+                                fontWeight: 'bold',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                border: '1px solid rgba(255,255,255,0.1)'
+                              }}>
+                                {BUSINESS_THEMES[type]?.name || type}
+                                <button
+                                  type="button"
+                                  onClick={() => setBusinessTypesInput(businessTypesInput.filter(t => t !== type))}
+                                  style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: '#ffffff',
+                                    cursor: 'pointer',
+                                    fontSize: '10px',
+                                    fontWeight: 'bold',
+                                    padding: 0,
+                                    lineHeight: 1
+                                  }}
+                                >
+                                  ✕
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Filtered Dropdown */}
+                        {businessTypesDropdownOpen && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            width: '100%',
+                            maxHeight: '180px',
+                            overflowY: 'auto',
+                            background: '#ffffff',
+                            border: '1px solid var(--border)',
+                            borderRadius: '8px',
+                            boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+                            zIndex: 1000,
+                            marginTop: '4px'
+                          }}>
+                            {AVAILABLE_BUSINESS_TYPES.filter(type =>
+                              type.toLowerCase().includes(businessTypesSearch.toLowerCase())
+                            ).length === 0 ? (
+                              <div style={{ padding: '10px', fontSize: '12.5px', color: '#666', textAlign: 'center' }}>
+                                No se encontraron resultados
+                              </div>
+                            ) : (
+                              AVAILABLE_BUSINESS_TYPES.filter(type =>
+                                type.toLowerCase().includes(businessTypesSearch.toLowerCase())
+                              ).map(type => {
+                                const isSelected = businessTypesInput.includes(type);
+                                return (
+                                  <div
+                                    key={type}
+                                    onClick={() => {
+                                      if (isSelected) {
+                                        setBusinessTypesInput(businessTypesInput.filter(t => t !== type));
+                                      } else {
+                                        if (businessTypesInput.length >= 4) {
+                                          alert('Puedes elegir un máximo de 4 tipos de negocio.');
+                                          return;
+                                        }
+                                        setBusinessTypesInput([...businessTypesInput, type]);
+                                      }
+                                      setBusinessTypesSearch('');
+                                      setBusinessTypesDropdownOpen(false);
+                                    }}
+                                    style={{
+                                      padding: '10px 14px',
+                                      fontSize: '12.5px',
+                                      color: '#000000',
+                                      cursor: 'pointer',
+                                      background: isSelected ? 'rgba(33, 57, 147, 0.08)' : 'transparent',
+                                      display: 'flex',
+                                      justifyContent: 'space-between',
+                                      alignItems: 'center',
+                                      borderBottom: '1px solid #f1f5f9'
+                                    }}
+                                  >
+                                    <span>{type}</span>
+                                    {isSelected && <span style={{ color: 'var(--cyan)', fontWeight: 'bold' }}>✓</span>}
+                                  </div>
+                                );
+                              })
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* WhatsApp & Email (2-col grid) */}
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                        <div className="form-group">
+                          <label>WhatsApp:</label>
+                          <div style={{ position: 'relative' }}>
+                            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📞</span>
+                            <input 
+                              type="text" 
+                              value={whatsappInput} 
+                              placeholder="WhatsApp" 
+                              onChange={(e) => setWhatsappInput(e.target.value)} 
+                              style={{ paddingLeft: '38px', width: '100%' }}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="form-group">
+                          <label>Correo electrónico:</label>
+                          <div style={{ position: 'relative' }}>
+                            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>✉️</span>
+                            <input 
+                              type="email" 
+                              required 
+                              value={emailInput} 
+                              placeholder="Correo electrónico" 
+                              onChange={(e) => setEmailInput(e.target.value)} 
+                              style={{ paddingLeft: '38px', width: '100%' }}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </>
                   )}
@@ -4388,6 +5985,118 @@ export default function App() {
             Tecnologías: React SPA, Vite, NestJS, Prisma, PostgreSQL con Auth JWT.
           </p>
         </footer>
+      )}
+
+      {isCreatingCompany && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0, 0, 0, 0.4)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+        }}>
+          <div style={{
+            background: '#ffffff',
+            padding: '2.5rem',
+            borderRadius: '4px',
+            width: '450px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.5rem',
+            animation: 'fadeIn 0.2s ease-out'
+          }}>
+            <span style={{
+              color: '#333333',
+              fontSize: '15px',
+              fontWeight: '500',
+              textAlign: 'left',
+              fontFamily: 'sans-serif'
+            }}>
+              Creando Empresa ....
+            </span>
+            <div style={{
+              width: '100%',
+              height: '24px',
+              background: '#1f2937',
+              borderRadius: '2px',
+              overflow: 'hidden',
+              position: 'relative'
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                height: '100%',
+                width: '60%',
+                background: 'var(--cyan, #06b6d4)',
+                animation: 'loadingProgress 1.5s infinite ease-in-out'
+              }} />
+            </div>
+          </div>
+          <style>{`
+            @keyframes loadingProgress {
+              0% { left: -60%; }
+              100% { left: 100%; }
+            }
+          `}</style>
+        </div>
+      )}
+
+      {simulatedModule && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0, 0, 0, 0.65)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999,
+        }}>
+          <div className="glass-panel" style={{
+            padding: '2.5rem',
+            borderRadius: '16px',
+            maxWidth: '500px',
+            width: '90%',
+            textAlign: 'center',
+            border: '1px solid rgba(6, 182, 212, 0.3)',
+            background: 'rgba(15, 23, 42, 0.9)',
+            boxShadow: '0 10px 30px rgba(6, 182, 212, 0.2)',
+          }}>
+            <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '1rem' }}>⚙️</span>
+            <h3 style={{ fontSize: '1.5rem', color: 'var(--cyan)', marginBottom: '1rem' }}>Módulo Simulado: {simulatedModule}</h3>
+            <p style={{ fontSize: '14px', lineHeight: '1.6', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+              El panel para <strong>{simulatedModule}</strong> está configurado en este entorno de negocios general.
+            </p>
+            <div style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid var(--border)',
+              borderRadius: '8px',
+              padding: '12px',
+              fontSize: '12.5px',
+              color: 'var(--text-muted)',
+              textAlign: 'left',
+              marginBottom: '1.5rem'
+            }}>
+              💡 <strong>Nota del Desarrollador:</strong> Todos los datos de este apartado se guardarán localmente de forma provisional y se sincronizarán con los servidores oficiales del SRI una vez activada la licencia correspondiente.
+            </div>
+            <button
+              onClick={() => setSimulatedModule(null)}
+              className="btn btn-cyan"
+              style={{ padding: '8px 24px', borderRadius: '8px', fontWeight: 'bold' }}
+            >
+              Entendido
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

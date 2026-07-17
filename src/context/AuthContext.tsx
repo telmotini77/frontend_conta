@@ -5,6 +5,11 @@ interface User {
   email: string;
   name: string;
   ruc: string;
+  province?: string;
+  city?: string;
+  whatsapp?: string;
+  businessTypes?: string[];
+  establishmentAddress?: string;
 }
 
 interface AuthContextType {
@@ -12,7 +17,17 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, ruc: string, email: string, password: string) => Promise<void>;
+  signup: (
+    name: string,
+    ruc: string,
+    email: string,
+    password: string,
+    address: string,
+    province: string,
+    city: string,
+    whatsapp: string,
+    businessTypes: string[]
+  ) => Promise<void>;
   logout: () => void;
   error: string | null;
 }
@@ -92,13 +107,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signup = async (name: string, ruc: string, email: string, password: string) => {
+  const signup = async (
+    name: string,
+    ruc: string,
+    email: string,
+    password: string,
+    address: string,
+    province: string,
+    city: string,
+    whatsapp: string,
+    businessTypes: string[]
+  ) => {
     setError(null);
     try {
       const response = await fetch(`${API_URL}/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, ruc, email, password }),
+        body: JSON.stringify({ name, ruc, email, password, address, province, city, whatsapp, businessTypes }),
       });
 
       const data = await response.json();

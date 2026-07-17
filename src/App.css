@@ -1623,3 +1623,28 @@ body:has(.app-container) {
     justify-content: center !important;
   }
 }
+
+/* Business Types Chips/Badges in Registration Form */
+.business-type-badge {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.business-type-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  filter: brightness(1.1);
+}
+
+/* Environment Transition Styles */
+body, .main-content, .top-bar, .card, .table-container, .glass-panel {
+  transition: background 0.5s ease, background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease;
+}
+
+.metrics-summary-grid .card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.metrics-summary-grid .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
