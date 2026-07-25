@@ -1,3 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-text-primary;
+    color: theme('colors.text.primary') !important;
+  }
+}
+
 :root {
   --text: #cbd5e1;
   --text-h: #f8fafc;
