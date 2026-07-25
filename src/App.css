@@ -1294,7 +1294,7 @@ footer p {
   padding: 0.5rem 0.85rem;
   background: transparent;
   border: 1px solid transparent;
-  color: var(--text-muted, #94a3b8);
+  color: #000; /* Letras negras para menús principales */
   font-size: 0.85rem;
   font-weight: 600;
   border-radius: 8px;
@@ -1312,8 +1312,8 @@ footer p {
 }
 
 .sidebar-nav .tab-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #f8fafc;
+  background: rgba(0, 0, 0, 0.05);
+  color: #000;
 }
 
 .sidebar-nav .tab-btn.active {

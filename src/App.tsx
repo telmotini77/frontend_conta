@@ -2011,7 +2011,7 @@ export default function App() {
             border: 'none',
             cursor: 'pointer',
             padding: '10px 15px',
-            color: isAnyActive ? 'var(--cyan)' : 'var(--text-primary)',
+            color: isAnyActive ? '#444' : '#000',
             fontSize: '14px',
             textAlign: 'left'
           }}
@@ -2050,9 +2050,9 @@ export default function App() {
                 className={`sub-tab-btn ${item.isActive ? 'active' : ''}`}
                 onClick={item.onClick}
                 style={{
-                  background: item.isActive ? 'var(--bg-pill, rgba(6, 182, 212, 0.1))' : 'transparent',
+                  background: item.isActive ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
                   border: 'none',
-                  color: item.isActive ? 'var(--cyan)' : 'var(--text-secondary)',
+                  color: item.isActive ? '#444' : '#333',
                   padding: '6px 12px',
                   borderRadius: '6px',
                   cursor: 'pointer',
