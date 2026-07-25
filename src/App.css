@@ -1291,9 +1291,9 @@ footer p {
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0.5rem 0.85rem;
-  background: transparent;
-  border: 1px solid transparent;
+  flex: 1;
+  background: rgba(33, 57, 147, 0.08);
+  border: 1px solid rgba(33, 57, 147, 0.2);
   color: #000;
   /* Letras negras para menús principales */
   font-size: 0.85rem;
@@ -1313,14 +1313,15 @@ footer p {
 }
 
 .sidebar-nav .tab-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(33, 57, 147, 0.15);
+  border-color: rgba(33, 57, 147, 0.3);
   color: #000;
 }
 
 .sidebar-nav .tab-btn.active {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(16, 185, 129, 0.15)) !important;
-  border: 1px solid rgba(56, 189, 248, 0.3) !important;
-  color: #38bdf8 !important;
+  background: var(--cyan);
+  border: 1px solid var(--cyan);
+  color: #fff !important;
   box-shadow: 0 4px 15px -5px rgba(56, 189, 248, 0.4) !important;
 }
 
