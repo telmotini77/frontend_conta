@@ -2499,15 +2499,12 @@ export default function App() {
                         setCompanyFormAction('create');
                       }}
                       style={{
-                        color: '#10b981',
+                        color: '#000',
                         textDecoration: 'underline',
                         cursor: 'pointer',
                         fontWeight: '600',
                         fontSize: '14px',
-                        transition: 'color 0.2s',
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.color = '#34d399'}
-                      onMouseLeave={(e) => e.currentTarget.style.color = '#10b981'}
                     >
                       Clic Para Crear una Empresa
                     </span>
@@ -5070,11 +5067,8 @@ export default function App() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px',
-                transition: 'all 0.2s',
                 fontFamily: 'inherit'
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'var(--cyan)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)'; }}
             >
               ← Volver al Inicio
             </button>
@@ -5434,7 +5428,7 @@ export default function App() {
             </div>
 
             <div className="landing-nav-links" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-              <a href="#hero" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: '14px', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}>Inicio</a>
+              <a href="#hero" style={{ color: '#000', textDecoration: 'none', fontSize: '14px' }}>Inicio</a>
               
               {/* PRODUCT DROP DOWN */}
               <div 
@@ -5546,7 +5540,7 @@ export default function App() {
                 )}
               </div>
 
-              <a href="#features" style={{ color: '#94a3b8', textDecoration: 'none', fontSize: '14px', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}>Características</a>
+              <a href="#features" style={{ color: '#000', textDecoration: 'none', fontSize: '14px' }}>Características</a>
             </div>
 
             <div className="landing-nav-auth" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>

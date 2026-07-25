@@ -1,9 +1,9 @@
 :root {
   --text: #000000;
   --text-h: #000000;
-  --bg: #E8EAE9;
-  --border: #D8DCDB;
-  --code-bg: #F3F4F6;
+  --bg: #0f1713;
+  --border: #20342f;
+  --code-bg: #293346;
   --accent: #213993;
   --accent-bg: rgba(33, 57, 147, 0.08);
   --accent-border: rgba(33, 57, 147, 0.4);
@@ -34,9 +34,9 @@
   :root {
     --text: #000000;
     --text-h: #000000;
-    --bg: #E8EAE9;
-    --border: #D8DCDB;
-    --code-bg: #F3F4F6;
+    --bg: #111f18;
+    --border: #0e211c;
+    --code-bg: #0b0f17;
     --accent: #213993;
     --accent-bg: rgba(33, 57, 147, 0.08);
     --accent-border: rgba(33, 57, 147, 0.4);
@@ -76,20 +76,24 @@ h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
+
   @media (max-width: 1024px) {
     font-size: 36px;
     margin: 20px 0;
   }
 }
+
 h2 {
   font-size: 24px;
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
+
   @media (max-width: 1024px) {
     font-size: 20px;
   }
 }
+
 p {
   margin: 0;
 }

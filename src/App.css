@@ -294,7 +294,6 @@ h1 {
 }
 
 .tab-btn:hover {
-  color: var(--text-primary);
   background: rgba(255, 255, 255, 0.03);
 }
 
@@ -598,7 +597,6 @@ select:focus {
 
 .btn-sm:hover {
   background: rgba(20, 15, 15, 0.05);
-  color: var(--text-primary);
 }
 
 .btn:disabled {
@@ -899,7 +897,6 @@ select:focus {
 
 .btn-suggest:hover {
   background: var(--cyan);
-  color: #000;
 }
 
 .chat-input-area {
@@ -1270,7 +1267,6 @@ footer p {
 
 .sidebar-toggle:hover {
   background: rgba(20, 15, 15, 0.05);
-  color: #fff;
 }
 
 .sidebar-nav {
@@ -1315,13 +1311,12 @@ footer p {
 .sidebar-nav .tab-btn:hover {
   background: rgba(33, 57, 147, 0.15);
   border-color: rgba(33, 57, 147, 0.3);
-  color: #000;
 }
 
 .sidebar-nav .tab-btn.active {
   background: var(--cyan);
   border: 1px solid var(--cyan);
-  color: #fff !important;
+  color: #11132bc3 !important;
   box-shadow: 0 4px 15px -5px rgba(56, 189, 248, 0.4) !important;
 }
 
@@ -1379,7 +1374,6 @@ footer p {
 
 .sidebar-footer .logout-btn:hover {
   background: #ef4444;
-  color: white;
 }
 
 .sidebar-collapsed .sidebar-footer .logout-btn {
