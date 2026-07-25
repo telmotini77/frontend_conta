@@ -2052,7 +2052,7 @@ export default function App() {
                 style={{
                   background: item.isActive ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
                   border: 'none',
-                  color: item.isActive ? '#000' : '#000',
+                  color: item.isActive ? '#f8fafc' : '#cbd5e1',
                   padding: '6px 12px',
                   borderRadius: '6px',
                   cursor: 'pointer',
@@ -2149,10 +2149,10 @@ export default function App() {
                         key={idx}
                         onClick={() => toggleRoadmapItem(item)}
                         style={{
-                          background: isSelected ? '#e9ecef' : 'transparent',
+                          background: isSelected ? 'rgba(255,255,255,0.1)' : 'transparent',
                           border: 'none',
-                          borderLeft: isSelected ? '4px solid #000' : '4px solid transparent',
-                          color: isSelected ? '#000' : '#000',
+                          borderLeft: isSelected ? '4px solid #f8fafc' : '4px solid transparent',
+                          color: isSelected ? '#f8fafc' : '#cbd5e1',
                           padding: '10px 15px 10px 25px',
                           cursor: 'pointer',
                           fontSize: '12.5px',
@@ -2499,7 +2499,7 @@ export default function App() {
                         setCompanyFormAction('create');
                       }}
                       style={{
-                        color: '#000',
+                        color: '#f8fafc',
                         textDecoration: 'underline',
                         cursor: 'pointer',
                         fontWeight: '600',
@@ -5428,7 +5428,7 @@ export default function App() {
             </div>
 
             <div className="landing-nav-links" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-              <a href="#hero" style={{ color: '#000', textDecoration: 'none', fontSize: '14px' }}>Inicio</a>
+              <a href="#hero" style={{ color: '#cbd5e1', textDecoration: 'none', fontSize: '14px' }}>Inicio</a>
               
               {/* PRODUCT DROP DOWN */}
               <div 
@@ -5540,7 +5540,7 @@ export default function App() {
                 )}
               </div>
 
-              <a href="#features" style={{ color: '#000', textDecoration: 'none', fontSize: '14px' }}>Características</a>
+              <a href="#features" style={{ color: '#cbd5e1', textDecoration: 'none', fontSize: '14px' }}>Características</a>
             </div>
 
             <div className="landing-nav-auth" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
