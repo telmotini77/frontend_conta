@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './context/AuthContext';
+import BillingSystem from './BillingSystem';
 import './App.css';
 
 interface KardexTransaction {
@@ -494,9 +495,8 @@ export default function App() {
   const [sriEmissionPoint, setSriEmissionPoint] = useState('002');
   const [sriEstablishmentAddress, setSriEstablishmentAddress] = useState('Av. de los Granados N45 y Eloy Alfaro, Quito');
   const [sriConfigLoading, setSriConfigLoading] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState<'login' | 'signup' | null>(null);
   const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'landing' | 'app'>('landing');
+  const [viewMode, setViewMode] = useState<'landing' | 'login' | 'signup' | 'app'>('landing');
   const [sriSaving, setSriSaving] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(1);
@@ -518,6 +518,13 @@ export default function App() {
   const [businessTypesSearch, setBusinessTypesSearch] = useState('');
   const [businessTypesDropdownOpen, setBusinessTypesDropdownOpen] = useState(false);
   const [activeEnvironment, setActiveEnvironment] = useState<string>('default');
+
+  // Roadmap states
+  const [isRoadmapExpanded, setIsRoadmapExpanded] = useState(false);
+  const [selectedRoadmapItems, setSelectedRoadmapItems] = useState<Record<string, boolean>>({});
+  const toggleRoadmapItem = (item: string) => {
+    setSelectedRoadmapItems(prev => ({...prev, [item]: !prev[item]}));
+  };
 
   // Company management and Administration states
   const [isAdministrationExpanded, setIsAdministrationExpanded] = useState(false);
@@ -593,7 +600,7 @@ export default function App() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
   // Employee management states
-  const [ventasSubTab, setVentasSubTab] = useState<'facturas' | 'empleados'>('facturas');
+  const [ventasSubTab, setVentasSubTab] = useState<'facturas' | 'empleados' | 'facturacion_avanzada'>('facturacion_avanzada');
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [employeesLoading, setEmployeesLoading] = useState(false);
   const [empName, setEmpName] = useState('');
@@ -1099,10 +1106,10 @@ export default function App() {
 
   // Auto-redirect to dashboard if user has active session
   useEffect(() => {
-    if (user && viewMode === 'landing') {
+    if (user && (viewMode === 'landing' || viewMode === 'login' || viewMode === 'signup')) {
       setViewMode('app');
     }
-  }, [user]);
+  }, [user, viewMode]);
 
   if (loading) {
     return (
@@ -2067,6 +2074,115 @@ export default function App() {
     );
   };
 
+  const renderRoadmapAccordion = () => {
+    const roadmapData = [
+      {
+        id: 'facturacion', icon: '🛒', label: 'Facturación',
+        items: [
+          'Correo con datos (cliente, productos, total)',
+          'Ver detalles de la factura',
+          'Restricciones de cambios',
+          'Límite consumidor final ($50)'
+        ]
+      },
+      {
+        id: 'productos', icon: '📦', label: 'Productos e Inventario',
+        items: [
+          'Tipo de productos (Gasto / Venta)',
+          'Módulo de escáner código de barras'
+        ]
+      },
+      {
+        id: 'configuracion', icon: '⚙️', label: 'Configuración y Empresas',
+        items: [
+          'Panel de servicio para configurar',
+          'Tipos de empresa (Comercial, Servicios, Producción, Transporte)',
+          'Sincronizaciones automáticas programadas'
+        ]
+      },
+      {
+        id: 'activos', icon: '🏠', label: 'Activos Fijos',
+        items: [
+          'Tipo de activo fijo por tipo de producto'
+        ]
+      },
+      {
+        id: 'sistema', icon: '🚀', label: 'Sistema y Mejoras',
+        items: [
+          'Buscadores mejorados',
+          'Funciones mejoradas asíncronas (async)',
+          'Exportación de datos opcional (conciliaciones)'
+        ]
+      }
+    ];
+
+    return (
+      <div className="admin-menu-accordion" style={{ display: 'flex', flexDirection: 'column', background: '#fff', borderRadius: '8px', margin: '4px', border: '1px solid #dee2e6' }}>
+        <button
+          type="button"
+          onClick={() => {
+            setIsRoadmapExpanded(!isRoadmapExpanded);
+            if (isSidebarCollapsed) setIsSidebarCollapsed(false);
+          }}
+          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)', border: 'none', borderBottom: isRoadmapExpanded ? '1px solid #dee2e6' : 'none', cursor: 'pointer', padding: '12px 15px', color: '#000', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottomLeftRadius: isRoadmapExpanded ? '0' : '8px', borderBottomRightRadius: isRoadmapExpanded ? '0' : '8px' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span className="icon" style={{ fontSize: '1.2rem' }}>🎯</span>
+            {!isSidebarCollapsed && <span>Nuevas Funciones</span>}
+          </div>
+          {!isSidebarCollapsed && (
+            <span style={{ fontSize: '10px', transform: isRoadmapExpanded ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s', color: '#000' }}>▶</span>
+          )}
+        </button>
+        {isRoadmapExpanded && !isSidebarCollapsed && (
+          <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '400px', overflowY: 'auto', background: '#fafbfc', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
+            {roadmapData.map(group => (
+              <div key={group.id} style={{ borderBottom: '1px solid #f1f3f5' }}>
+                <div style={{ padding: '8px 15px', fontSize: '13px', fontWeight: '600', color: '#000', display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#f8f9fa' }}>
+                  <span>{group.icon}</span> {group.label}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {group.items.map((item, idx) => {
+                    const isSelected = selectedRoadmapItems[item];
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => toggleRoadmapItem(item)}
+                        style={{
+                          background: isSelected ? '#e9ecef' : 'transparent',
+                          border: 'none',
+                          borderLeft: isSelected ? '4px solid #444' : '4px solid transparent',
+                          color: isSelected ? '#444' : '#333',
+                          padding: '10px 15px 10px 25px',
+                          cursor: 'pointer',
+                          fontSize: '12.5px',
+                          textAlign: 'left',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          fontWeight: isSelected ? 'bold' : 'normal',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <div style={{
+                          width: '14px', height: '14px', border: `2px solid ${isSelected ? '#444' : '#333'}`, borderRadius: '50%',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: isSelected ? '#444' : 'transparent', flexShrink: 0
+                        }}>
+                          {isSelected && <span style={{ color: '#fff', fontSize: '10px' }}>✓</span>}
+                        </div>
+                        <span style={{ lineHeight: '1.2' }}>{item}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className={viewMode === 'app' && user ? `app-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}` : ''} style={viewMode === 'app' && user ? {} : { width: '100%' }}>
       {viewMode === 'app' && user ? (
@@ -2081,6 +2197,7 @@ export default function App() {
             </div>
 
             <nav className="sidebar-nav" style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 180px)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              {renderRoadmapAccordion()}
               {renderAccordion('admin', '⚙️', 'Administración', isAdministrationExpanded, setIsAdministrationExpanded, [
                 { label: 'Gestión Empresas', icon: '🏢', onClick: () => { setActiveTab('admin'); setAdminSubTab('empresas'); }, isActive: activeTab === 'admin' && adminSubTab === 'empresas' },
                 { label: 'Administrador Sucursales', icon: '🏪', onClick: () => { setActiveTab('admin'); setAdminSubTab('sucursales'); }, isActive: activeTab === 'admin' && adminSubTab === 'sucursales' },
@@ -2962,7 +3079,14 @@ export default function App() {
                     <button className={`btn-sm ${ventasSubTab === 'empleados' ? 'status-aura' : ''}`} onClick={() => setVentasSubTab('empleados')}>
                       👥 Administrar Empleados
                     </button>
+                    <button className={`btn-sm ${ventasSubTab === 'facturacion_avanzada' ? 'status-aura' : ''}`} onClick={() => setVentasSubTab('facturacion_avanzada')}>
+                      💻 Facturación Avanzada (POS)
+                    </button>
                   </div>
+
+                  {ventasSubTab === 'facturacion_avanzada' && (
+                    <BillingSystem />
+                  )}
 
                   {ventasSubTab === 'facturas' && (
                     <div className="fade-in">
@@ -4916,6 +5040,367 @@ export default function App() {
             </footer>
           </div>
         </>
+      ) : (viewMode === 'login' || viewMode === 'signup') ? (
+        /* DEDICATED AUTH PAGE */
+        <div style={{
+          background: '#070a13',
+          color: '#e2e8f0',
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem 1rem',
+          boxSizing: 'border-box',
+          width: '100%'
+        }}>
+          {/* Back Button */}
+          <div style={{ maxWidth: '440px', width: '100%', marginBottom: '1.5rem', display: 'flex', justifyContent: 'flex-start' }}>
+            <button
+              type="button"
+              onClick={() => setViewMode('landing')}
+              style={{
+                background: 'transparent',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                color: 'var(--text-secondary)',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.2s',
+                fontFamily: 'inherit'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'var(--cyan)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)'; }}
+            >
+              ← Volver al Inicio
+            </button>
+          </div>
+
+          <div 
+            className="auth-container glass-panel animate-slideup" 
+            style={{ 
+              padding: '2.5rem 2rem', 
+              position: 'relative', 
+              maxWidth: '440px',
+              width: '100%',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
+              border: '1px solid rgba(6, 182, 212, 0.2)',
+            }}
+          >
+            <div className="header-glow"></div>
+            <div className="auth-header text-center" style={{ marginBottom: '1.5rem' }}>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 'bold', color: 'var(--text-primary)', margin: 0 }}>
+                {isLoginView ? 'Iniciar Sesión' : 'Registrar Contribuyente'}
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '6px', margin: 0 }}>
+                Acceso al Ecosistema Contable Autónomo — AuraContable
+              </p>
+            </div>
+
+            <form onSubmit={async (e) => {
+              await handleAuthSubmit(e);
+            }}>
+              {!isLoginView && (
+                <>
+                  {/* RUC Input */}
+                  <div className="form-group">
+                    <label>RUC (13 dígitos):</label>
+                    <div style={{ position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>🪪</span>
+                      <input 
+                        type="text" 
+                        required 
+                        maxLength={13}
+                        value={rucInput} 
+                        placeholder="Ej. 1792455894001" 
+                        onChange={(e) => setRucInput(e.target.value.replace(/\D/g, ''))} 
+                        style={{ paddingLeft: '38px', width: '100%' }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Razón Social Input */}
+                  <div className="form-group">
+                    <label>Razón social o nombre completo:</label>
+                    <div style={{ position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>👤</span>
+                      <input 
+                        type="text" 
+                        required 
+                        value={nameInput} 
+                        placeholder="Razón social o nombre completo" 
+                        onChange={(e) => setNameInput(e.target.value)} 
+                        style={{ paddingLeft: '38px', width: '100%' }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Dirección Input */}
+                  <div className="form-group">
+                    <label>Dirección:</label>
+                    <div style={{ position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
+                      <input 
+                        type="text" 
+                        required 
+                        value={addressInput} 
+                        placeholder="Dirección del establecimiento principal" 
+                        onChange={(e) => setAddressInput(e.target.value)} 
+                        style={{ paddingLeft: '38px', width: '100%' }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Provincia & Ciudad (2-col grid) */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                    <div className="form-group">
+                      <label>Provincia:</label>
+                      <div style={{ position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
+                        <select 
+                          required 
+                          value={provinceInput} 
+                          onChange={(e) => {
+                            const prov = e.target.value;
+                            setProvinceInput(prov);
+                            const cities = ECUADOR_PROVINCES[prov] || [];
+                            setCityInput(cities[0] || '');
+                          }} 
+                          style={{ paddingLeft: '38px', width: '100%', WebkitAppearance: 'none', appearance: 'none' }}
+                        >
+                          <option value="" disabled>Provincia</option>
+                          {Object.keys(ECUADOR_PROVINCES).map(prov => (
+                            <option key={prov} value={prov} style={{ color: '#000' }}>{prov}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Ciudad:</label>
+                      <div style={{ position: 'relative' }}>
+                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
+                        <select 
+                          required 
+                          value={cityInput} 
+                          onChange={(e) => setCityInput(e.target.value)} 
+                          style={{ paddingLeft: '38px', width: '100%', WebkitAppearance: 'none', appearance: 'none' }}
+                          disabled={!provinceInput}
+                        >
+                          <option value="" disabled>Ciudad</option>
+                          {(ECUADOR_PROVINCES[provinceInput] || []).map(city => (
+                            <option key={city} value={city} style={{ color: '#000' }}>{city}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tipo de negocio (searchable, up to 4 selected badges) */}
+                  <div className="form-group" style={{ position: 'relative' }}>
+                    <label>Tipo de negocio (Elige de 1 a 4):</label>
+                    <div style={{ position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>🏢</span>
+                      <input
+                        type="text"
+                        placeholder="Buscar tipo..."
+                        value={businessTypesSearch}
+                        onChange={(e) => {
+                          setBusinessTypesSearch(e.target.value);
+                          setBusinessTypesDropdownOpen(true);
+                        }}
+                        onFocus={() => setBusinessTypesDropdownOpen(true)}
+                        style={{ paddingLeft: '38px', width: '100%' }}
+                      />
+                    </div>
+
+                    {/* Selected badges chips container */}
+                    {businessTypesInput.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
+                        {businessTypesInput.map(type => (
+                          <span key={type} className="business-type-badge" style={{
+                            background: 'var(--cyan, #213993)',
+                            color: '#ffffff',
+                            padding: '4px 10px',
+                            borderRadius: '16px',
+                            fontSize: '11px',
+                            fontWeight: 'bold',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            border: '1px solid rgba(255,255,255,0.1)'
+                          }}>
+                            {BUSINESS_THEMES[type]?.name || type}
+                            <button
+                              type="button"
+                              onClick={() => setBusinessTypesInput(businessTypesInput.filter(t => t !== type))}
+                              style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: '#ffffff',
+                                cursor: 'pointer',
+                                fontSize: '10px',
+                                fontWeight: 'bold',
+                                padding: 0,
+                                lineHeight: 1
+                              }}
+                            >
+                              ✕
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Filtered Dropdown */}
+                    {businessTypesDropdownOpen && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '100%',
+                        left: 0,
+                        width: '100%',
+                        maxHeight: '180px',
+                        overflowY: 'auto',
+                        background: '#ffffff',
+                        border: '1px solid var(--border)',
+                        borderRadius: '8px',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+                        zIndex: 1000,
+                        marginTop: '4px'
+                      }}>
+                        {AVAILABLE_BUSINESS_TYPES.filter(type =>
+                          type.toLowerCase().includes(businessTypesSearch.toLowerCase())
+                        ).length === 0 ? (
+                          <div style={{ padding: '10px', fontSize: '12.5px', color: '#666', textAlign: 'center' }}>
+                            No se encontraron resultados
+                          </div>
+                        ) : (
+                          AVAILABLE_BUSINESS_TYPES.filter(type =>
+                            type.toLowerCase().includes(businessTypesSearch.toLowerCase())
+                          ).map(type => {
+                            const isSelected = businessTypesInput.includes(type);
+                            return (
+                              <div
+                                key={type}
+                                onClick={() => {
+                                  if (isSelected) {
+                                    setBusinessTypesInput(businessTypesInput.filter(t => t !== type));
+                                  } else {
+                                    if (businessTypesInput.length >= 4) {
+                                      alert('Puedes elegir un máximo de 4 tipos de negocio.');
+                                      return;
+                                    }
+                                    setBusinessTypesInput([...businessTypesInput, type]);
+                                  }
+                                  setBusinessTypesSearch('');
+                                  setBusinessTypesDropdownOpen(false);
+                                }}
+                                style={{
+                                  padding: '10px 14px',
+                                  fontSize: '12.5px',
+                                  color: '#000000',
+                                  cursor: 'pointer',
+                                  background: isSelected ? 'rgba(33, 57, 147, 0.08)' : 'transparent',
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  borderBottom: '1px solid #f1f5f9'
+                                }}
+                              >
+                                <span>{type}</span>
+                                {isSelected && <span style={{ color: 'var(--cyan)', fontWeight: 'bold' }}>✓</span>}
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* WhatsApp (1-col) */}
+                  <div className="form-group">
+                    <label>WhatsApp:</label>
+                    <div style={{ position: 'relative' }}>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📞</span>
+                      <input 
+                        type="text" 
+                        value={whatsappInput} 
+                        placeholder="WhatsApp" 
+                        onChange={(e) => setWhatsappInput(e.target.value)} 
+                        style={{ paddingLeft: '38px', width: '100%' }}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <div className="form-group">
+                <label>Correo Electrónico:</label>
+                <div style={{ position: 'relative' }}>
+                  <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>✉️</span>
+                  <input 
+                    type="email" 
+                    required 
+                    value={emailInput} 
+                    placeholder="ejemplo@aura.com" 
+                    onChange={(e) => setEmailInput(e.target.value)} 
+                    style={{ paddingLeft: '38px', width: '100%' }}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Contraseña:</label>
+                <div style={{ position: 'relative' }}>
+                  <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>🔒</span>
+                  <input 
+                    type="password" 
+                    required 
+                    value={passwordInput} 
+                    placeholder="••••••••" 
+                    onChange={(e) => setPasswordInput(e.target.value)} 
+                    style={{ paddingLeft: '38px', width: '100%' }}
+                  />
+                </div>
+              </div>
+
+              {authFormError && <div className="error-alert">{authFormError}</div>}
+              {authError && <div className="error-alert">{authError}</div>}
+
+              <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '1rem' }}>
+                {isLoginView ? 'Ingresar al Sistema' : 'Crear Cuenta'}
+              </button>
+            </form>
+
+            <div className="auth-toggle" style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '13px' }}>
+              {isLoginView ? (
+                <p>
+                  ¿No tienes una cuenta registrada?{' '}
+                  <button type="button" onClick={() => {
+                    setIsLoginView(false);
+                    setViewMode('signup');
+                  }} style={{ background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontWeight: '600', textDecoration: 'underline' }}>
+                    Crea una cuenta aquí
+                  </button>
+                </p>
+              ) : (
+                <p>
+                  ¿Ya posees una cuenta activa?{' '}
+                  <button type="button" onClick={() => {
+                    setIsLoginView(true);
+                    setViewMode('login');
+                  }} style={{ background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontWeight: '600', textDecoration: 'underline' }}>
+                    Inicia sesión aquí
+                  </button>
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
       ) : (
         /* LANDING PAGE VIEW */
         <div style={{ background: '#070a13', color: '#e2e8f0', minHeight: '100vh', display: 'flex', flexDirection: 'column', width: '100%', boxSizing: 'border-box' }}>
@@ -5106,7 +5591,7 @@ export default function App() {
                     className="btn" 
                     onClick={() => {
                       setIsLoginView(true);
-                      setShowAuthModal('login');
+                      setViewMode('login');
                     }}
                     style={{
                       background: 'transparent',
@@ -5133,7 +5618,7 @@ export default function App() {
                     className="btn btn-cyan" 
                     onClick={() => {
                       setIsLoginView(false);
-                      setShowAuthModal('signup');
+                      setViewMode('signup');
                     }}
                     style={{
                       padding: '8px 18px',
@@ -5203,7 +5688,7 @@ export default function App() {
                   className="btn btn-cyan" 
                   onClick={() => {
                     setIsLoginView(false);
-                    setShowAuthModal('signup');
+                    setViewMode('signup');
                   }}
                   style={{
                     padding: '12px 28px',
@@ -5293,7 +5778,7 @@ export default function App() {
                   {/* CTA Button — Aura Contable */}
                   <div style={{ marginTop: 'auto', paddingTop: '0.5rem' }}>
                     <button
-                      onClick={() => { if (user) { setViewMode('app'); } else { setIsLoginView(true); setShowAuthModal('login'); } }}
+                      onClick={() => { if (user) { setViewMode('app'); } else { setIsLoginView(true); setViewMode('login'); } }}
                       style={{
                         width: '100%',
                         padding: '10px 0',
@@ -5424,369 +5909,7 @@ export default function App() {
             <p style={{ color: '#475569', fontSize: '11px', marginTop: '6px' }}>Tecnologías: React Single-Page Application, NestJS, Prisma, PostgreSQL y SQLite</p>
           </footer>
 
-          {/* AUTH MODAL DIALOG */}
-          {showAuthModal && (
-            <div 
-              style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100vw',
-                height: '100vh',
-                background: 'rgba(5, 8, 20, 0.85)',
-                backdropFilter: 'blur(8px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 1000,
-              }}
-              onClick={() => setShowAuthModal(null)}
-            >
-              <div 
-                className="auth-container glass-panel animate-slideup" 
-                style={{ 
-                  padding: '2.5rem 2rem', 
-                  position: 'relative', 
-                  maxWidth: '440px',
-                  width: '90%',
-                  margin: 0,
-                  boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
-                  border: '1px solid rgba(6, 182, 212, 0.2)',
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Close Button */}
-                <button 
-                  onClick={() => setShowAuthModal(null)}
-                  style={{
-                    position: 'absolute',
-                    top: '16px',
-                    right: '16px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#94a3b8',
-                    fontSize: '18px',
-                    cursor: 'pointer',
-                    transition: 'color 0.2s',
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}
-                >
-                  ✕
-                </button>
 
-                <div className="header-glow"></div>
-                <div className="auth-header text-center" style={{ marginBottom: '1.5rem' }}>
-                  <h2 style={{ fontSize: '1.6rem', fontWeight: 'bold', color: 'var(--text-primary)', margin: 0 }}>
-                    {isLoginView ? 'Iniciar Sesión' : 'Registrar Contribuyente'}
-                  </h2>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '6px', margin: 0 }}>
-                    Acceso al Ecosistema Contable Autónomo — AuraContable
-                  </p>
-                </div>
-
-                <form onSubmit={async (e) => {
-                  await handleAuthSubmit(e);
-                  // Close modal if login succeeds
-                  if (!authError && !authFormError) {
-                    setShowAuthModal(null);
-                  }
-                }}>
-                  {!isLoginView && (
-                    <>
-                      {/* RUC Input */}
-                      <div className="form-group">
-                        <label>RUC (13 dígitos):</label>
-                        <div style={{ position: 'relative' }}>
-                          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>🪪</span>
-                          <input 
-                            type="text" 
-                            required 
-                            maxLength={13}
-                            value={rucInput} 
-                            placeholder="Ej. 1792455894001" 
-                            onChange={(e) => setRucInput(e.target.value.replace(/\D/g, ''))} 
-                            style={{ paddingLeft: '38px', width: '100%' }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Razón Social Input */}
-                      <div className="form-group">
-                        <label>Razón social o nombre completo:</label>
-                        <div style={{ position: 'relative' }}>
-                          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>👤</span>
-                          <input 
-                            type="text" 
-                            required 
-                            value={nameInput} 
-                            placeholder="Razón social o nombre completo" 
-                            onChange={(e) => setNameInput(e.target.value)} 
-                            style={{ paddingLeft: '38px', width: '100%' }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Dirección Input */}
-                      <div className="form-group">
-                        <label>Dirección:</label>
-                        <div style={{ position: 'relative' }}>
-                          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
-                          <input 
-                            type="text" 
-                            required 
-                            value={addressInput} 
-                            placeholder="Dirección del establecimiento principal" 
-                            onChange={(e) => setAddressInput(e.target.value)} 
-                            style={{ paddingLeft: '38px', width: '100%' }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Provincia & Ciudad (2-col grid) */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                        <div className="form-group">
-                          <label>Provincia:</label>
-                          <div style={{ position: 'relative' }}>
-                            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
-                            <select 
-                              required 
-                              value={provinceInput} 
-                              onChange={(e) => {
-                                const prov = e.target.value;
-                                setProvinceInput(prov);
-                                const cities = ECUADOR_PROVINCES[prov] || [];
-                                setCityInput(cities[0] || '');
-                              }} 
-                              style={{ paddingLeft: '38px', width: '100%', WebkitAppearance: 'none', appearance: 'none' }}
-                            >
-                              <option value="" disabled>Provincia</option>
-                              {Object.keys(ECUADOR_PROVINCES).map(prov => (
-                                <option key={prov} value={prov} style={{ color: '#000' }}>{prov}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-
-                        <div className="form-group">
-                          <label>Ciudad:</label>
-                          <div style={{ position: 'relative' }}>
-                            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
-                            <select 
-                              required 
-                              value={cityInput} 
-                              onChange={(e) => setCityInput(e.target.value)} 
-                              style={{ paddingLeft: '38px', width: '100%', WebkitAppearance: 'none', appearance: 'none' }}
-                              disabled={!provinceInput}
-                            >
-                              <option value="" disabled>Ciudad</option>
-                              {(ECUADOR_PROVINCES[provinceInput] || []).map(city => (
-                                <option key={city} value={city} style={{ color: '#000' }}>{city}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Tipo de negocio (searchable, up to 4 selected badges) */}
-                      <div className="form-group" style={{ position: 'relative' }}>
-                        <label>Tipo de negocio (Elige de 1 a 4):</label>
-                        <div style={{ position: 'relative' }}>
-                          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>🏢</span>
-                          <input
-                            type="text"
-                            placeholder="Buscar tipo..."
-                            value={businessTypesSearch}
-                            onChange={(e) => {
-                              setBusinessTypesSearch(e.target.value);
-                              setBusinessTypesDropdownOpen(true);
-                            }}
-                            onFocus={() => setBusinessTypesDropdownOpen(true)}
-                            style={{ paddingLeft: '38px', width: '100%' }}
-                          />
-                        </div>
-
-                        {/* Selected badges chips container */}
-                        {businessTypesInput.length > 0 && (
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
-                            {businessTypesInput.map(type => (
-                              <span key={type} className="business-type-badge" style={{
-                                background: 'var(--cyan, #213993)',
-                                color: '#ffffff',
-                                padding: '4px 10px',
-                                borderRadius: '16px',
-                                fontSize: '11px',
-                                fontWeight: 'bold',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                border: '1px solid rgba(255,255,255,0.1)'
-                              }}>
-                                {BUSINESS_THEMES[type]?.name || type}
-                                <button
-                                  type="button"
-                                  onClick={() => setBusinessTypesInput(businessTypesInput.filter(t => t !== type))}
-                                  style={{
-                                    background: 'transparent',
-                                    border: 'none',
-                                    color: '#ffffff',
-                                    cursor: 'pointer',
-                                    fontSize: '10px',
-                                    fontWeight: 'bold',
-                                    padding: 0,
-                                    lineHeight: 1
-                                  }}
-                                >
-                                  ✕
-                                </button>
-                              </span>
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Filtered Dropdown */}
-                        {businessTypesDropdownOpen && (
-                          <div style={{
-                            position: 'absolute',
-                            top: '100%',
-                            left: 0,
-                            width: '100%',
-                            maxHeight: '180px',
-                            overflowY: 'auto',
-                            background: '#ffffff',
-                            border: '1px solid var(--border)',
-                            borderRadius: '8px',
-                            boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
-                            zIndex: 1000,
-                            marginTop: '4px'
-                          }}>
-                            {AVAILABLE_BUSINESS_TYPES.filter(type =>
-                              type.toLowerCase().includes(businessTypesSearch.toLowerCase())
-                            ).length === 0 ? (
-                              <div style={{ padding: '10px', fontSize: '12.5px', color: '#666', textAlign: 'center' }}>
-                                No se encontraron resultados
-                              </div>
-                            ) : (
-                              AVAILABLE_BUSINESS_TYPES.filter(type =>
-                                type.toLowerCase().includes(businessTypesSearch.toLowerCase())
-                              ).map(type => {
-                                const isSelected = businessTypesInput.includes(type);
-                                return (
-                                  <div
-                                    key={type}
-                                    onClick={() => {
-                                      if (isSelected) {
-                                        setBusinessTypesInput(businessTypesInput.filter(t => t !== type));
-                                      } else {
-                                        if (businessTypesInput.length >= 4) {
-                                          alert('Puedes elegir un máximo de 4 tipos de negocio.');
-                                          return;
-                                        }
-                                        setBusinessTypesInput([...businessTypesInput, type]);
-                                      }
-                                      setBusinessTypesSearch('');
-                                      setBusinessTypesDropdownOpen(false);
-                                    }}
-                                    style={{
-                                      padding: '10px 14px',
-                                      fontSize: '12.5px',
-                                      color: '#000000',
-                                      cursor: 'pointer',
-                                      background: isSelected ? 'rgba(33, 57, 147, 0.08)' : 'transparent',
-                                      display: 'flex',
-                                      justifyContent: 'space-between',
-                                      alignItems: 'center',
-                                      borderBottom: '1px solid #f1f5f9'
-                                    }}
-                                  >
-                                    <span>{type}</span>
-                                    {isSelected && <span style={{ color: 'var(--cyan)', fontWeight: 'bold' }}>✓</span>}
-                                  </div>
-                                );
-                              })
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* WhatsApp & Email (2-col grid) */}
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                        <div className="form-group">
-                          <label>WhatsApp:</label>
-                          <div style={{ position: 'relative' }}>
-                            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📞</span>
-                            <input 
-                              type="text" 
-                              value={whatsappInput} 
-                              placeholder="WhatsApp" 
-                              onChange={(e) => setWhatsappInput(e.target.value)} 
-                              style={{ paddingLeft: '38px', width: '100%' }}
-                            />
-                          </div>
-                        </div>
-
-                        <div className="form-group">
-                          <label>Correo electrónico:</label>
-                          <div style={{ position: 'relative' }}>
-                            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>✉️</span>
-                            <input 
-                              type="email" 
-                              required 
-                              value={emailInput} 
-                              placeholder="Correo electrónico" 
-                              onChange={(e) => setEmailInput(e.target.value)} 
-                              style={{ paddingLeft: '38px', width: '100%' }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  <div className="form-group">
-                    <label>Correo Electrónico:</label>
-                    <input type="email" required value={emailInput} placeholder="ejemplo@aura.com" onChange={(e) => setEmailInput(e.target.value)} />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Contraseña:</label>
-                    <input type="password" required value={passwordInput} placeholder="••••••••" onChange={(e) => setPasswordInput(e.target.value)} />
-                  </div>
-
-                  {authFormError && <div className="error-alert">{authFormError}</div>}
-                  {authError && <div className="error-alert">{authError}</div>}
-
-                  <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '1rem' }}>
-                    {isLoginView ? 'Ingresar al Sistema' : 'Crear Cuenta'}
-                  </button>
-                </form>
-
-                <div className="auth-toggle" style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '13px' }}>
-                  {isLoginView ? (
-                    <p>
-                      ¿No tienes una cuenta registrada?{' '}
-                      <button type="button" onClick={() => {
-                        setIsLoginView(false);
-                        setShowAuthModal('signup');
-                      }} style={{ background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontWeight: '600', textDecoration: 'underline' }}>
-                        Crea una cuenta aquí
-                      </button>
-                    </p>
-                  ) : (
-                    <p>
-                      ¿Ya posees una cuenta activa?{' '}
-                      <button type="button" onClick={() => {
-                        setIsLoginView(true);
-                        setShowAuthModal('login');
-                      }} style={{ background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontWeight: '600', textDecoration: 'underline' }}>
-                        Inicia sesión aquí
-                      </button>
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
 
         </div>
       )}
