@@ -255,7 +255,7 @@ h1 {
   font-size: 2.8rem;
   font-weight: 800;
   line-height: 1.1;
-  background: linear-gradient(135deg, #ffffff 40%, #cffafc 100%);
+  background: linear-gradient(135deg, #111827 40%, #213993 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.75rem;
@@ -570,9 +570,9 @@ select:focus {
 }
 
 .btn {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(20, 15, 15, 0.05);
   border: 1px solid var(--border);
-  color: var(--text-primary);
+  color: #000;
   padding: 7px 14px;
   border-radius: 6px;
   font-weight: 600;
@@ -590,7 +590,7 @@ select:focus {
   font-family: var(--font-mono);
   background: rgba(20, 15, 15, 0.05);
   border: 1px solid var(--border);
-  color: var(--text-secondary);
+  color: #000;
   padding: 3px 6px;
   border-radius: 4px;
   cursor: pointer;
@@ -612,7 +612,7 @@ select:focus {
 
 .btn-cyan {
   background: var(--cyan);
-  color: #fff;
+  color: #000;
   border: none;
 }
 
@@ -623,7 +623,7 @@ select:focus {
 
 .btn-indigo {
   background: var(--indigo);
-  color: #fff;
+  color: #000;
   border: none;
 }
 
@@ -634,7 +634,7 @@ select:focus {
 
 .btn-emerald {
   background: var(--emerald);
-  color: #fff;
+  color: #000;
   border: none;
 }
 
@@ -677,7 +677,7 @@ select:focus {
 }
 
 .log-line {
-  color: #cbd5e1;
+  color: #111827;
 }
 
 .journal-entry {
@@ -779,7 +779,7 @@ select:focus {
 .match-row {
   display: flex;
   flex-direction: column;
-  background: rgbargba(20, 15, 15, 0.05);
+  background: rgba(20, 15, 15, 0.05);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px;
@@ -866,15 +866,15 @@ select:focus {
 }
 
 .chat-message.bot .chat-bubble {
-  background: rgbargba(20, 15, 15, 0.05);
+  background: rgba(20, 15, 15, 0.05);
   border: 1px solid var(--border);
-  color: #e2e8f0;
+  color: #000;
   border-top-left-radius: 2px;
 }
 
 .chat-message.user .chat-bubble {
   background: var(--indigo);
-  color: #fff;
+  color: #000;
   border-top-right-radius: 2px;
 }
 
@@ -925,7 +925,7 @@ select:focus {
 .btn-send {
   background: var(--indigo);
   border: none;
-  color: #fff;
+  color: #000;
   width: 38px;
   height: 38px;
   border-radius: 50%;
