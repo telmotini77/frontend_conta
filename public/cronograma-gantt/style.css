@@ -28,39 +28,39 @@
 /* Dark Mode Variables (Default) */
 body.dark-mode {
   --bg-app: #090d16;
-  --bg-card: rgba(17, 25, 40, 0.75);
-  --bg-card-hover: rgba(22, 33, 54, 0.85);
+  --bg-card: rgb(17, 25, 40);
+  --bg-card-hover: rgb(22, 33, 54);
   --bg-sidebar: #0f172a;
   --bg-grid-header: #0f172a;
   --bg-input: #1e293b;
   --text-main: #f8fafc;
   --text-muted: #f8fafc;
-  --border-color: rgba(255, 255, 255, 0.08);
+  --border-color: rgb(255, 255, 255);
   --border-focus: #3b82f6;
-  --weekend-bg: rgba(255, 255, 255, 0.02);
-  --grid-line: rgba(255, 255, 255, 0.04);
-  --shadow-main: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --weekend-bg: rgb(255, 255, 255);
+  --grid-line: rgb(255, 255, 255);
+  --shadow-main: 0 10px 30px -10px rgb(0, 0, 0);
   --glass-blur: blur(12px);
-  --glass-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+  --glass-shadow: inset 0 1px 1px 0 rgb(255, 255, 255);
 }
 
 /* Light Mode Variables */
 body.light-mode {
   --bg-app: #f1f5f9;
-  --bg-card: rgba(255, 255, 255, 0.85);
-  --bg-card-hover: rgba(255, 255, 255, 0.95);
+  --bg-card: rgb(255, 255, 255);
+  --bg-card-hover: rgb(255, 255, 255);
   --bg-sidebar: #ffffff;
   --bg-grid-header: #f8fafc;
   --bg-input: #f8fafc;
   --text-main: #0f172a;
   --text-muted: #0f172a;
-  --border-color: rgba(15, 23, 42, 0.08);
+  --border-color: rgb(15, 23, 42);
   --border-focus: #3b82f6;
-  --weekend-bg: rgba(0, 0, 0, 0.02);
-  --grid-line: rgba(0, 0, 0, 0.04);
-  --shadow-main: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+  --weekend-bg: rgb(0, 0, 0);
+  --grid-line: rgb(0, 0, 0);
+  --shadow-main: 0 10px 30px -10px rgb(0, 0, 0);
   --glass-blur: blur(12px);
-  --glass-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.8);
+  --glass-shadow: inset 0 1px 1px 0 rgb(255, 255, 255);
 }
 
 /* --- Base Layout --- */
@@ -97,8 +97,8 @@ body {
   align-items: center;
   padding: 20px 28px;
   background: var(--bg-card);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-main), var(--glass-shadow);
   border-radius: var(--border-radius-lg);
@@ -121,7 +121,7 @@ body {
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 14px rgb(59, 130, 246);
 }
 
 .logo-area h1 {
@@ -160,17 +160,17 @@ body {
 .btn-primary {
   background: linear-gradient(135deg, #3b82f6, #8b5cf6);
   color: rgb(6, 6, 7);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 12px rgb(139, 92, 246);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35);
+  box-shadow: 0 6px 20px rgb(139, 92, 246);
   background: linear-gradient(135deg, #4f46e5, #9333ea);
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgb(255, 255, 255);
   border-color: var(--border-color);
   color: var(--text-main);
 }
@@ -180,7 +180,7 @@ body.light-mode .btn-secondary {
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(255, 255, 255);
   transform: translateY(-1px);
 }
 
@@ -189,13 +189,13 @@ body.light-mode .btn-secondary:hover {
 }
 
 .btn-danger-soft {
-  background: rgba(244, 63, 94, 0.1);
+  background: rgb(244, 63, 94);
   color: #f43f5e;
-  border-color: rgba(244, 63, 94, 0.2);
+  border-color: rgb(244, 63, 94);
 }
 
 .btn-danger-soft:hover {
-  background: rgba(244, 63, 94, 0.2);
+  background: rgb(244, 63, 94);
   transform: translateY(-1px);
 }
 
@@ -222,8 +222,8 @@ body.light-mode #btn-theme-toggle .icon-sun {
 
 .stat-card {
   background: var(--bg-card);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-main), var(--glass-shadow);
   border-radius: var(--border-radius-md);
@@ -248,22 +248,22 @@ body.light-mode #btn-theme-toggle .icon-sun {
 }
 
 .stat-icon.blue {
-  background: rgba(59, 130, 246, 0.15);
+  background: rgb(59, 130, 246);
   color: #3b82f6;
 }
 
 .stat-icon.green {
-  background: rgba(16, 185, 129, 0.15);
+  background: rgb(16, 185, 129);
   color: #10b981;
 }
 
 .stat-icon.orange {
-  background: rgba(245, 158, 11, 0.15);
+  background: rgb(245, 158, 11);
   color: #f59e0b;
 }
 
 .stat-icon.gray {
-  background: rgba(148, 163, 184, 0.15);
+  background: rgb(148, 163, 184);
   color: #94a3b8;
 }
 
@@ -290,8 +290,8 @@ body.light-mode #btn-theme-toggle .icon-sun {
   justify-content: space-between;
   align-items: center;
   background: var(--bg-card);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-main), var(--glass-shadow);
   border-radius: var(--border-radius-md);
@@ -332,7 +332,7 @@ body.light-mode #btn-theme-toggle .icon-sun {
 .search-box input:focus {
   outline: none;
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 3px rgb(59, 130, 246);
 }
 
 .filter-controls {
@@ -375,14 +375,14 @@ body.light-mode #btn-theme-toggle .icon-sun {
 .btn-tab.active {
   background: linear-gradient(135deg, #3b82f6, #8b5cf6);
   color: rgb(3, 11, 8);
-  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.15);
+  box-shadow: 0 2px 6px rgb(139, 92, 246);
 }
 
 /* --- Main Gantt Interface Wrapper --- */
 .gantt-wrapper {
   background: var(--bg-card);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-main), var(--glass-shadow);
   border-radius: var(--border-radius-lg);
@@ -435,7 +435,7 @@ body.light-mode #btn-theme-toggle .icon-sun {
 }
 
 .task-item:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgb(255, 255, 255);
 }
 
 body.light-mode .task-item:hover {
@@ -466,12 +466,12 @@ body.light-mode .task-item:hover {
 .task-item-actions {
   display: flex;
   gap: 4px;
-  opacity: 0;
+  
   transition: opacity var(--transition-fast);
 }
 
 .task-item:hover .task-item-actions {
-  opacity: 1;
+  
 }
 
 .btn-icon-sm {
@@ -489,7 +489,7 @@ body.light-mode .task-item:hover {
 }
 
 .btn-icon-sm:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(255, 255, 255);
   color: var(--text-main);
 }
 
@@ -498,15 +498,15 @@ body.light-mode .btn-icon-sm:hover {
 }
 
 .btn-icon-sm.edit:hover {
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: rgb(59, 130, 246);
   color: #3b82f6;
-  background: rgba(59, 130, 246, 0.08);
+  background: rgb(59, 130, 246);
 }
 
 .btn-icon-sm.delete:hover {
-  border-color: rgba(244, 63, 94, 0.3);
+  border-color: rgb(244, 63, 94);
   color: #f43f5e;
-  background: rgba(244, 63, 94, 0.08);
+  background: rgb(244, 63, 94);
 }
 
 /* --- Gantt Timeline (Right Panel) --- */
@@ -582,11 +582,11 @@ body.light-mode .btn-icon-sm:hover {
 }
 
 .gantt-row:hover {
-  background: rgba(255, 255, 255, 0.01);
+  background: rgb(255, 255, 255);
 }
 
 body.light-mode .gantt-row:hover {
-  background: rgba(0, 0, 0, 0.005);
+  background: rgb(0, 0, 0);
 }
 
 .sidebar-group-header {
@@ -595,7 +595,7 @@ body.light-mode .gantt-row:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(59, 130, 246, 0.05);
+  background: rgb(59, 130, 246);
   font-size: 0.7rem;
   font-weight: 700;
   color: var(--border-focus);
@@ -605,18 +605,18 @@ body.light-mode .gantt-row:hover {
 }
 
 body.light-mode .sidebar-group-header {
-  background: rgba(59, 130, 246, 0.08);
+  background: rgb(59, 130, 246);
 }
 
 .gantt-row-spacer {
   grid-column: 1 / -1;
   height: 32px;
   border-bottom: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.01);
+  background: rgb(255, 255, 255);
 }
 
 body.light-mode .gantt-row-spacer {
-  background: rgba(0, 0, 0, 0.005);
+  background: rgb(0, 0, 0);
 }
 
 .task-bar-wrapper {
@@ -640,14 +640,14 @@ body.light-mode .gantt-row-spacer {
   left: 0;
   bottom: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(255, 255, 255);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-sm);
   overflow: hidden;
 }
 
 body.light-mode .task-bar-progress-bg {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgb(0, 0, 0);
 }
 
 .task-bar-progress-fill {
@@ -659,11 +659,11 @@ body.light-mode .task-bar-progress-bg {
 
 /* Subtle glow matching the selected task color */
 .task-bar-wrapper {
-  box-shadow: 0 2px 8px -2px var(--shadow-color, rgba(0, 0, 0, 0.2));
+  box-shadow: 0 2px 8px -2px var(--shadow-color, rgb(0, 0, 0));
 }
 
 .task-bar-wrapper:hover {
-  box-shadow: 0 4px 15px -2px var(--shadow-color, rgba(0, 0, 0, 0.3));
+  box-shadow: 0 4px 15px -2px var(--shadow-color, rgb(0, 0, 0));
 }
 
 .task-bar-label {
@@ -678,7 +678,7 @@ body.light-mode .task-bar-progress-bg {
   text-overflow: ellipsis;
   pointer-events: none;
   z-index: 3;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 3px rgb(0, 0, 0);
 }
 
 /* Empty Gantt state */
@@ -705,26 +705,26 @@ body.light-mode .task-bar-progress-bg {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgb(0, 0, 0);
+  backdrop-filter: none;
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
+  
   pointer-events: none;
   transition: opacity var(--transition-fast);
 }
 
 .modal-backdrop.open {
-  opacity: 1;
+  
   pointer-events: all;
 }
 
 .modal-card {
   background: var(--bg-sidebar);
   border: 1px solid var(--border-color);
-  box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 50px -15px rgb(0, 0, 0);
   border-radius: var(--border-radius-lg);
   width: 90%;
   max-width: 550px;
@@ -802,7 +802,7 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 3px rgb(59, 130, 246);
 }
 
 /* Slider and numerical progression display */
@@ -853,7 +853,7 @@ textarea:focus {
 
 .color-option input {
   position: absolute;
-  opacity: 0;
+  
   cursor: pointer;
 }
 
@@ -862,13 +862,13 @@ textarea:focus {
   height: 10px;
   background-color: white;
   border-radius: 50%;
-  opacity: 0;
+  
   transition: opacity var(--transition-fast);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 3px rgb(0, 0, 0);
 }
 
 .color-option input:checked+span {
-  opacity: 1;
+  
 }
 
 .modal-actions {
@@ -961,7 +961,7 @@ textarea:focus {
   }
 
   .task-item-actions {
-    opacity: 1;
+    
   }
 
   .gantt-timeline-container {
@@ -975,7 +975,7 @@ textarea:focus {
 }
 
 .quick-progress-slider::-webkit-slider-runnable-track {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: rgb(255, 255, 255) !important;
   height: 4px;
   border-radius: 2px;
 }
@@ -983,11 +983,11 @@ textarea:focus {
 .quick-progress-slider::-webkit-slider-thumb {
   -webkit-appearance: none !important;
   background: #ffffff !important;
-  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid rgb(0, 0, 0) !important;
   width: 12px;
   height: 12px;
   border-radius: 50% !important;
   margin-top: -4px !important;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 3px rgb(0, 0, 0);
 }

@@ -16,11 +16,11 @@
   --border: #20342f;
   --code-bg: #293346;
   --accent: #213993;
-  --accent-bg: rgba(33, 57, 147, 0.08);
-  --accent-border: rgba(33, 57, 147, 0.4);
-  --social-bg: rgba(255, 255, 255, 0.5);
+  --accent-bg: rgb(33, 57, 147);
+  --accent-border: rgb(33, 57, 147);
+  --social-bg: rgb(255, 255, 255);
   --shadow:
-    rgba(0, 0, 0, 0.05) 0 10px 15px -3px, rgba(0, 0, 0, 0.02) 0 4px 6px -2px;
+    rgb(0, 0, 0) 0 10px 15px -3px, rgb(0, 0, 0) 0 4px 6px -2px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
@@ -49,11 +49,11 @@
     --border: #0e211c;
     --code-bg: #0b0f17;
     --accent: #213993;
-    --accent-bg: rgba(33, 57, 147, 0.08);
-    --accent-border: rgba(33, 57, 147, 0.4);
-    --social-bg: rgba(255, 255, 255, 0.5);
+    --accent-bg: rgb(33, 57, 147);
+    --accent-border: rgb(33, 57, 147);
+    --social-bg: rgb(255, 255, 255);
     --shadow:
-      rgba(0, 0, 0, 0.05) 0 10px 15px -3px, rgba(0, 0, 0, 0.02) 0 4px 6px -2px;
+      rgb(0, 0, 0) 0 10px 15px -3px, rgb(0, 0, 0) 0 4px 6px -2px;
   }
 
   #social .button-icon {

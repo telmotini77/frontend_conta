@@ -173,7 +173,7 @@ export default function BillingSystem() {
                 ))}
               </tbody>
             </table>
-            <button onClick={handleAddRow} style={{ margin: '10px', background: 'transparent', border: '1px dashed rgba(255,255,255,0.2)', color: 'var(--text-muted)', padding: '5px 10px', cursor: 'pointer', borderRadius: '4px' }}>+ Agregar Fila</button>
+            <button onClick={handleAddRow} style={{ margin: '10px', background: 'transparent', border: '1px dashed rgb(255, 255, 255)', color: 'var(--text-muted)', padding: '5px 10px', cursor: 'pointer', borderRadius: '4px' }}>+ Agregar Fila</button>
           </div>
         </div>
 

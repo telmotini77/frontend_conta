@@ -230,9 +230,9 @@ const BUSINESS_THEMES: Record<string, {
   'Industrias Manufactureras y Producción': {
     name: 'Manufactura y Producción',
     accent: '#f59e0b',
-    accentGlow: 'rgba(245, 158, 11, 0.25)',
+    accentGlow: 'rgb(245, 158, 11)',
     accentSecondary: '#d97706',
-    gradient: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(245, 158, 11) 0%, rgb(5, 8, 20) 100%)',
     icon: '🏭',
     banner: 'Consola de Control de Producción y Manufactura',
     bgDark: '#0f172a',
@@ -247,9 +247,9 @@ const BUSINESS_THEMES: Record<string, {
   'Comercio al Por Mayor y Por Menor de Viveres en General': {
     name: 'Comercio de Víveres',
     accent: '#10b981',
-    accentGlow: 'rgba(16, 185, 129, 0.25)',
+    accentGlow: 'rgb(16, 185, 129)',
     accentSecondary: '#059669',
-    gradient: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(16, 185, 129) 0%, rgb(5, 8, 20) 100%)',
     icon: '🛒',
     banner: 'Portal Comercial y Control de Víveres en General',
     bgDark: '#022c22',
@@ -264,9 +264,9 @@ const BUSINESS_THEMES: Record<string, {
   'Comercio al Por Mayor y Por Menor de Productos en General': {
     name: 'Comercio General',
     accent: '#a855f7',
-    accentGlow: 'rgba(168, 85, 247, 0.25)',
+    accentGlow: 'rgb(168, 85, 247)',
     accentSecondary: '#7c3aed',
-    gradient: 'linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(168, 85, 247) 0%, rgb(5, 8, 20) 100%)',
     icon: '📦',
     banner: 'Ecosistema de Inventario y Distribución de Productos',
     bgDark: '#1e1b4b',
@@ -281,9 +281,9 @@ const BUSINESS_THEMES: Record<string, {
   'Industrias de Extracción, Cultivo, Explotación, Conservación, etc': {
     name: 'Extracción y Cultivo',
     accent: '#22c55e',
-    accentGlow: 'rgba(34, 197, 94, 0.25)',
+    accentGlow: 'rgb(34, 197, 94)',
     accentSecondary: '#15803d',
-    gradient: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(34, 197, 94) 0%, rgb(5, 8, 20) 100%)',
     icon: '🚜',
     banner: 'Terminal de Gestión Agrícola, Cultivo y Conservación',
     bgDark: '#052e16',
@@ -298,9 +298,9 @@ const BUSINESS_THEMES: Record<string, {
   'Hoteleria y Turismo': {
     name: 'Hotelería y Turismo',
     accent: '#eab308',
-    accentGlow: 'rgba(234, 179, 8, 0.25)',
+    accentGlow: 'rgb(234, 179, 8)',
     accentSecondary: '#ca8a04',
-    gradient: 'linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(234, 179, 8) 0%, rgb(5, 8, 20) 100%)',
     icon: '🏨',
     banner: 'Plataforma Hotelera y Servicios Turísticos',
     bgDark: '#1c1917',
@@ -315,9 +315,9 @@ const BUSINESS_THEMES: Record<string, {
   'Restaurantes, Cafeterias o Similares': {
     name: 'Restaurantes y Cafeterías',
     accent: '#f97316',
-    accentGlow: 'rgba(249, 115, 22, 0.25)',
+    accentGlow: 'rgb(249, 115, 22)',
     accentSecondary: '#ea580c',
-    gradient: 'linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(249, 115, 22) 0%, rgb(5, 8, 20) 100%)',
     icon: '🍔',
     banner: 'Consola Operativa Gastronómica y Restaurantes',
     bgDark: '#2a1a15',
@@ -332,9 +332,9 @@ const BUSINESS_THEMES: Record<string, {
   'Servicios de Contabilidad': {
     name: 'Servicios Contables',
     accent: '#06b6d4',
-    accentGlow: 'rgba(6, 182, 212, 0.25)',
+    accentGlow: 'rgb(6, 182, 212)',
     accentSecondary: '#0891b2',
-    gradient: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(6, 182, 212) 0%, rgb(5, 8, 20) 100%)',
     icon: '💼',
     banner: 'Escritorio de Gestión Contable y Tributaria Profesional',
     bgDark: '#082f49',
@@ -349,9 +349,9 @@ const BUSINESS_THEMES: Record<string, {
   'Actividades Profesionales': {
     name: 'Actividades Profesionales',
     accent: '#3b82f6',
-    accentGlow: 'rgba(59, 130, 246, 0.25)',
+    accentGlow: 'rgb(59, 130, 246)',
     accentSecondary: '#2563eb',
-    gradient: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(5, 8, 20) 100%)',
     icon: '🎓',
     banner: 'Escritorio de Consultoría y Servicios Profesionales',
     bgDark: '#0f172a',
@@ -366,9 +366,9 @@ const BUSINESS_THEMES: Record<string, {
   'Servicios Sociales y de Salud': {
     name: 'Servicios de Salud',
     accent: '#0d9488',
-    accentGlow: 'rgba(13, 148, 136, 0.25)',
+    accentGlow: 'rgb(13, 148, 136)',
     accentSecondary: '#0f766e',
-    gradient: 'linear-gradient(135deg, rgba(13, 148, 136, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(13, 148, 136) 0%, rgb(5, 8, 20) 100%)',
     icon: '🩺',
     banner: 'Portal de Servicios de Salud y Bienestar Social',
     bgDark: '#042f2e',
@@ -383,9 +383,9 @@ const BUSINESS_THEMES: Record<string, {
   'Servicios en General': {
     name: 'Servicios Generales',
     accent: '#6366f1',
-    accentGlow: 'rgba(99, 102, 241, 0.25)',
+    accentGlow: 'rgb(99, 102, 241)',
     accentSecondary: '#4f46e5',
-    gradient: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(99, 102, 241) 0%, rgb(5, 8, 20) 100%)',
     icon: '🔧',
     banner: 'Consola General de Gestión de Servicios',
     bgDark: '#111827',
@@ -400,9 +400,9 @@ const BUSINESS_THEMES: Record<string, {
   'Servicios de Transporte': {
     name: 'Servicios de Transporte',
     accent: '#ef4444',
-    accentGlow: 'rgba(239, 68, 68, 0.25)',
+    accentGlow: 'rgb(239, 68, 68)',
     accentSecondary: '#dc2626',
-    gradient: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(239, 68, 68) 0%, rgb(5, 8, 20) 100%)',
     icon: '🚚',
     banner: 'Terminal Logístico y Despacho de Transporte',
     bgDark: '#450a0a',
@@ -417,9 +417,9 @@ const BUSINESS_THEMES: Record<string, {
   'Servicios de Reparación de Automotores y Motocicletas': {
     name: 'Reparación Automotriz',
     accent: '#84cc16',
-    accentGlow: 'rgba(132, 204, 22, 0.25)',
+    accentGlow: 'rgb(132, 204, 22)',
     accentSecondary: '#65a30d',
-    gradient: 'linear-gradient(135deg, rgba(132, 204, 22, 0.15) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(132, 204, 22) 0%, rgb(5, 8, 20) 100%)',
     icon: '🏍️',
     banner: 'Consola Operativa de Taller Automotriz y Motos',
     bgDark: '#1c1d17',
@@ -434,9 +434,9 @@ const BUSINESS_THEMES: Record<string, {
   'default': {
     name: 'General',
     accent: '#213993',
-    accentGlow: 'rgba(33, 57, 147, 0.25)',
+    accentGlow: 'rgb(33, 57, 147)',
     accentSecondary: '#3b53a4',
-    gradient: 'linear-gradient(135deg, rgba(33, 57, 147, 0.1) 0%, rgba(5, 8, 20, 0.95) 100%)',
+    gradient: 'linear-gradient(135deg, rgb(33, 57, 147) 0%, rgb(5, 8, 20) 100%)',
     icon: '💻',
     banner: 'Consola General de Control y Contabilidad',
     bgDark: '#E8EAE9',
@@ -1085,11 +1085,11 @@ export default function App() {
       root.style.setProperty('--bg-gradient-end', '#090d1a');
       root.style.setProperty('--bg-main', theme.bgDark);
       root.style.setProperty('--bg-card', theme.panelDark);
-      root.style.setProperty('--bg-card-hover', 'rgba(255, 255, 255, 0.05)');
+      root.style.setProperty('--bg-card-hover', 'rgb(255, 255, 255)');
       root.style.setProperty('--text-primary', theme.textPrimary);
       root.style.setProperty('--text-secondary', theme.textPrimary);
       root.style.setProperty('--text-muted', theme.textPrimary);
-      root.style.setProperty('--border', 'rgba(255, 255, 255, 0.1)');
+      root.style.setProperty('--border', 'rgb(255, 255, 255)');
     } else {
       // Reset variables on landing page/logout
       root.style.setProperty('--bg-gradient-start', '#E8EAE9');
@@ -2025,7 +2025,7 @@ export default function App() {
               fontSize: '10px',
               transform: isExpanded ? 'rotate(90deg)' : 'none',
               transition: 'transform 0.2s',
-              opacity: 0.5
+              
             }}>
               ▶
             </span>
@@ -2039,7 +2039,7 @@ export default function App() {
             flexDirection: 'column',
             gap: '2px',
             margin: '2px 0 6px 0',
-            borderLeft: '1px solid rgba(255, 255, 255, 0.05)',
+            borderLeft: '1px solid rgb(255, 255, 255)',
             maxHeight: '260px',
             overflowY: 'auto'
           }}>
@@ -2050,7 +2050,7 @@ export default function App() {
                 className={`sub-tab-btn ${item.isActive ? 'active' : ''}`}
                 onClick={item.onClick}
                 style={{
-                  background: item.isActive ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
+                  background: item.isActive ? 'rgb(0, 0, 0)' : 'transparent',
                   border: 'none',
                   color: item.isActive ? '#f8fafc' : 'var(--text-primary)',
                   padding: '6px 12px',
@@ -2149,7 +2149,7 @@ export default function App() {
                         key={idx}
                         onClick={() => toggleRoadmapItem(item)}
                         style={{
-                          background: isSelected ? 'rgba(255,255,255,0.1)' : 'transparent',
+                          background: isSelected ? 'rgb(255, 255, 255)' : 'transparent',
                           border: 'none',
                           borderLeft: isSelected ? '4px solid #f8fafc' : '4px solid transparent',
                           color: isSelected ? '#f8fafc' : 'var(--text-primary)',
@@ -2358,7 +2358,7 @@ export default function App() {
                         </svg>
                       </button>
                     </div>
-                    <span style={{ opacity: 0.7 }}>RUC: {user.ruc}</span>
+                    <span style={{  }}>RUC: {user.ruc}</span>
                   </div>
                 )}
               </div>
@@ -2401,8 +2401,8 @@ export default function App() {
                       value={activeEnvironment}
                       onChange={(e) => handleSwitchEnvironment(e.target.value)}
                       style={{
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        background: 'rgb(255, 255, 255)',
+                        border: '1px solid rgb(255, 255, 255)',
                         borderRadius: '6px',
                         color: 'var(--text-primary)',
                         fontSize: '12.5px',
@@ -2419,7 +2419,7 @@ export default function App() {
                     </select>
                   </div>
                 )}
-                <span className="top-bar-text" style={{ fontSize: '12px', opacity: 0.8 }}>Ecosistema Autónomo AuraContable</span>
+                <span className="top-bar-text" style={{ fontSize: '12px',  }}>Ecosistema Autónomo AuraContable</span>
                 <button
                   onClick={() => {
                     if (activeTab === 'kardex') {
@@ -2446,8 +2446,8 @@ export default function App() {
                   }}
                   className="btn-sm"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    background: 'rgb(255, 255, 255)',
+                    border: '1px solid rgb(255, 255, 255)',
                     borderRadius: '6px',
                     cursor: 'pointer',
                     padding: '6px 10px',
@@ -2459,8 +2459,8 @@ export default function App() {
                     transition: 'all 0.2s ease',
                   }}
                   title="Refrescar Datos"
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgb(255, 255, 255)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'rgb(255, 255, 255)'}
                 >
                   <span style={{ fontSize: '14px' }}>🔄</span> Refrescar
                 </button>
@@ -2479,10 +2479,10 @@ export default function App() {
                   padding: '12px 20px',
                   margin: '0 0 1.5rem 0',
                   borderRadius: '12px',
-                  border: '1px solid rgba(6, 182, 212, 0.3)',
-                  background: 'rgba(15, 23, 42, 0.65)',
-                  backdropFilter: 'blur(10px)',
-                  boxShadow: '0 8px 32px 0 rgba(6, 182, 212, 0.1)',
+                  border: '1px solid rgb(6, 182, 212)',
+                  background: 'rgb(15, 23, 42)',
+                  backdropFilter: 'none',
+                  boxShadow: '0 8px 32px 0 rgb(6, 182, 212)',
                   position: 'relative',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -2530,7 +2530,7 @@ export default function App() {
                         cursor: 'pointer',
                         fontWeight: 'bold',
                         fontSize: '16px',
-                        boxShadow: '0 0 10px rgba(6, 182, 212, 0.4)',
+                        boxShadow: '0 0 10px rgb(6, 182, 212)',
                         transition: 'all 0.2s',
                       }}
                       onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
@@ -2607,8 +2607,8 @@ export default function App() {
                           <button className={`btn-sm ${ivaFilter === 'without' ? 'status-no' : ''}`} onClick={() => setIvaFilter('without')}>Sin IVA (0%)</button>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', marginBottom: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '0.8rem' }}>
-                        <span style={{ fontSize: '12px', fontWeight: 'bold', marginRight: '6px', opacity: 0.8 }}>Categorías:</span>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', marginBottom: '1.5rem', borderTop: '1px solid rgb(255, 255, 255)', paddingTop: '0.8rem' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 'bold', marginRight: '6px',  }}>Categorías:</span>
                         <button className={`btn-sm ${categoryFilter === 'all' ? 'status-aura' : ''}`} onClick={() => setCategoryFilter('all')}>Todas</button>
                         <button className={`btn-sm ${categoryFilter === 'none' ? 'status-no' : ''}`} onClick={() => setCategoryFilter('none')}>Sin Categoría</button>
                         {categories.map(cat => (
@@ -2646,7 +2646,7 @@ export default function App() {
                                 <td>
                                   <div>{p.name}</div>
                                   {p.category && (
-                                    <span style={{ fontSize: '10px', opacity: 0.6, background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', marginTop: '2px', display: 'inline-block' }}>
+                                    <span style={{ fontSize: '10px', , background: 'rgb(255, 255, 255)', padding: '2px 6px', borderRadius: '4px', marginTop: '2px', display: 'inline-block' }}>
                                       📂 {p.category.name}
                                     </span>
                                   )}
@@ -2679,14 +2679,14 @@ export default function App() {
                                       fontSize: '11px',
                                       fontWeight: '600',
                                       color: '#ef4444',
-                                      background: 'rgba(239, 68, 68, 0.1)',
+                                      background: 'rgb(239, 68, 68)',
                                       transition: 'all 0.2s ease',
                                     }}
                                     onMouseEnter={(e) => {
-                                      e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+                                      e.currentTarget.style.background = 'rgb(239, 68, 68)';
                                     }}
                                     onMouseLeave={(e) => {
-                                      e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+                                      e.currentTarget.style.background = 'rgb(239, 68, 68)';
                                     }}
                                     title="Eliminar producto y movimientos"
                                   >
@@ -2703,7 +2703,7 @@ export default function App() {
                     {/* Sidebar forms */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       <div className="card glass-panel" style={{ padding: '1.5rem', overflow: 'visible', zIndex: 10 }}>
-                        <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.1)', marginBottom: '1rem' }}>
+                        <div style={{ display: 'flex', borderBottom: '1px solid rgb(255, 255, 255)', marginBottom: '1rem' }}>
                           <button
                             type="button"
                             onClick={() => setProductFormMode('create')}
@@ -2832,12 +2832,12 @@ export default function App() {
                                        position: 'absolute',
                                        zIndex: 1000,
                                        background: '#1e293b',
-                                       border: '1px solid rgba(255,255,255,0.1)',
+                                       border: '1px solid rgb(255, 255, 255)',
                                        borderRadius: '6px',
                                        width: '100%',
                                        maxHeight: '250px',
                                        overflowY: 'auto',
-                                       boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
+                                       boxShadow: '0 10px 15px -3px rgb(0, 0, 0)',
                                        marginTop: '4px'
                                      }}
                                    >
@@ -2850,12 +2850,12 @@ export default function App() {
                                          style={{
                                            padding: '8px 12px',
                                            cursor: 'pointer',
-                                           borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                           borderBottom: '1px solid rgb(255, 255, 255)',
                                            fontSize: '13px',
                                            color: '#fff',
                                            transition: 'background 0.2s'
                                          }}
-                                         onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(6, 182, 212, 0.2)'}
+                                         onMouseEnter={(e) => e.currentTarget.style.background = 'rgb(6, 182, 212)'}
                                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                                        >
                                          <strong>{p.sku}</strong> - {p.name}
@@ -2870,8 +2870,8 @@ export default function App() {
                                   {foundProduct ? (
                                     <div
                                       style={{
-                                        background: 'rgba(6, 182, 212, 0.1)',
-                                        border: '1px solid rgba(6, 182, 212, 0.2)',
+                                        background: 'rgb(6, 182, 212)',
+                                        border: '1px solid rgb(6, 182, 212)',
                                         padding: '10px',
                                         borderRadius: '6px',
                                         marginBottom: '1rem',
@@ -2894,8 +2894,8 @@ export default function App() {
                                   ) : (
                                     <div
                                       style={{
-                                        background: 'rgba(239, 68, 68, 0.1)',
-                                        border: '1px solid rgba(239, 68, 68, 0.2)',
+                                        background: 'rgb(239, 68, 68)',
+                                        border: '1px solid rgb(239, 68, 68)',
                                         padding: '10px',
                                         borderRadius: '6px',
                                         marginBottom: '1rem',
@@ -3175,7 +3175,7 @@ export default function App() {
                               <input type="text" required value={newClientName} onChange={e => setNewClientName(e.target.value)} placeholder="Ej: CORPORACION EL ROSADO S.A." />
                             </div>
 
-                            <div style={{ marginBottom: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '0.8rem' }}>
+                            <div style={{ marginBottom: '1rem', borderTop: '1px solid rgb(255, 255, 255)', paddingTop: '0.8rem' }}>
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                                 <label style={{ fontSize: '12px', fontWeight: 'bold' }}>Detalle de Productos:</label>
                                 <button
@@ -3222,7 +3222,7 @@ export default function App() {
                                       placeholder="Cant"
                                     />
 
-                                    <span style={{ fontSize: '12px', width: '60px', textAlign: 'right', opacity: 0.8 }}>
+                                    <span style={{ fontSize: '12px', width: '60px', textAlign: 'right',  }}>
                                       ${selectedProd ? (selectedProd.price * item.quantity).toFixed(2) : '0.00'}
                                     </span>
 
@@ -3254,12 +3254,12 @@ export default function App() {
 
                             {/* Breakdown Totals */}
                             <div style={{
-                              background: 'rgba(255,255,255,0.02)',
+                              background: 'rgb(255, 255, 255)',
                               padding: '10px',
                               borderRadius: '8px',
                               marginBottom: '1rem',
                               fontSize: '12px',
-                              border: '1px solid rgba(255,255,255,0.05)'
+                              border: '1px solid rgb(255, 255, 255)'
                             }}>
                               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                                 <span style={{ color: 'var(--text-secondary)' }}>Subtotal:</span>
@@ -3269,7 +3269,7 @@ export default function App() {
                                 <span style={{ color: 'var(--text-secondary)' }}>IVA ({globalIvaRate}%):</span>
                                 <strong>${calculatedInvoiceTotals.iva.toFixed(2)}</strong>
                               </div>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '4px', fontWeight: 'bold' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgb(255, 255, 255)', paddingTop: '4px', fontWeight: 'bold' }}>
                                 <span>Total a Cobrar:</span>
                                 <span style={{ color: 'var(--cyan)' }}>${calculatedInvoiceTotals.total.toFixed(2)}</span>
                               </div>
@@ -3353,7 +3353,7 @@ export default function App() {
                                       <button 
                                         className="btn-sm btn-cyan" 
                                         onClick={() => handleDeleteEmployee(emp.id)}
-                                        style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239,68,68,0.4)' }}
+                                        style={{ background: 'rgb(239, 68, 68)', color: '#f87171', border: '1px solid rgb(239, 68, 68)' }}
                                       >
                                         🗑️ Eliminar
                                       </button>
@@ -3495,7 +3495,7 @@ export default function App() {
                           </div>
                           <div className="form-group">
                             <label>Fecha Compra:</label>
-                            <input type="date" required value={newPurDate} onChange={e => setNewPurDate(e.target.value)} style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px 12px', color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', fontSize: '14px', outline: 'none' }} />
+                            <input type="date" required value={newPurDate} onChange={e => setNewPurDate(e.target.value)} style={{ width: '100%', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px 12px', color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', fontSize: '14px', outline: 'none' }} />
                           </div>
                         </div>
                         <div className="form-group">
@@ -3809,7 +3809,7 @@ export default function App() {
                             ))}
                           </tbody>
                           <tfoot>
-                            <tr style={{ background: 'rgba(0,0,0,0.3)', fontWeight: 'bold' }}>
+                            <tr style={{ background: 'rgb(0, 0, 0)', fontWeight: 'bold' }}>
                               <td colSpan={2}>TOTALES GENERALES</td>
                               <td style={{ color: 'var(--cyan)' }}>${totalDebits.toFixed(2)}</td>
                               <td style={{ color: 'var(--cyan)' }}>${totalCredits.toFixed(2)}</td>
@@ -3829,8 +3829,8 @@ export default function App() {
                         ) : (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                             {journalEntries.map(entry => (
-                              <div key={entry.id} className="journal-entry glass-panel" style={{ padding: '1.25rem', border: '1px solid rgba(99, 102, 241, 0.15)', background: 'rgba(18, 21, 32, 0.4)' }}>
-                                <div className="journal-header" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '6px', marginBottom: '8px' }}>
+                              <div key={entry.id} className="journal-entry glass-panel" style={{ padding: '1.25rem', border: '1px solid rgb(99, 102, 241)', background: 'rgb(18, 21, 32)' }}>
+                                <div className="journal-header" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)', borderBottom: '1px solid rgb(255, 255, 255)', paddingBottom: '6px', marginBottom: '8px' }}>
                                   <span><strong>REF:</strong> {entry.id.slice(0, 8).toUpperCase()} ({entry.type})</span>
                                   <span>{new Date(entry.date).toLocaleString()}</span>
                                 </div>
@@ -3878,7 +3878,7 @@ export default function App() {
                         </div>
                         <div className="form-group">
                           <label>Fecha Contable:</label>
-                          <input type="date" required value={manualEntryDate} onChange={e => setManualEntryDate(e.target.value)} style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px 12px', color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', fontSize: '14px', outline: 'none' }} />
+                          <input type="date" required value={manualEntryDate} onChange={e => setManualEntryDate(e.target.value)} style={{ width: '100%', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px 12px', color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', fontSize: '14px', outline: 'none' }} />
                         </div>
 
                         <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px', marginTop: '8px' }}>
@@ -3998,7 +3998,7 @@ export default function App() {
                             <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>${salesWithoutIva.toFixed(2)}</td>
                             <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>$0.00</td>
                           </tr>
-                          <tr style={{ fontWeight: 'bold', background: 'rgba(0,0,0,0.1)' }}>
+                          <tr style={{ fontWeight: 'bold', background: 'rgb(0, 0, 0)' }}>
                             <td>499</td>
                             <td>TOTAL VENTAS Y RENDIMIENTOS</td>
                             <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>${(salesWithIva + salesWithoutIva).toFixed(2)}</td>
@@ -4017,7 +4017,7 @@ export default function App() {
                             <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>${purchasesWithoutIva.toFixed(2)}</td>
                             <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>$0.00</td>
                           </tr>
-                          <tr style={{ fontWeight: 'bold', background: 'rgba(0,0,0,0.1)' }}>
+                          <tr style={{ fontWeight: 'bold', background: 'rgb(0, 0, 0)' }}>
                             <td>599</td>
                             <td>TOTAL ADQUISICIONES Y COMPRAS</td>
                             <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>${(purchasesWithIva + purchasesWithoutIva).toFixed(2)}</td>
@@ -4026,7 +4026,7 @@ export default function App() {
                         </tbody>
                       </table>
 
-                      <div className="card glass-panel" style={{ padding: '1.25rem', border: '1px solid rgba(99,102,241,0.2)', background: 'rgba(99,102,241,0.02)' }}>
+                      <div className="card glass-panel" style={{ padding: '1.25rem', border: '1px solid rgb(99, 102, 241)', background: 'rgb(99, 102, 241)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div>
                             <strong style={{ fontSize: '15px', color: 'var(--text-primary)' }}>IMPUESTO A LIQUIDAR (Casillero 601 / 602):</strong>
@@ -4087,8 +4087,8 @@ export default function App() {
                                   ? '2px solid var(--cyan)'
                                   : '1px solid var(--border)',
                                 background: sriSimulate
-                                  ? 'rgba(6, 182, 212, 0.05)'
-                                  : 'rgba(0, 0, 0, 0.2)',
+                                  ? 'rgb(6, 182, 212)'
+                                  : 'rgb(0, 0, 0)',
                                 boxShadow: sriSimulate
                                   ? '0 0 15px var(--cyan-glow)'
                                   : 'none',
@@ -4128,8 +4128,8 @@ export default function App() {
                                   ? '2px solid var(--indigo)'
                                   : '1px solid var(--border)',
                                 background: (!sriSimulate && sriEnvironment === '1')
-                                  ? 'rgba(99, 102, 241, 0.05)'
-                                  : 'rgba(0, 0, 0, 0.2)',
+                                  ? 'rgb(99, 102, 241)'
+                                  : 'rgb(0, 0, 0)',
                                 boxShadow: (!sriSimulate && sriEnvironment === '1')
                                   ? '0 0 15px var(--indigo-glow)'
                                   : 'none',
@@ -4169,8 +4169,8 @@ export default function App() {
                                   ? '2px solid var(--emerald)'
                                   : '1px solid var(--border)',
                                 background: (!sriSimulate && sriEnvironment === '2')
-                                  ? 'rgba(16, 185, 129, 0.05)'
-                                  : 'rgba(0, 0, 0, 0.2)',
+                                  ? 'rgb(16, 185, 129)'
+                                  : 'rgb(0, 0, 0)',
                                 boxShadow: (!sriSimulate && sriEnvironment === '2')
                                   ? '0 0 15px var(--emerald-glow)'
                                   : 'none',
@@ -4211,7 +4211,7 @@ export default function App() {
                                 El sistema está configurado en modo educativo y de pruebas locales. Las facturas emitidas simularán su firma y el flujo SOAP del SRI de manera automática.
                               </p>
 
-                              <div style={{ background: 'rgba(6, 182, 212, 0.05)', border: '1px solid rgba(6, 182, 212, 0.2)', borderRadius: '8px', padding: '12px', marginBottom: '1.5rem' }}>
+                              <div style={{ background: 'rgb(6, 182, 212)', border: '1px solid rgb(6, 182, 212)', borderRadius: '8px', padding: '12px', marginBottom: '1.5rem' }}>
                                 <h5 style={{ margin: '0 0 6px', fontSize: '12px', fontWeight: 'bold', color: 'var(--cyan)' }}>Guía Rápida de Interacción:</h5>
                                 <ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '11px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                   <li>Dirígete a la pestaña <strong>Control de Ventas</strong>.</li>
@@ -4265,7 +4265,7 @@ export default function App() {
                                     accept=".p12"
                                     onChange={handleP12FileChange}
                                     style={{
-                                      background: 'rgba(0,0,0,0.3)',
+                                      background: 'rgb(0, 0, 0)',
                                       border: '1px dashed var(--border)',
                                       borderRadius: '8px',
                                       padding: '10px',
@@ -4285,7 +4285,7 @@ export default function App() {
                                     value={sriSignaturePassword}
                                     onChange={(e) => setSriSignaturePassword(e.target.value)}
                                     placeholder={sriConfigHasSignature ? '••••••••' : 'Ingresa la contraseña del certificado'}
-                                    style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                                    style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
                                   />
                                 </div>
 
@@ -4297,7 +4297,7 @@ export default function App() {
                                       value={sriEstablishmentCode}
                                       onChange={(e) => setSriEstablishmentCode(e.target.value.slice(0, 3))}
                                       placeholder="001"
-                                      style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                                      style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
                                     />
                                   </div>
                                   <div className="form-group">
@@ -4307,7 +4307,7 @@ export default function App() {
                                       value={sriEmissionPoint}
                                       onChange={(e) => setSriEmissionPoint(e.target.value.slice(0, 3))}
                                       placeholder="002"
-                                      style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                                      style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
                                     />
                                   </div>
                                 </div>
@@ -4319,7 +4319,7 @@ export default function App() {
                                     value={sriEstablishmentAddress}
                                     onChange={(e) => setSriEstablishmentAddress(e.target.value)}
                                     placeholder="Av. de los Granados N45 y Eloy Alfaro, Quito"
-                                    style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                                    style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
                                   />
                                 </div>
 
@@ -4344,7 +4344,7 @@ export default function App() {
                                       value={sriParentCompanyRuc}
                                       onChange={(e) => setSriParentCompanyRuc(e.target.value.slice(0, 13))}
                                       placeholder="1792455894001"
-                                      style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                                      style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
                                     />
                                   </div>
                                 )}
@@ -4373,13 +4373,13 @@ export default function App() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem', flex: 1, maxWidth: '700px' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
                             <span style={{ fontWeight: '600' }}>WSDL Recepción:</span>
-                            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', opacity: 0.8, wordBreak: 'break-all' }}>
+                            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', , wordBreak: 'break-all' }}>
                               {sriSimulate ? 'Simulador Local (N/A)' : (sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...')}
                             </span>
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
                             <span style={{ fontWeight: '600' }}>WSDL Autorización:</span>
-                            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', opacity: 0.8, wordBreak: 'break-all' }}>
+                            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', , wordBreak: 'break-all' }}>
                               {sriSimulate ? 'Simulador Local (N/A)' : (sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...')}
                             </span>
                           </div>
@@ -4389,7 +4389,7 @@ export default function App() {
                               {sriSimulate ? (
                                 <span className="badge-status status-aura">MOCK SIMULADO</span>
                               ) : sriEnvironment === '2' ? (
-                                <span className="badge-status status-yes" style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--emerald)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>PRODUCCIÓN REAL</span>
+                                <span className="badge-status status-yes" style={{ background: 'rgb(16, 185, 129)', color: 'var(--emerald)', border: '1px solid rgb(16, 185, 129)' }}>PRODUCCIÓN REAL</span>
                               ) : (
                                 <span className="badge-status status-yes">PRUEBAS REAL</span>
                               )}
@@ -4409,7 +4409,7 @@ export default function App() {
                           </div>
                         </div>
 
-                        <div style={{ marginTop: '2rem', padding: '1.25rem', borderRadius: '8px', background: 'rgba(0,0,0,0.02)', fontSize: '12px', border: '1px solid var(--border)', maxWidth: '700px' }}>
+                        <div style={{ marginTop: '2rem', padding: '1.25rem', borderRadius: '8px', background: 'rgb(0, 0, 0)', fontSize: '12px', border: '1px solid var(--border)', maxWidth: '700px' }}>
                           <strong style={{ display: 'block', marginBottom: '8px', color: 'var(--text-primary)' }}>Guía de Comprobación:</strong>
                           <ol style={{ paddingLeft: '1.25rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             {sriSimulate ? (
@@ -4580,15 +4580,15 @@ export default function App() {
                         justifyContent: 'flex-start',
                         borderRadius: '12px',
                         marginBottom: '1rem',
-                        background: 'rgba(15, 23, 42, 0.45)'
+                        background: 'rgb(15, 23, 42)'
                       }}>
                         <button
                           onClick={() => setCompanyViewMode('list')}
                           disabled={companyViewMode === 'list'}
                           className="btn-sm"
                           style={{
-                            background: companyViewMode === 'list' ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.1)',
-                            border: '1px solid rgba(255,255,255,0.15)',
+                            background: companyViewMode === 'list' ? 'rgb(255, 255, 255)' : 'rgb(255, 255, 255)',
+                            border: '1px solid rgb(255, 255, 255)',
                             color: companyViewMode === 'list' ? 'var(--text-muted)' : 'var(--text-primary)',
                             padding: '8px 16px',
                             borderRadius: '8px',
@@ -4608,7 +4608,7 @@ export default function App() {
                           disabled={companyViewMode === 'list'}
                           className="btn-sm"
                           style={{
-                            background: companyViewMode === 'list' ? 'rgba(255,255,255,0.03)' : 'var(--cyan)',
+                            background: companyViewMode === 'list' ? 'rgb(255, 255, 255)' : 'var(--cyan)',
                             border: 'none',
                             color: companyViewMode === 'list' ? 'var(--text-muted)' : '#070a13',
                             padding: '8px 18px',
@@ -4619,7 +4619,7 @@ export default function App() {
                             gap: '6px',
                             fontWeight: '700',
                             fontSize: '13px',
-                            boxShadow: companyViewMode === 'list' ? 'none' : '0 0 12px rgba(6, 182, 212, 0.3)'
+                            boxShadow: companyViewMode === 'list' ? 'none' : '0 0 12px rgb(6, 182, 212)'
                           }}
                         >
                           💾 Guardar
@@ -4630,8 +4630,8 @@ export default function App() {
                           disabled={companyViewMode === 'form' && companyFormAction === 'create'}
                           className="btn-sm"
                           style={{
-                            background: (companyViewMode === 'form' && companyFormAction === 'create') ? 'rgba(255,255,255,0.03)' : 'rgba(6, 182, 212, 0.15)',
-                            border: '1px solid rgba(6, 182, 212, 0.3)',
+                            background: (companyViewMode === 'form' && companyFormAction === 'create') ? 'rgb(255, 255, 255)' : 'rgb(6, 182, 212)',
+                            border: '1px solid rgb(6, 182, 212)',
                             color: (companyViewMode === 'form' && companyFormAction === 'create') ? 'var(--text-muted)' : 'var(--cyan)',
                             padding: '8px 16px',
                             borderRadius: '8px',
@@ -4651,8 +4651,8 @@ export default function App() {
                           disabled={!selectedCompany || (companyViewMode === 'form' && companyFormAction === 'edit')}
                           className="btn-sm"
                           style={{
-                            background: (!selectedCompany || (companyViewMode === 'form' && companyFormAction === 'edit')) ? 'rgba(255,255,255,0.03)' : 'rgba(16, 185, 129, 0.15)',
-                            border: '1px solid rgba(16, 185, 129, 0.3)',
+                            background: (!selectedCompany || (companyViewMode === 'form' && companyFormAction === 'edit')) ? 'rgb(255, 255, 255)' : 'rgb(16, 185, 129)',
+                            border: '1px solid rgb(16, 185, 129)',
                             color: (!selectedCompany || (companyViewMode === 'form' && companyFormAction === 'edit')) ? 'var(--text-muted)' : '#10b981',
                             padding: '8px 16px',
                             borderRadius: '8px',
@@ -4700,14 +4700,14 @@ export default function App() {
                                     onClick={() => setSelectedCompany(c)}
                                     style={{
                                       cursor: 'pointer',
-                                      background: selectedCompany?.id === c.id ? 'rgba(6, 182, 212, 0.08)' : 'transparent',
+                                      background: selectedCompany?.id === c.id ? 'rgb(6, 182, 212)' : 'transparent',
                                       borderLeft: selectedCompany?.id === c.id ? '3px solid var(--cyan)' : '3px solid transparent'
                                     }}
                                   >
                                     <td><strong>{c.name}</strong></td>
                                     <td style={{ fontFamily: 'var(--font-mono)' }}>{c.identification}</td>
                                     <td><span className="badge-status status-yes">{c.type}</span></td>
-                                    <td>{c.description || <span style={{ opacity: 0.4 }}>Sin descripción</span>}</td>
+                                    <td>{c.description || <span style={{  }}>Sin descripción</span>}</td>
                                     <td style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--cyan)' }}>{c.dbName}</td>
                                     <td style={{ textAlign: 'right' }}>
                                       <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
@@ -4723,7 +4723,7 @@ export default function App() {
                                             setCompanyViewMode('form');
                                           }}
                                           className="btn-sm"
-                                          style={{ padding: '4px 8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', cursor: 'pointer' }}
+                                          style={{ padding: '4px 8px', background: 'rgb(255, 255, 255)', border: '1px solid rgb(255, 255, 255)', borderRadius: '4px', cursor: 'pointer' }}
                                           title="Editar"
                                         >
                                           ✏️
@@ -4731,7 +4731,7 @@ export default function App() {
                                         <button
                                           onClick={() => handleDeleteCompany(c.id, c.name)}
                                           className="btn-sm"
-                                          style={{ padding: '4px 8px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '4px', cursor: 'pointer' }}
+                                          style={{ padding: '4px 8px', background: 'rgb(239, 68, 68)', border: '1px solid rgb(239, 68, 68)', borderRadius: '4px', cursor: 'pointer' }}
                                           title="Eliminar"
                                         >
                                           🗑️
@@ -4756,7 +4756,7 @@ export default function App() {
                               <select
                                 value={compType}
                                 onChange={(e) => setCompType(e.target.value)}
-                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
+                                style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                               >
                                 <option value="RUC">RUC</option>
                                 <option value="CÉDULA">Cédula</option>
@@ -4772,7 +4772,7 @@ export default function App() {
                                 value={compIdentificacion}
                                 onChange={(e) => setCompIdentificacion(e.target.value)}
                                 placeholder="Identificación (RUC o Cédula)"
-                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
+                                style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                               />
                             </div>
 
@@ -4784,7 +4784,7 @@ export default function App() {
                                 value={compRazonSocial}
                                 onChange={(e) => setCompRazonSocial(e.target.value)}
                                 placeholder="Nombre Oficial o Razón Social"
-                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
+                                style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                               />
                             </div>
 
@@ -4795,7 +4795,7 @@ export default function App() {
                                 value={compDescripcion}
                                 onChange={(e) => setCompDescripcion(e.target.value)}
                                 placeholder="Nombre Comercial o Descripción"
-                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
+                                style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                               />
                             </div>
 
@@ -4806,7 +4806,7 @@ export default function App() {
                                 disabled
                                 readOnly
                                 value={compNombreDB}
-                                style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--cyan)', outline: 'none', cursor: 'not-allowed', fontFamily: 'var(--font-mono)' }}
+                                style={{ width: '100%', padding: '10px', background: 'rgb(255, 255, 255)', border: '1px solid rgb(255, 255, 255)', borderRadius: '8px', color: 'var(--cyan)', outline: 'none', cursor: 'not-allowed', fontFamily: 'var(--font-mono)' }}
                               />
                             </div>
 
@@ -4833,7 +4833,7 @@ export default function App() {
                               value={sriEstablishmentCode}
                               onChange={(e) => setSriEstablishmentCode(e.target.value.slice(0, 3))}
                               placeholder="001"
-                              style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}
+                              style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}
                             />
                           </div>
 
@@ -4845,7 +4845,7 @@ export default function App() {
                               value={sriEmissionPoint}
                               onChange={(e) => setSriEmissionPoint(e.target.value.slice(0, 3))}
                               placeholder="002"
-                              style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}
+                              style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}
                             />
                           </div>
 
@@ -4857,7 +4857,7 @@ export default function App() {
                               value={sriEstablishmentAddress}
                               onChange={(e) => setSriEstablishmentAddress(e.target.value)}
                               placeholder="Av. de los Granados N45 y Eloy Alfaro, Quito"
-                              style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                              style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
                             />
                           </div>
 
@@ -4883,7 +4883,7 @@ export default function App() {
                                 value={sriParentCompanyRuc}
                                 onChange={(e) => setSriParentCompanyRuc(e.target.value.slice(0, 13))}
                                 placeholder="1792455894001"
-                                style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}
+                                style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}
                               />
                             </div>
                           )}
@@ -4926,7 +4926,7 @@ export default function App() {
                             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
                               <span>Estado de Conexión:</span>
                               <span>
-                                <span className="badge-status status-yes" style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--emerald)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>⚡ ONLINE</span>
+                                <span className="badge-status status-yes" style={{ background: 'rgb(16, 185, 129)', color: 'var(--emerald)', border: '1px solid rgb(16, 185, 129)' }}>⚡ ONLINE</span>
                               </span>
                             </div>
                           </div>
@@ -4945,7 +4945,7 @@ export default function App() {
                                 {sriSimulate ? (
                                   <span className="badge-status status-aura">MOCK SIMULADO</span>
                                 ) : sriEnvironment === '2' ? (
-                                  <span className="badge-status status-yes" style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--emerald)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>PRODUCCIÓN REAL</span>
+                                  <span className="badge-status status-yes" style={{ background: 'rgb(16, 185, 129)', color: 'var(--emerald)', border: '1px solid rgb(16, 185, 129)' }}>PRODUCCIÓN REAL</span>
                                 ) : (
                                   <span className="badge-status status-yes">PRUEBAS REAL</span>
                                 )}
@@ -4988,7 +4988,7 @@ export default function App() {
                           </tr>
                         </thead>
                         <tbody>
-                          <tr style={{ background: 'rgba(255,255,255,0.01)' }}>
+                          <tr style={{ background: 'rgb(255, 255, 255)' }}>
                             <td style={{ fontSize: '12px', fontFamily: 'var(--font-mono)' }}>{new Date().toLocaleString()}</td>
                             <td>{user.email}</td>
                             <td><span className="badge-status status-aura">ADMINISTRACIÓN</span></td>
@@ -5006,7 +5006,7 @@ export default function App() {
                               <td><span className="badge-status status-yes">COMPLETADO</span></td>
                             </tr>
                           )}
-                          <tr style={{ background: 'rgba(255,255,255,0.01)' }}>
+                          <tr style={{ background: 'rgb(255, 255, 255)' }}>
                             <td style={{ fontSize: '12px', fontFamily: 'var(--font-mono)' }}>
                               {new Date(Date.now() - 3600000).toLocaleString()}
                             </td>
@@ -5032,7 +5032,7 @@ export default function App() {
               )}
 
             </main>
-            <footer style={{ marginTop: 'auto', paddingTop: '2rem', paddingBottom: '1rem', textAlign: 'center', opacity: 0.6, fontSize: '11px' }}>
+            <footer style={{ marginTop: 'auto', paddingTop: '2rem', paddingBottom: '1rem', textAlign: 'center', , fontSize: '11px' }}>
               <p>AuraContable — Ecosistema Contable Autónomo Real &copy; 2026</p>
             </footer>
           </div>
@@ -5058,7 +5058,7 @@ export default function App() {
               onClick={() => setViewMode('landing')}
               style={{
                 background: 'transparent',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgb(255, 255, 255)',
                 color: 'var(--text-secondary)',
                 padding: '8px 16px',
                 borderRadius: '6px',
@@ -5081,8 +5081,8 @@ export default function App() {
               position: 'relative', 
               maxWidth: '440px',
               width: '100%',
-              boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
-              border: '1px solid rgba(6, 182, 212, 0.2)',
+              boxShadow: '0 20px 50px rgb(0, 0, 0)',
+              border: '1px solid rgb(6, 182, 212)',
             }}
           >
             <div className="header-glow"></div>
@@ -5104,7 +5104,7 @@ export default function App() {
                   <div className="form-group">
                     <label>RUC (13 dígitos):</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>🪪</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>🪪</span>
                       <input 
                         type="text" 
                         required 
@@ -5121,7 +5121,7 @@ export default function App() {
                   <div className="form-group">
                     <label>Razón social o nombre completo:</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>👤</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>👤</span>
                       <input 
                         type="text" 
                         required 
@@ -5137,7 +5137,7 @@ export default function App() {
                   <div className="form-group">
                     <label>Dirección:</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>📍</span>
                       <input 
                         type="text" 
                         required 
@@ -5154,7 +5154,7 @@ export default function App() {
                     <div className="form-group">
                       <label>Provincia:</label>
                       <div style={{ position: 'relative' }}>
-                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
+                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>📍</span>
                         <select 
                           required 
                           value={provinceInput} 
@@ -5177,7 +5177,7 @@ export default function App() {
                     <div className="form-group">
                       <label>Ciudad:</label>
                       <div style={{ position: 'relative' }}>
-                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📍</span>
+                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>📍</span>
                         <select 
                           required 
                           value={cityInput} 
@@ -5198,7 +5198,7 @@ export default function App() {
                   <div className="form-group" style={{ position: 'relative' }}>
                     <label>Tipo de negocio (Elige de 1 a 4):</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>🏢</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>🏢</span>
                       <input
                         type="text"
                         placeholder="Buscar tipo..."
@@ -5226,7 +5226,7 @@ export default function App() {
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '6px',
-                            border: '1px solid rgba(255,255,255,0.1)'
+                            border: '1px solid rgb(255, 255, 255)'
                           }}>
                             {BUSINESS_THEMES[type]?.name || type}
                             <button
@@ -5262,7 +5262,7 @@ export default function App() {
                         background: '#ffffff',
                         border: '1px solid var(--border)',
                         borderRadius: '8px',
-                        boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+                        boxShadow: '0 8px 24px rgb(0, 0, 0)',
                         zIndex: 1000,
                         marginTop: '4px'
                       }}>
@@ -5298,7 +5298,7 @@ export default function App() {
                                   fontSize: '12.5px',
                                   color: '#000000',
                                   cursor: 'pointer',
-                                  background: isSelected ? 'rgba(33, 57, 147, 0.08)' : 'transparent',
+                                  background: isSelected ? 'rgb(33, 57, 147)' : 'transparent',
                                   display: 'flex',
                                   justifyContent: 'space-between',
                                   alignItems: 'center',
@@ -5319,7 +5319,7 @@ export default function App() {
                   <div className="form-group">
                     <label>WhatsApp:</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>📞</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>📞</span>
                       <input 
                         type="text" 
                         value={whatsappInput} 
@@ -5335,7 +5335,7 @@ export default function App() {
               <div className="form-group">
                 <label>Correo Electrónico:</label>
                 <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>✉️</span>
+                  <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>✉️</span>
                   <input 
                     type="email" 
                     required 
@@ -5350,7 +5350,7 @@ export default function App() {
               <div className="form-group">
                 <label>Contraseña:</label>
                 <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.6, fontSize: '16px' }}>🔒</span>
+                  <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>🔒</span>
                   <input 
                     type="password" 
                     required 
@@ -5405,9 +5405,9 @@ export default function App() {
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '1rem 2rem',
-            background: 'rgba(10, 15, 30, 0.75)',
-            backdropFilter: 'blur(12px)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'rgb(10, 15, 30)',
+            backdropFilter: 'none',
+            borderBottom: '1px solid rgb(255, 255, 255)',
             position: 'sticky',
             top: 0,
             zIndex: 500,
@@ -5421,7 +5421,7 @@ export default function App() {
                 background: 'linear-gradient(90deg, #22d3ee, #818cf8)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                filter: 'drop-shadow(0 0 10px rgba(6, 182, 212, 0.3))'
+                filter: 'drop-shadow(0 0 10px rgb(6, 182, 212))'
               }}>
                 AURA CONTABLE
               </strong>
@@ -5457,9 +5457,9 @@ export default function App() {
                     left: 0,
                     width: '240px',
                     background: '#0d1326',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    border: '1px solid rgb(255, 255, 255)',
                     borderRadius: '8px',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                    boxShadow: '0 10px 25px rgb(0, 0, 0)',
                     padding: '8px',
                     display: 'flex',
                     flexDirection: 'column',
@@ -5478,7 +5478,7 @@ export default function App() {
                         flexDirection: 'column',
                         transition: 'background 0.2s',
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgb(255, 255, 255)'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
                       <strong style={{ fontSize: '13px', color: '#22d3ee' }}>🏛️ Aura Contable</strong>
@@ -5496,14 +5496,14 @@ export default function App() {
                         flexDirection: 'column',
                         transition: 'background 0.2s',
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgb(255, 255, 255)'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
                       <strong style={{ fontSize: '13px', color: '#818cf8' }}>⚡ Facturación Electrónica</strong>
                       <span style={{ fontSize: '11px', color: 'var(--text-primary)', marginTop: '2px' }}>Microservicio de emisión y firmas SRI.</span>
                     </a>
                     {/* Direct access to billing frontend */}
-                    <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', margin: '4px 0', paddingTop: '6px' }}>
+                    <div style={{ borderTop: '1px solid rgb(255, 255, 255)', margin: '4px 0', paddingTop: '6px' }}>
                       <a
                         href="http://localhost:5174"
                         target="_blank"
@@ -5520,15 +5520,15 @@ export default function App() {
                           background: 'linear-gradient(90deg, #818cf8, #6366f1)',
                           fontWeight: '700',
                           fontSize: '12.5px',
-                          boxShadow: '0 0 12px rgba(129,140,248,0.4)',
+                          boxShadow: '0 0 12px rgb(129, 140, 248)',
                           transition: 'all 0.2s',
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.boxShadow = '0 0 20px rgba(129,140,248,0.7)';
+                          e.currentTarget.style.boxShadow = '0 0 20px rgb(129, 140, 248)';
                           e.currentTarget.style.transform = 'scale(1.02)';
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.boxShadow = '0 0 12px rgba(129,140,248,0.4)';
+                          e.currentTarget.style.boxShadow = '0 0 12px rgb(129, 140, 248)';
                           e.currentTarget.style.transform = 'scale(1)';
                         }}
                       >
@@ -5555,7 +5555,7 @@ export default function App() {
                       borderRadius: '6px',
                       fontSize: '13px',
                       fontWeight: '600',
-                      boxShadow: '0 0 15px rgba(6, 182, 212, 0.4)',
+                      boxShadow: '0 0 15px rgb(6, 182, 212)',
                     }}
                   >
                     Ir al Sistema
@@ -5568,7 +5568,7 @@ export default function App() {
                     }}
                     style={{
                       background: 'transparent',
-                      border: '1px solid rgba(239, 68, 68, 0.4)',
+                      border: '1px solid rgb(239, 68, 68)',
                       color: '#f87171',
                       padding: '8px 16px',
                       borderRadius: '6px',
@@ -5589,7 +5589,7 @@ export default function App() {
                     }}
                     style={{
                       background: 'transparent',
-                      border: '1px solid rgba(6, 182, 212, 0.4)',
+                      border: '1px solid rgb(6, 182, 212)',
                       color: '#22d3ee',
                       padding: '8px 16px',
                       borderRadius: '6px',
@@ -5598,8 +5598,8 @@ export default function App() {
                       transition: 'all 0.2s',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(6, 182, 212, 0.1)';
-                      e.currentTarget.style.boxShadow = '0 0 10px rgba(6, 182, 212, 0.3)';
+                      e.currentTarget.style.background = 'rgb(6, 182, 212)';
+                      e.currentTarget.style.boxShadow = '0 0 10px rgb(6, 182, 212)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.background = 'transparent';
@@ -5619,7 +5619,7 @@ export default function App() {
                       borderRadius: '6px',
                       fontSize: '13px',
                       fontWeight: '600',
-                      boxShadow: '0 0 15px rgba(6, 182, 212, 0.4)',
+                      boxShadow: '0 0 15px rgb(6, 182, 212)',
                     }}
                   >
                     Registrarse
@@ -5633,7 +5633,7 @@ export default function App() {
           <section id="hero" style={{
             padding: '5rem 2rem',
             textAlign: 'center',
-            background: 'radial-gradient(circle at top, rgba(99, 102, 241, 0.15), transparent 60%)',
+            background: 'radial-gradient(circle at top, rgb(99, 102, 241), transparent 60%)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -5672,7 +5672,7 @@ export default function App() {
                     borderRadius: '8px',
                     fontSize: '15px',
                     fontWeight: '600',
-                    boxShadow: '0 0 20px rgba(6, 182, 212, 0.5)',
+                    boxShadow: '0 0 20px rgb(6, 182, 212)',
                   }}
                 >
                   Ir al Sistema
@@ -5689,7 +5689,7 @@ export default function App() {
                     borderRadius: '8px',
                     fontSize: '15px',
                     fontWeight: '600',
-                    boxShadow: '0 0 20px rgba(6, 182, 212, 0.5)',
+                    boxShadow: '0 0 20px rgb(6, 182, 212)',
                   }}
                 >
                   Comenzar Gratis
@@ -5702,16 +5702,16 @@ export default function App() {
                   borderRadius: '8px',
                   fontSize: '15px',
                   fontWeight: '600',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  background: 'rgb(255, 255, 255)',
+                  border: '1px solid rgb(255, 255, 255)',
                   color: 'var(--text-primary)',
                   textDecoration: 'none',
                   display: 'inline-flex',
                   alignItems: 'center',
                   transition: 'all 0.2s',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgb(255, 255, 255)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'rgb(255, 255, 255)'}
               >
                 Ver Soluciones
               </a>
@@ -5721,9 +5721,9 @@ export default function App() {
           {/* PRODUCTS SECTION */}
           <section id="products" style={{
             padding: '5rem 2rem',
-            background: 'rgba(10, 15, 30, 0.4)',
-            borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+            background: 'rgb(10, 15, 30)',
+            borderTop: '1px solid rgb(255, 255, 255)',
+            borderBottom: '1px solid rgb(255, 255, 255)',
           }}>
             <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
               <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
@@ -5738,24 +5738,24 @@ export default function App() {
                 <div id="products-aura" className="glass-panel" style={{
                   padding: '2.5rem',
                   borderRadius: '12px',
-                  border: '1px solid rgba(6, 182, 212, 0.15)',
+                  border: '1px solid rgb(6, 182, 212)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '1.2rem',
                   textAlign: 'left',
-                  background: 'linear-gradient(135deg, rgba(6,182,212,0.05) 0%, transparent 100%)',
+                  background: 'linear-gradient(135deg, rgb(6, 182, 212) 0%, transparent 100%)',
                 }}>
                   <div style={{
                     width: '50px',
                     height: '50px',
                     borderRadius: '10px',
-                    background: 'rgba(6, 182, 212, 0.1)',
+                    background: 'rgb(6, 182, 212)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '24px',
                     color: '#22d3ee',
-                    boxShadow: '0 0 15px rgba(6, 182, 212, 0.2)',
+                    boxShadow: '0 0 15px rgb(6, 182, 212)',
                   }}>
                     🏛️
                   </div>
@@ -5784,11 +5784,11 @@ export default function App() {
                         fontWeight: '700',
                         fontSize: '13.5px',
                         letterSpacing: '0.4px',
-                        boxShadow: '0 0 14px rgba(6,182,212,0.4)',
+                        boxShadow: '0 0 14px rgb(6, 182, 212)',
                         transition: 'all 0.2s',
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 22px rgba(6,182,212,0.7)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 14px rgba(6,182,212,0.4)'; e.currentTarget.style.transform = 'scale(1)'; }}
+                      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 22px rgb(6, 182, 212)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 14px rgb(6, 182, 212)'; e.currentTarget.style.transform = 'scale(1)'; }}
                     >
                       🏛️ {user ? 'Ir al Sistema Contable' : 'Iniciar en Aura Contable'}
                     </button>
@@ -5799,24 +5799,24 @@ export default function App() {
                 <div id="products-billing" className="glass-panel" style={{
                   padding: '2.5rem',
                   borderRadius: '12px',
-                  border: '1px solid rgba(129, 140, 248, 0.15)',
+                  border: '1px solid rgb(129, 140, 248)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '1.2rem',
                   textAlign: 'left',
-                  background: 'linear-gradient(135deg, rgba(129,140,248,0.05) 0%, transparent 100%)',
+                  background: 'linear-gradient(135deg, rgb(129, 140, 248) 0%, transparent 100%)',
                 }}>
                   <div style={{
                     width: '50px',
                     height: '50px',
                     borderRadius: '10px',
-                    background: 'rgba(129, 140, 248, 0.1)',
+                    background: 'rgb(129, 140, 248)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '24px',
                     color: '#818cf8',
-                    boxShadow: '0 0 15px rgba(129, 140, 248, 0.2)',
+                    boxShadow: '0 0 15px rgb(129, 140, 248)',
                   }}>
                     ⚡
                   </div>
@@ -5848,12 +5848,12 @@ export default function App() {
                         fontWeight: '700',
                         fontSize: '13.5px',
                         letterSpacing: '0.4px',
-                        boxShadow: '0 0 14px rgba(129,140,248,0.4)',
+                        boxShadow: '0 0 14px rgb(129, 140, 248)',
                         transition: 'all 0.2s',
                         cursor: 'pointer',
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 22px rgba(129,140,248,0.7)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 14px rgba(129,140,248,0.4)'; e.currentTarget.style.transform = 'scale(1)'; }}
+                      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 22px rgb(129, 140, 248)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 14px rgb(129, 140, 248)'; e.currentTarget.style.transform = 'scale(1)'; }}
                     >
                       ⚡ Iniciar en Facturación
                     </a>
@@ -5895,8 +5895,8 @@ export default function App() {
           <footer style={{
             padding: '3rem 2rem',
             textAlign: 'center',
-            borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-            background: 'rgba(5, 8, 20, 0.4)',
+            borderTop: '1px solid rgb(255, 255, 255)',
+            background: 'rgb(5, 8, 20)',
             marginTop: 'auto',
           }}>
             <p style={{ color: '#64748b', fontSize: '13px' }}>AuraContable — Ecosistema Contable y Facturación Electrónica &copy; 2026</p>
@@ -5910,7 +5910,7 @@ export default function App() {
 
       {/* XML VIEW MODAL */}
       {activeXml && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgb(0, 0, 0)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="glass-panel" style={{ width: '80%', maxWidth: '800px', maxHeight: '80%', display: 'flex', flexDirection: 'column', padding: '1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '8px', marginBottom: '12px' }}>
               <strong>Factura Autorizada por el SRI - Formato XML</strong>
@@ -5934,8 +5934,8 @@ export default function App() {
 
       {/* INTERACTIVE TUTORIAL MODAL */}
       {showTutorial && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(5px)' }}>
-          <div className="glass-panel" style={{ width: '90%', maxWidth: '600px', padding: '2rem', display: 'flex', flexDirection: 'column', position: 'relative', border: '1px solid rgba(6, 182, 212, 0.3)' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgb(0, 0, 0)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'none' }}>
+          <div className="glass-panel" style={{ width: '90%', maxWidth: '600px', padding: '2rem', display: 'flex', flexDirection: 'column', position: 'relative', border: '1px solid rgb(6, 182, 212)' }}>
 
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '1.5rem' }}>
@@ -5947,7 +5947,7 @@ export default function App() {
                 type="button"
                 className="btn-sm status-no"
                 onClick={() => setShowTutorial(false)}
-                style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: 'none', cursor: 'pointer', padding: '4px 10px', borderRadius: '4px' }}
+                style={{ background: 'rgb(239, 68, 68)', color: '#f87171', border: 'none', cursor: 'pointer', padding: '4px 10px', borderRadius: '4px' }}
               >
                 Omitir
               </button>
@@ -5967,7 +5967,7 @@ export default function App() {
                     Su principal función es emular de manera idéntica la respuesta de los servidores web del <strong>SRI</strong> (Servicio de Rentas Internas de Ecuador).
                     No requiere que tengas un certificado de firma digital real `.p12` cargado y funciona sin conexión externa al SRI.
                   </p>
-                  <div style={{ marginTop: '15px', background: 'rgba(6, 182, 212, 0.05)', border: '1px solid rgba(6, 182, 212, 0.2)', padding: '12px', borderRadius: '6px' }}>
+                  <div style={{ marginTop: '15px', background: 'rgb(6, 182, 212)', border: '1px solid rgb(6, 182, 212)', padding: '12px', borderRadius: '6px' }}>
                     💡 <strong>Beneficio:</strong> Ideal para entrenamiento de personal o demostraciones inmediatas sin demoras de red ni errores de validación legal.
                   </div>
                 </div>
@@ -6051,7 +6051,7 @@ export default function App() {
                     width: '10px',
                     height: '10px',
                     borderRadius: '50%',
-                    background: tutorialStep === step ? 'var(--cyan)' : 'rgba(255,255,255,0.1)',
+                    background: tutorialStep === step ? 'var(--cyan)' : 'rgb(255, 255, 255)',
                     boxShadow: tutorialStep === step ? '0 0 8px var(--cyan)' : 'none',
                     transition: 'all 0.3s ease'
                   }}
@@ -6096,9 +6096,9 @@ export default function App() {
       )}
 
       {!user && (
-        <footer style={{ marginTop: '3rem', textAlign: 'center', opacity: 0.6, fontSize: '12px' }}>
+        <footer style={{ marginTop: '3rem', textAlign: 'center', , fontSize: '12px' }}>
           <p>AuraContable — Ecosistema Contable Autónomo Real</p>
-          <p style={{ opacity: 0.5, marginTop: '4px' }}>
+          <p style={{ , marginTop: '4px' }}>
             Tecnologías: React SPA, Vite, NestJS, Prisma, PostgreSQL con Auth JWT.
           </p>
         </footer>
@@ -6111,7 +6111,7 @@ export default function App() {
           left: 0,
           width: '100%',
           height: '100%',
-          background: 'rgba(0, 0, 0, 0.4)',
+          background: 'rgb(0, 0, 0)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -6122,7 +6122,7 @@ export default function App() {
             padding: '2.5rem',
             borderRadius: '4px',
             width: '450px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+            boxShadow: '0 4px 20px rgb(0, 0, 0)',
             display: 'flex',
             flexDirection: 'column',
             gap: '1.5rem',
@@ -6172,7 +6172,7 @@ export default function App() {
           left: 0,
           width: '100%',
           height: '100%',
-          background: 'rgba(0, 0, 0, 0.65)',
+          background: 'rgb(0, 0, 0)',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -6184,9 +6184,9 @@ export default function App() {
             maxWidth: '500px',
             width: '90%',
             textAlign: 'center',
-            border: '1px solid rgba(6, 182, 212, 0.3)',
-            background: 'rgba(15, 23, 42, 0.9)',
-            boxShadow: '0 10px 30px rgba(6, 182, 212, 0.2)',
+            border: '1px solid rgb(6, 182, 212)',
+            background: 'rgb(15, 23, 42)',
+            boxShadow: '0 10px 30px rgb(6, 182, 212)',
           }}>
             <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '1rem' }}>⚙️</span>
             <h3 style={{ fontSize: '1.5rem', color: 'var(--cyan)', marginBottom: '1rem' }}>Módulo Simulado: {simulatedModule}</h3>
@@ -6194,7 +6194,7 @@ export default function App() {
               El panel para <strong>{simulatedModule}</strong> está configurado en este entorno de negocios general.
             </p>
             <div style={{
-              background: 'rgba(255,255,255,0.03)',
+              background: 'rgb(255, 255, 255)',
               border: '1px solid var(--border)',
               borderRadius: '8px',
               padding: '12px',
