@@ -1,14 +1,20 @@
 /* --- Design System & Global Variables --- */
 :root {
   --font-family: 'Outfit', sans-serif;
-  
+
   /* Task Colors (HSL base for soft glows) */
-  --task-color-1: #3b82f6; /* Blue */
-  --task-color-2: #8b5cf6; /* Purple */
-  --task-color-3: #10b981; /* Emerald */
-  --task-color-4: #f59e0b; /* Amber */
-  --task-color-5: #ec4899; /* Pink */
-  --task-color-6: #f43f5e; /* Rose */
+  --task-color-1: #3b82f6;
+  /* Blue */
+  --task-color-2: #8b5cf6;
+  /* Purple */
+  --task-color-3: #10b981;
+  /* Emerald */
+  --task-color-4: #f59e0b;
+  /* Amber */
+  --task-color-5: #ec4899;
+  /* Pink */
+  --task-color-6: #f43f5e;
+  /* Rose */
 
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -153,7 +159,7 @@ body {
 
 .btn-primary {
   background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
+  color: rgb(6, 6, 7);
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
 }
 
@@ -197,9 +203,11 @@ body.light-mode .btn-secondary:hover {
 #btn-theme-toggle .icon-sun {
   display: none;
 }
+
 body.light-mode #btn-theme-toggle .icon-moon {
   display: none;
 }
+
 body.light-mode #btn-theme-toggle .icon-sun {
   display: inline-block;
   color: #f59e0b;
@@ -239,10 +247,25 @@ body.light-mode #btn-theme-toggle .icon-sun {
   justify-content: center;
 }
 
-.stat-icon.blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-.stat-icon.green { background: rgba(16, 185, 129, 0.15); color: #10b981; }
-.stat-icon.orange { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-.stat-icon.gray { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+.stat-icon.blue {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.stat-icon.green {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.stat-icon.orange {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.stat-icon.gray {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
 
 .stat-info {
   display: flex;
@@ -351,7 +374,7 @@ body.light-mode #btn-theme-toggle .icon-sun {
 
 .btn-tab.active {
   background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
+  color: rgb(3, 11, 8);
   box-shadow: 0 2px 6px rgba(139, 92, 246, 0.15);
 }
 
@@ -636,11 +659,11 @@ body.light-mode .task-bar-progress-bg {
 
 /* Subtle glow matching the selected task color */
 .task-bar-wrapper {
-  box-shadow: 0 2px 8px -2px var(--shadow-color, rgba(0,0,0,0.2));
+  box-shadow: 0 2px 8px -2px var(--shadow-color, rgba(0, 0, 0, 0.2));
 }
 
 .task-bar-wrapper:hover {
-  box-shadow: 0 4px 15px -2px var(--shadow-color, rgba(0,0,0,0.3));
+  box-shadow: 0 4px 15px -2px var(--shadow-color, rgba(0, 0, 0, 0.3));
 }
 
 .task-bar-label {
@@ -841,10 +864,10 @@ textarea:focus {
   border-radius: 50%;
   opacity: 0;
   transition: opacity var(--transition-fast);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-.color-option input:checked + span {
+.color-option input:checked+span {
   opacity: 1;
 }
 
@@ -871,10 +894,12 @@ textarea:focus {
     background: white !important;
     color: black !important;
   }
+
   .app-container {
     padding: 0 !important;
     max-width: 100% !important;
   }
+
   .main-header,
   .toolbar-section,
   .stats-dashboard,
@@ -883,29 +908,36 @@ textarea:focus {
   #btn-add-task {
     display: none !important;
   }
+
   .gantt-wrapper {
     border: none !important;
     box-shadow: none !important;
   }
+
   .gantt-sidebar {
     background: transparent !important;
     border-right: 1px solid #ddd !important;
   }
+
   .gantt-timeline-header {
     background: transparent !important;
     border-bottom: 1px solid #ddd !important;
   }
+
   .gantt-row {
     border-bottom: 1px solid #eee !important;
   }
+
   .task-bar-progress-bg {
     border: 1px solid #999 !important;
     background: #f0f0f0 !important;
   }
+
   .task-bar-progress-fill {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
+
   .task-bar-label {
     text-shadow: none !important;
     color: black !important;
@@ -917,17 +949,21 @@ textarea:focus {
   .gantt-container {
     grid-template-columns: 1fr;
   }
+
   .gantt-sidebar {
     border-right: none;
     border-bottom: 1px solid var(--border-color);
   }
+
   .task-item {
     padding: 10px 20px;
     height: auto;
   }
+
   .task-item-actions {
     opacity: 1;
   }
+
   .gantt-timeline-container {
     overflow-x: auto;
   }
@@ -937,11 +973,13 @@ textarea:focus {
 .quick-progress-slider {
   accent-color: #3b82f6;
 }
+
 .quick-progress-slider::-webkit-slider-runnable-track {
   background: rgba(255, 255, 255, 0.15) !important;
   height: 4px;
   border-radius: 2px;
 }
+
 .quick-progress-slider::-webkit-slider-thumb {
   -webkit-appearance: none !important;
   background: #ffffff !important;
@@ -951,5 +989,5 @@ textarea:focus {
   border-radius: 50% !important;
   margin-top: -4px !important;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
