@@ -2052,7 +2052,7 @@ export default function App() {
                 style={{
                   background: item.isActive ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
                   border: 'none',
-                  color: item.isActive ? '#444' : '#333',
+                  color: item.isActive ? '#000' : '#000',
                   padding: '6px 12px',
                   borderRadius: '6px',
                   cursor: 'pointer',
@@ -2151,8 +2151,8 @@ export default function App() {
                         style={{
                           background: isSelected ? '#e9ecef' : 'transparent',
                           border: 'none',
-                          borderLeft: isSelected ? '4px solid #444' : '4px solid transparent',
-                          color: isSelected ? '#444' : '#333',
+                          borderLeft: isSelected ? '4px solid #000' : '4px solid transparent',
+                          color: isSelected ? '#000' : '#000',
                           padding: '10px 15px 10px 25px',
                           cursor: 'pointer',
                           fontSize: '12.5px',

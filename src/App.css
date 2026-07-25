@@ -12,10 +12,10 @@
   --border: #D8DCDB;
   --border-hover: #213993;
 
-  --text-primary: #111827;
-  --text-secondary: #374151;
-  --text-muted: #6B7280;
-  --text-main: #111827;
+  --text-primary: #000000;
+  --text-secondary: #000000;
+  --text-muted: #000000;
+  --text-main: #000000;
 
   /* Accents based on Navy Blue (#213993) and Red (#ED3833) */
   --cyan: #213993;
