@@ -1087,8 +1087,8 @@ export default function App() {
       root.style.setProperty('--bg-card', theme.panelDark);
       root.style.setProperty('--bg-card-hover', 'rgba(255, 255, 255, 0.05)');
       root.style.setProperty('--text-primary', theme.textPrimary);
-      root.style.setProperty('--text-secondary', 'rgba(255, 255, 255, 0.7)');
-      root.style.setProperty('--text-muted', 'rgba(255, 255, 255, 0.45)');
+      root.style.setProperty('--text-secondary', theme.textPrimary);
+      root.style.setProperty('--text-muted', theme.textPrimary);
       root.style.setProperty('--border', 'rgba(255, 255, 255, 0.1)');
     } else {
       // Reset variables on landing page/logout
@@ -1098,8 +1098,8 @@ export default function App() {
       root.style.setProperty('--bg-card', '#FFFFFF');
       root.style.setProperty('--bg-card-hover', '#F3F5F4');
       root.style.setProperty('--text-primary', '#111827');
-      root.style.setProperty('--text-secondary', '#374151');
-      root.style.setProperty('--text-muted', '#6B7280');
+      root.style.setProperty('--text-secondary', '#111827');
+      root.style.setProperty('--text-muted', '#111827');
       root.style.setProperty('--border', '#D8DCDB');
     }
   }, [activeEnvironment, user]);
@@ -2052,7 +2052,7 @@ export default function App() {
                 style={{
                   background: item.isActive ? 'rgba(0, 0, 0, 0.05)' : 'transparent',
                   border: 'none',
-                  color: item.isActive ? '#f8fafc' : '#cbd5e1',
+                  color: item.isActive ? '#f8fafc' : 'var(--text-primary)',
                   padding: '6px 12px',
                   borderRadius: '6px',
                   cursor: 'pointer',
@@ -2152,7 +2152,7 @@ export default function App() {
                           background: isSelected ? 'rgba(255,255,255,0.1)' : 'transparent',
                           border: 'none',
                           borderLeft: isSelected ? '4px solid #f8fafc' : '4px solid transparent',
-                          color: isSelected ? '#f8fafc' : '#cbd5e1',
+                          color: isSelected ? '#f8fafc' : 'var(--text-primary)',
                           padding: '10px 15px 10px 25px',
                           cursor: 'pointer',
                           fontSize: '12.5px',
@@ -5428,7 +5428,7 @@ export default function App() {
             </div>
 
             <div className="landing-nav-links" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-              <a href="#hero" style={{ color: '#cbd5e1', textDecoration: 'none', fontSize: '14px' }}>Inicio</a>
+              <a href="#hero" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px' }}>Inicio</a>
               
               {/* PRODUCT DROP DOWN */}
               <div 
@@ -5439,7 +5439,7 @@ export default function App() {
                 <button style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#94a3b8',
+                  color: 'var(--text-primary)',
                   fontSize: '14px',
                   cursor: 'pointer',
                   display: 'flex',
@@ -5482,7 +5482,7 @@ export default function App() {
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
                       <strong style={{ fontSize: '13px', color: '#22d3ee' }}>🏛️ Aura Contable</strong>
-                      <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>Gestión de diarios, Kardex y reportes.</span>
+                      <span style={{ fontSize: '11px', color: 'var(--text-primary)', marginTop: '2px' }}>Gestión de diarios, Kardex y reportes.</span>
                     </a>
                     <a 
                       href="#products-billing"
@@ -5500,7 +5500,7 @@ export default function App() {
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
                       <strong style={{ fontSize: '13px', color: '#818cf8' }}>⚡ Facturación Electrónica</strong>
-                      <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>Microservicio de emisión y firmas SRI.</span>
+                      <span style={{ fontSize: '11px', color: 'var(--text-primary)', marginTop: '2px' }}>Microservicio de emisión y firmas SRI.</span>
                     </a>
                     {/* Direct access to billing frontend */}
                     <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)', margin: '4px 0', paddingTop: '6px' }}>
@@ -5540,13 +5540,13 @@ export default function App() {
                 )}
               </div>
 
-              <a href="#features" style={{ color: '#cbd5e1', textDecoration: 'none', fontSize: '14px' }}>Características</a>
+              <a href="#features" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px' }}>Características</a>
             </div>
 
             <div className="landing-nav-auth" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
               {user ? (
                 <>
-                  <span style={{ fontSize: '13.5px', color: '#cbd5e1' }}>Hola, <strong style={{ color: '#22d3ee' }}>{user.name}</strong></span>
+                  <span style={{ fontSize: '13.5px', color: 'var(--text-primary)' }}>Hola, <strong style={{ color: '#22d3ee' }}>{user.name}</strong></span>
                   <button 
                     className="btn btn-cyan" 
                     onClick={() => setViewMode('app')}
@@ -5646,7 +5646,7 @@ export default function App() {
               lineHeight: '1.2',
               maxWidth: '800px',
               margin: '0 0 1.5rem 0',
-              background: 'linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%)',
+              background: 'linear-gradient(135deg, #ffffff 0%, var(--text-primary) 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               letterSpacing: '-1.5px',
@@ -5655,7 +5655,7 @@ export default function App() {
             </h1>
             <p className="landing-hero-subtitle" style={{
               fontSize: '1.1rem',
-              color: '#94a3b8',
+              color: 'var(--text-primary)',
               maxWidth: '650px',
               lineHeight: '1.6',
               margin: '0 0 2.5rem 0',
@@ -5704,7 +5704,7 @@ export default function App() {
                   fontWeight: '600',
                   background: 'rgba(255, 255, 255, 0.05)',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#cbd5e1',
+                  color: 'var(--text-primary)',
                   textDecoration: 'none',
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -5729,7 +5729,7 @@ export default function App() {
               <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
                 <span style={{ color: '#22d3ee', textTransform: 'uppercase', fontSize: '12px', fontWeight: 'bold', letterSpacing: '2px' }}>Portafolio de Aplicaciones</span>
                 <h2 style={{ fontSize: '2.2rem', fontWeight: '700', color: '#fff', marginTop: '8px' }}>Nuestras Soluciones Integradas</h2>
-                <p style={{ color: '#94a3b8', fontSize: '15px', marginTop: '10px' }}>Ecosistemas desacoplados y diseñados para trabajar en armonía.</p>
+                <p style={{ color: 'var(--text-primary)', fontSize: '15px', marginTop: '10px' }}>Ecosistemas desacoplados y diseñados para trabajar en armonía.</p>
               </div>
 
               <div className="landing-products-grid" style={{ gap: '2.5rem' }}>
@@ -5760,10 +5760,10 @@ export default function App() {
                     🏛️
                   </div>
                   <h3 style={{ fontSize: '1.5rem', margin: 0, color: '#fff', fontWeight: 'bold' }}>Aura Contable</h3>
-                  <p style={{ color: '#94a3b8', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
+                  <p style={{ color: 'var(--text-primary)', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
                     La herramienta completa para el control financiero. Administra el libro diario con asientos automáticos desencadenados de tus actividades de venta y compra, controla el stock mediante movimientos de Kárdex y amortiza activos fijos en segundos. Genera reportes listos para la declaración mensual de IVA del SRI.
                   </p>
-                  <ul style={{ color: '#cbd5e1', fontSize: '12.5px', paddingLeft: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <ul style={{ color: 'var(--text-primary)', fontSize: '12.5px', paddingLeft: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <li>Asientos contables automáticos (Debe/Haber).</li>
                     <li>Libro Mayor y balances al instante.</li>
                     <li>Kárdex de stock y valorización de inventario.</li>
@@ -5821,10 +5821,10 @@ export default function App() {
                     ⚡
                   </div>
                   <h3 style={{ fontSize: '1.5rem', margin: 0, color: '#fff', fontWeight: 'bold' }}>Sistema de Facturación</h3>
-                  <p style={{ color: '#94a3b8', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
+                  <p style={{ color: 'var(--text-primary)', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
                     Un microservicio desacoplado y altamente reutilizable para facturación electrónica en el Ecuador. Firma digitalmente archivos XML de comprobantes con certificados PKCS#12 (.p12), se comunica de forma segura mediante SOAP con el SRI y gestiona sucursales y puntos de emisión dinámicamente.
                   </p>
-                  <ul style={{ color: '#cbd5e1', fontSize: '12.5px', paddingLeft: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <ul style={{ color: 'var(--text-primary)', fontSize: '12.5px', paddingLeft: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <li>Firma XML independiente con certificados .p12.</li>
                     <li>Conectividad SOAP directa con el SRI (Real y Simulado).</li>
                     <li>Soporte para múltiples sucursales y puntos de emisión.</li>
@@ -5875,17 +5875,17 @@ export default function App() {
                 <div style={{ padding: '1.5rem', textAlign: 'center' }}>
                   <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>⚙️</span>
                   <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Automatización</h4>
-                  <p style={{ color: '#94a3b8', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Tus libros y balances contables se generan en tiempo real al emitir facturas y compras.</p>
+                  <p style={{ color: 'var(--text-primary)', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Tus libros y balances contables se generan en tiempo real al emitir facturas y compras.</p>
                 </div>
                 <div style={{ padding: '1.5rem', textAlign: 'center' }}>
                   <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>🔒</span>
                   <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Seguridad Criptográfica</h4>
-                  <p style={{ color: '#94a3b8', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Cifrado y firmas digitales PKCS#12 con contraseñas seguras y protegidas en el backend.</p>
+                  <p style={{ color: 'var(--text-primary)', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Cifrado y firmas digitales PKCS#12 con contraseñas seguras y protegidas en el backend.</p>
                 </div>
                 <div style={{ padding: '1.5rem', textAlign: 'center' }}>
                   <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>⚖️</span>
                   <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Cumplimiento Legal</h4>
-                  <p style={{ color: '#94a3b8', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Adaptado al 100% de la normativa ecuatoriana de retenciones e IVA diferenciado.</p>
+                  <p style={{ color: 'var(--text-primary)', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Adaptado al 100% de la normativa ecuatoriana de retenciones e IVA diferenciado.</p>
                 </div>
               </div>
             </div>

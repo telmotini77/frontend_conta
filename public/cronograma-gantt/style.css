@@ -28,7 +28,7 @@ body.dark-mode {
   --bg-grid-header: #0f172a;
   --bg-input: #1e293b;
   --text-main: #f8fafc;
-  --text-muted: #94a3b8;
+  --text-muted: #f8fafc;
   --border-color: rgba(255, 255, 255, 0.08);
   --border-focus: #3b82f6;
   --weekend-bg: rgba(255, 255, 255, 0.02);
@@ -47,7 +47,7 @@ body.light-mode {
   --bg-grid-header: #f8fafc;
   --bg-input: #f8fafc;
   --text-main: #0f172a;
-  --text-muted: #64748b;
+  --text-muted: #0f172a;
   --border-color: rgba(15, 23, 42, 0.08);
   --border-focus: #3b82f6;
   --weekend-bg: rgba(0, 0, 0, 0.02);
