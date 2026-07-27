@@ -257,6 +257,7 @@ h1 {
   line-height: 1.1;
   background: linear-gradient(135deg, #111827 40%, #213993 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.75rem;
 }
@@ -1243,6 +1244,7 @@ footer p {
   margin: 0;
   background: linear-gradient(135deg, #213993, #ED3833);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   transition: opacity 0.2s ease;
 }
@@ -1413,6 +1415,7 @@ footer p {
   font-weight: 700;
   background: linear-gradient(135deg, #213993, #111827);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
