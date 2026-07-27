@@ -677,7 +677,7 @@ select:focus {
 }
 
 .log-line {
-  color: #111827;
+  color: #4b72c6;
 }
 
 .journal-entry {
@@ -883,7 +883,7 @@ select:focus {
   flex-wrap: wrap;
   gap: 6px;
   padding: 8px;
-  border-top: 1px solid rgb(20, 15, 15);
+  border-top: 1px solid rgb(65, 114, 173);
   background: rgb(65, 114, 173);
 }
 
@@ -1093,7 +1093,7 @@ select:focus {
 
 .phase-bar-wrapper {
   height: 6px;
-  background: rgb(0, 0, 0);
+  background: rgb(65, 114, 173);
   border-radius: 99px;
   overflow: hidden;
   position: relative;
@@ -1191,8 +1191,8 @@ footer p {
 .app-container {
   display: flex;
   min-height: 100vh;
-  background: var(--bg-main, #0f172a);
-  color: var(--text-main, #111212);
+  background: var(--bg-main, #96afea);
+  color: var(--text-main, #96afea);
   overflow-x: hidden;
   position: relative;
   width: 100%;
