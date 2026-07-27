@@ -10,13 +10,15 @@
   --danger: #ef4444;
   --success: #10b981;
   --warning: #f59e0b;
-  
+
   font-family: 'Inter', system-ui, sans-serif;
   color: var(--text-main);
   box-sizing: border-box;
 }
 
-.billing-app * { box-sizing: border-box; }
+.billing-app * {
+  box-sizing: border-box;
+}
 
 .billing-container {
   width: 100%;
@@ -36,8 +38,13 @@
 }
 
 @keyframes slideIn {
-  from {  transform: translateY(20px); }
-  to {  transform: translateY(0); }
+  from {
+    transform: translateY(20px);
+  }
+
+  to {
+    transform: translateY(0);
+  }
 }
 
 .toolbar {
@@ -79,10 +86,23 @@
   box-shadow: 0 0 15px var(--primary-glow);
 }
 
-.billing-app .btn.danger { color: var(--danger); }
-.billing-app .btn.warning { color: var(--warning); }
-.billing-app .btn.orange { color: #f97316; border-color: rgb(249, 115, 22); }
-.billing-app .btn.teal { color: #14b8a6; border-color: rgb(20, 184, 166); }
+.billing-app .btn.danger {
+  color: var(--danger);
+}
+
+.billing-app .btn.warning {
+  color: var(--warning);
+}
+
+.billing-app .btn.orange {
+  color: #f97316;
+  border-color: rgb(249, 115, 22);
+}
+
+.billing-app .btn.teal {
+  color: #14b8a6;
+  border-color: rgb(20, 184, 166);
+}
 
 .tabs {
   display: flex;
@@ -107,7 +127,9 @@
   background: linear-gradient(to top, rgb(6, 182, 212), transparent);
 }
 
-.content { padding: 24px; }
+.content {
+  padding: 24px;
+}
 
 .top-section {
   display: grid;
@@ -132,7 +154,9 @@
   gap: 6px;
 }
 
-.form-group.col-span-2 { grid-column: span 2; }
+.form-group.col-span-2 {
+  grid-column: span 2;
+}
 
 .form-group label {
   font-size: 11px;
@@ -142,8 +166,9 @@
   font-weight: 600;
 }
 
-.form-group input, .form-group select {
-  background: rgb(0, 0, 0);
+.form-group input,
+.form-group select {
+  background: rgb(255, 255, 255);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 12px;
@@ -153,7 +178,8 @@
   transition: all 0.2s;
 }
 
-.form-group input:focus, .form-group select:focus {
+.form-group input:focus,
+.form-group select:focus {
   border-color: var(--border-focus);
   background: rgb(0, 0, 0);
   box-shadow: 0 0 0 3px rgb(6, 182, 212);
@@ -172,6 +198,7 @@
   gap: 12px;
   padding-left: 10px;
 }
+
 .checkbox-label {
   display: flex;
   align-items: center;
@@ -245,9 +272,13 @@
 }
 
 @keyframes pulse {
-  0% {  }
-  50% {  text-shadow: 0 0 25px rgb(239, 68, 68); }
-  100% {  }
+  0% {}
+
+  50% {
+    text-shadow: 0 0 25px rgb(239, 68, 68);
+  }
+
+  100% {}
 }
 
 .actions-bar {
@@ -309,7 +340,8 @@
   font-family: inherit;
 }
 
-.td-input:focus, .td-input:hover {
+.td-input:focus,
+.td-input:hover {
   background: rgb(0, 0, 0);
   border-color: rgb(255, 255, 255);
 }
