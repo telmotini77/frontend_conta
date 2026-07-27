@@ -11,8 +11,8 @@ El archivo `index.css` define las variables globales del tema base de la aplicac
 ### Variables CSS de Texto
 | Variable | Valor (Modo Claro) | Valor (Modo Oscuro) | Descripción / Propósito |
 | :--- | :--- | :--- | :--- |
-| `--text` | `#cbd5e1` (Gris azulado claro) | `#0f1215` (Gris carbón oscuro) | Color predeterminado para el texto del cuerpo (`body`). |
-| `--text-h` | `#f8fafc` (Blanco grisáceo) | `#101317` (Gris carbón muy oscuro) | Utilizado para títulos principales (`h1`, `h2`), etiquetas `code` y el contador. |
+| `--text` | `#202225` (Gris carbón) | `#0f1215` (Gris carbón oscuro) | Color predeterminado para el texto del cuerpo (`body`). |
+| `--text-h` | `#0b1117` (Gris azulado muy oscuro) | `#101317` (Gris carbón muy oscuro) | Utilizado para títulos principales (`h1`, `h2`), etiquetas `code` y el contador. |
 
 ### Aplicación en Reglas CSS
 - **Cuerpo (`body`)**:
@@ -47,7 +47,7 @@ El archivo `App.css` implementa el sistema de diseño visual principal y persona
 
 ### Aplicación en Componentes y Clases Específicas
 - **Encabezados y Subtítulos**:
-  - `h1`: Texto degradado moderno (`linear-gradient(135deg, #111827 40%, #213993 100%)`) con `-webkit-text-fill-color: transparent`.
+  - `h1`: Texto degradado moderno (`linear-gradient(135deg, #111827 40%, #213993 100%)`) con `-webkit-background-clip: text` y `background-clip: text`.
   - `.subtitle`, `.sim-desc`, `.progress-details`, `.phase-card p`: `color: var(--text-secondary);`
 - **Perfil de Usuario**:
   - `.user-info strong`: `color: var(--text-primary);` (Nombre del usuario en el encabezado)
@@ -67,7 +67,7 @@ El archivo `App.css` implementa el sistema de diseño visual principal y persona
   - `.tag-indigo`: `color: var(--indigo);`
   - `.tag-emerald`: `color: var(--emerald);`
   - `.tag-amber`: `color: var(--amber);`
-  - `.status-yes`, `.status-partial`, `.status-no`, `.status-aura`: `color: #ffffff;` (Texto blanco sobre fondo de estado de color)
+  - `.status-yes`, `.status-partial`, `.status-no`, `.status-aura`: `color: #242524;` (Texto gris oscuro para contraste sobre fondos de colores verde, amarillo, rojo y cian respectivamente)
   - `.status-indicator.status-online`: `color: var(--emerald);`
 - **Tablas y Diarios (`.journal-xxx` / `table`)**:
   - `th`: `color: var(--text-primary);`
@@ -81,6 +81,8 @@ El archivo `App.css` implementa el sistema de diseño visual principal y persona
   - `.sidebar-nav .tab-btn.active`: `color: #11132bc3 !important;` (Texto de la pestaña lateral activa)
   - `.sidebar-toggle`: `color: var(--text-muted, #94a3b8);`
   - `.sidebar-footer .logout-btn`: `color: #ef4444;`
+- **Contenedor General**:
+  - `.app-container`: `color: var(--text-main, #111212);`
 
 ---
 

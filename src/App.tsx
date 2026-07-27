@@ -2646,7 +2646,7 @@ export default function App() {
                                 <td>
                                   <div>{p.name}</div>
                                   {p.category && (
-                                    <span style={{ fontSize: '10px', , background: 'rgb(255, 255, 255)', padding: '2px 6px', borderRadius: '4px', marginTop: '2px', display: 'inline-block' }}>
+                                    <span style={{ fontSize: '10px', background: 'rgb(255, 255, 255)', padding: '2px 6px', borderRadius: '4px', marginTop: '2px', display: 'inline-block' }}>
                                       📂 {p.category.name}
                                     </span>
                                   )}
@@ -4373,13 +4373,13 @@ export default function App() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem', flex: 1, maxWidth: '700px' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
                             <span style={{ fontWeight: '600' }}>WSDL Recepción:</span>
-                            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', , wordBreak: 'break-all' }}>
+                            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
                               {sriSimulate ? 'Simulador Local (N/A)' : (sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...')}
                             </span>
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
                             <span style={{ fontWeight: '600' }}>WSDL Autorización:</span>
-                            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', , wordBreak: 'break-all' }}>
+                            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
                               {sriSimulate ? 'Simulador Local (N/A)' : (sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...')}
                             </span>
                           </div>
@@ -4436,14 +4436,12 @@ export default function App() {
                       </div>
                     </div>
                   )}
-    </div>
-  )
-}
+                </div>
+              )}
 
 
 {/* TAB: FIXED ASSETS */ }
-{
-  activeTab === 'assets' && (
+              {activeTab === 'assets' && (
     <div className="fade-in">
       <div className="dashboard-grid">
         {/* Assets list */}
@@ -4564,13 +4562,11 @@ export default function App() {
           </table>
         )}
       </div>
-    </div>
-  )
-}
+                    </div>
+                  )}
 
-{/* TAB: ADMINISTRATION & COMPANY MANAGEMENT */ }
-{
-  activeTab === 'admin' && (
+                  {/* TAB: ADMINISTRATION & COMPANY MANAGEMENT */}
+              {activeTab === 'admin' && (
     <div className="fade-in animate-slideup">
       {/* Sub tab content: Gestión Empresas */}
       {adminSubTab === 'empresas' && (
@@ -5032,12 +5028,11 @@ export default function App() {
           </table>
         </div>
       )}
-    </div>
-  )
-}
+                    </div>
+                  )}
 
-            </main >
-  <footer style={{ marginTop: 'auto', paddingTop: '2rem', paddingBottom: '1rem', textAlign: 'center', , fontSize: '11px' }}>
+                </main>
+  <footer style={{ marginTop: 'auto', paddingTop: '2rem', paddingBottom: '1rem', textAlign: 'center', fontSize: '11px' }}>
     <p>AuraContable — Ecosistema Contable Autónomo Real &copy; 2026</p>
   </footer>
           </div >
@@ -5109,7 +5104,7 @@ export default function App() {
             <div className="form-group">
               <label>RUC (13 dígitos):</label>
               <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>🪪</span>
+                <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>🪪</span>
               <input
                 type="text"
                 required
@@ -5126,7 +5121,7 @@ export default function App() {
         <div className="form-group">
           <label>Razón social o nombre completo:</label>
           <div style={{ position: 'relative' }}>
-            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>👤</span>
+            <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>👤</span>
           <input
             type="text"
             required
@@ -5142,7 +5137,7 @@ export default function App() {
     <div className="form-group">
       <label>Dirección:</label>
       <div style={{ position: 'relative' }}>
-        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>📍</span>
+        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>📍</span>
       <input
         type="text"
         required
@@ -5159,7 +5154,7 @@ export default function App() {
                     <div className="form-group">
                       <label>Provincia:</label>
                       <div style={{ position: 'relative' }}>
-                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>📍</span>
+                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>📍</span>
                         <select 
                           required 
                           value={provinceInput} 
@@ -5182,7 +5177,7 @@ export default function App() {
                     <div className="form-group">
                       <label>Ciudad:</label>
                       <div style={{ position: 'relative' }}>
-                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>📍</span>
+                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>📍</span>
                         <select 
                           required 
                           value={cityInput} 
@@ -5203,7 +5198,7 @@ export default function App() {
   < div className = "form-group" style = {{ position: 'relative' }}>
                     <label>Tipo de negocio (Elige de 1 a 4):</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>🏢</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>🏢</span>
                       <input
                         type="text"
                         placeholder="Buscar tipo..."
@@ -5328,7 +5323,7 @@ export default function App() {
   < div className = "form-group" >
                     <label>WhatsApp:</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>📞</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>📞</span>
                       <input 
                         type="text" 
                         value={whatsappInput} 
@@ -5344,7 +5339,7 @@ export default function App() {
 <div className="form-group">
   <label>Correo Electrónico:</label>
   <div style={{ position: 'relative' }}>
-    <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>✉️</span>
+    <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>✉️</span>
   <input
     type="email"
     required
@@ -5359,7 +5354,7 @@ export default function App() {
   <div className="form-group">
     <label>Contraseña:</label>
     <div style={{ position: 'relative' }}>
-      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', , fontSize: '16px' }}>🔒</span>
+      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>🔒</span>
     <input
       type="password"
       required
@@ -6110,9 +6105,9 @@ export default function App() {
 
 {
   !user && (
-    <footer style={{ marginTop: '3rem', textAlign: 'center', , fontSize: '12px' }}>
+    <footer style={{ marginTop: '3rem', textAlign: 'center', fontSize: '12px' }}>
       <p>AuraContable — Ecosistema Contable Autónomo Real</p>
-      <p style={{ , marginTop: '4px' }}>
+      <p style={{ marginTop: '4px' }}>
       Tecnologías: React SPA, Vite, NestJS, Prisma, PostgreSQL con Auth JWT.
     </p>
         </footer >

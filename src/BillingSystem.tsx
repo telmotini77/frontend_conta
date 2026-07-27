@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './BillingSystem.css';
 
 export default function BillingSystem() {
@@ -159,7 +159,7 @@ export default function BillingSystem() {
                 </tr>
               </thead>
               <tbody>
-                {invoices.map((inv, idx) => (
+                {invoices.map((inv) => (
                   <tr key={inv.id}>
                     <td><input type="text" className="td-input" placeholder="Ingresar..." /></td>
                     <td><input type="text" className="td-input" /></td>
