@@ -18,9 +18,9 @@
   --accent: #213993;
   --accent-bg: rgb(33, 57, 147);
   --accent-border: rgb(33, 57, 147);
-  --social-bg: rgb(7, 15, 10);
+  --social-bg: rgb(43, 53, 80);
   --shadow:
-    rgb(0, 0, 0) 0 10px 15px -3px, rgb(0, 0, 0) 0 4px 6px -2px;
+    rgb(55, 74, 56) 0 10px 15px -3px, rgb(100, 102, 112) 0 4px 6px -2px;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
