@@ -3,7 +3,7 @@
 /* APP DESIGN SYSTEM SPECIFICATIONS - AURACONTABLE */
 :root {
   /* Color Palette - User Light Theme Specification */
-  --bg-gradient-start: #E8EAE9;
+  --bg-gradient-start: #03150c;
   --bg-gradient-end: #F5F7F6;
   --bg-main: #E8EAE9;
   --bg-card: #FFFFFF;
@@ -427,25 +427,25 @@ tr:hover td {
 
 .status-yes {
   background: rgb(16, 185, 129);
-  color: #ffffff;
+  color: #242524;
   border: 1px solid rgb(16, 185, 129);
 }
 
 .status-partial {
   background: rgb(245, 158, 11);
-  color: #ffffff;
+  color: #242524;
   border: 1px solid rgb(245, 158, 11);
 }
 
 .status-no {
   background: rgb(239, 68, 68);
-  color: #ffffff;
+  color: #242524;
   border: 1px solid rgb(239, 68, 68);
 }
 
 .status-aura {
   background: rgb(6, 182, 212);
-  color: #ffffff;
+  color: #242524;
   border: 1px solid rgb(6, 182, 212);
   font-weight: 700;
 }
@@ -480,7 +480,7 @@ tr:hover td {
 .status-indicator {
   font-family: var(--font-mono);
   font-size: 11px;
-  background: rgb(255, 255, 255);
+  background: rgb(17, 17, 17);
   border: 1px solid var(--border);
   padding: 2px 8px;
   border-radius: 4px;
@@ -601,7 +601,7 @@ select:focus {
 }
 
 .btn:disabled {
-  
+
   cursor: not-allowed;
 }
 
@@ -1191,7 +1191,7 @@ footer p {
   display: flex;
   min-height: 100vh;
   background: var(--bg-main, #0f172a);
-  color: var(--text-main, #f8fafc);
+  color: var(--text-main, #111212);
   overflow-x: hidden;
   position: relative;
   width: 100%;
