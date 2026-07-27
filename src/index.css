@@ -11,14 +11,14 @@
 
 :root {
   --text: #202225;
-  --text-h: #f8fafc;
+  --text-h: #0b1117;
   --bg: #0f1713;
   --border: #20342f;
   --code-bg: #293346;
   --accent: #213993;
   --accent-bg: rgb(33, 57, 147);
   --accent-border: rgb(33, 57, 147);
-  --social-bg: rgb(255, 255, 255);
+  --social-bg: rgb(7, 15, 10);
   --shadow:
     rgb(0, 0, 0) 0 10px 15px -3px, rgb(0, 0, 0) 0 4px 6px -2px;
 
@@ -51,7 +51,7 @@
     --accent: #213993;
     --accent-bg: rgb(33, 57, 147);
     --accent-border: rgb(33, 57, 147);
-    --social-bg: rgb(255, 255, 255);
+    --social-bg: rgb(10, 20, 16);
     --shadow:
       rgb(0, 0, 0) 0 10px 15px -3px, rgb(0, 0, 0) 0 4px 6px -2px;
   }
