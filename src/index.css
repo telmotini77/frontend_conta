@@ -45,13 +45,13 @@
   :root {
     --text: #0f1215;
     --text-h: #101317;
-    --bg: #111f18;
+    --bg: #99f0c5;
     --border: #0e211c;
-    --code-bg: #0b0f17;
+    --code-bg: #4b73c2;
     --accent: #213993;
     --accent-bg: rgb(33, 57, 147);
     --accent-border: rgb(33, 57, 147);
-    --social-bg: rgb(10, 20, 16);
+    --social-bg: rgb(84, 188, 147);
     --shadow:
       rgb(0, 0, 0) 0 10px 15px -3px, rgb(0, 0, 0) 0 4px 6px -2px;
   }

@@ -255,7 +255,7 @@ h1 {
   font-size: 2.8rem;
   font-weight: 800;
   line-height: 1.1;
-  background: linear-gradient(135deg, #111827 40%, #213993 100%);
+  background: linear-gradient(135deg, #2c53a7 40%, #213993 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -440,13 +440,13 @@ tr:hover td {
 
 .status-no {
   background: rgb(239, 68, 68);
-  color: #242524;
+  color: #7ec47e;
   border: 1px solid rgb(239, 68, 68);
 }
 
 .status-aura {
   background: rgb(6, 182, 212);
-  color: #242524;
+  color: #75cb75;
   border: 1px solid rgb(6, 182, 212);
   font-weight: 700;
 }
@@ -572,7 +572,7 @@ select:focus {
 .btn {
   background: rgb(99, 145, 245);
   border: 1px solid var(--border);
-  color: #000;
+  color: #d3bfbf;
   padding: 7px 14px;
   border-radius: 6px;
   font-weight: 600;
@@ -612,7 +612,7 @@ select:focus {
 
 .btn-cyan {
   background: var(--cyan);
-  color: #000;
+  color: #96b55e;
   border: none;
 }
 
@@ -623,7 +623,7 @@ select:focus {
 
 .btn-indigo {
   background: var(--indigo);
-  color: #000;
+  color: #4a9d83;
   border: none;
 }
 
@@ -634,7 +634,7 @@ select:focus {
 
 .btn-emerald {
   background: var(--emerald);
-  color: #000;
+  color: #b7e4a7;
   border: none;
 }
 
@@ -644,7 +644,7 @@ select:focus {
 }
 
 .console-box {
-  background: #030712;
+  background: #1a398f;
   border: 1px solid var(--border);
   border-radius: 8px;
   margin-top: 1.25rem;
@@ -656,7 +656,7 @@ select:focus {
 }
 
 .console-header {
-  background: rgb(20, 15, 15);
+  background: rgb(34, 45, 110);
   padding: 6px 12px;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -703,7 +703,7 @@ select:focus {
   font-family: var(--font-mono);
   color: var(--text-secondary);
   margin-bottom: 10px;
-  border-bottom: 1px solid rgb(20, 15, 15);
+  border-bottom: 1px solid rgb(51, 17, 117);
   padding-bottom: 4px;
 }
 
@@ -729,7 +729,7 @@ select:focus {
   padding: 2rem 1.5rem;
   text-align: center;
   margin-bottom: 1.25rem;
-  background: rgb(0, 0, 0);
+  background: rgb(102, 179, 46);
   cursor: pointer;
 }
 
@@ -779,7 +779,7 @@ select:focus {
 .match-row {
   display: flex;
   flex-direction: column;
-  background: rgb(20, 15, 15);
+  background: rgb(78, 73, 179);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px;
@@ -824,7 +824,7 @@ select:focus {
   display: flex;
   flex-direction: column;
   flex: 1;
-  background: #080c14;
+  background: #3d5e9e;
   overflow: hidden;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
