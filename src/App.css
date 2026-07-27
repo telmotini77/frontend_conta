@@ -15,7 +15,7 @@
   --text-primary: #0b0c0d;
   --text-secondary: #0d2222;
   --text-muted: #0c0c0c;
-  --text-main: #171819;
+  --text-main: #5f8cb9;
 
   /* Accents based on Navy Blue (#213993) and Red (#ED3833) */
   --cyan: #213993;
@@ -100,7 +100,7 @@
 
 .logout-btn {
   background: rgb(239, 68, 68) !important;
-  color: #f87171 !important;
+  color: #f1efef !important;
   border: 1px solid rgb(239, 68, 68) !important;
 }
 
@@ -866,7 +866,7 @@ select:focus {
 }
 
 .chat-message.bot .chat-bubble {
-  background: rgb(20, 15, 15);
+  background: rgb(58, 74, 179);
   border: 1px solid var(--border);
   color: #000;
   border-top-left-radius: 2px;
@@ -884,7 +884,7 @@ select:focus {
   gap: 6px;
   padding: 8px;
   border-top: 1px solid rgb(20, 15, 15);
-  background: rgb(0, 0, 0);
+  background: rgb(65, 114, 173);
 }
 
 .btn-suggest {
@@ -906,12 +906,12 @@ select:focus {
   border-top: 1px solid var(--border);
   display: flex;
   gap: 8px;
-  background: rgb(0, 0, 0);
+  background: rgb(78, 98, 137);
 }
 
 .chat-input-area input {
   flex: 1;
-  background: rgb(0, 0, 0);
+  background: rgb(108, 84, 153);
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 8px 16px;
@@ -960,7 +960,7 @@ select:focus {
 
 .progress-bar-bg {
   height: 10px;
-  background: rgb(20, 15, 15);
+  background: rgb(115, 180, 172);
   border-radius: 999px;
   overflow: hidden;
   border: 1px solid var(--border);
