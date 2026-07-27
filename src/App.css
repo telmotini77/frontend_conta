@@ -4,10 +4,10 @@
 :root {
   /* Color Palette - User Light Theme Specification */
   --bg-gradient-start: #03150c;
-  --bg-gradient-end: #F5F7F6;
+  --bg-gradient-end: #171a18;
   --bg-main: #E8EAE9;
-  --bg-card: #FFFFFF;
-  --bg-card-hover: #F3F5F4;
+  --bg-card: #141613;
+  --bg-card-hover: #161918;
   --bg-pill: rgb(33, 57, 147);
   --border: #D8DCDB;
   --border-hover: #213993;
