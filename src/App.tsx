@@ -109,6 +109,57 @@ interface Employee {
   createdAt: string;
 }
 
+interface Customer {
+  id: string;
+  name: string;
+  ruc: string;
+  email: string;
+  phone: string;
+  address: string;
+  createdAt: string;
+}
+
+interface ProformaItem {
+  productId: string;
+  productName: string;
+  productSku: string;
+  price: number;
+  quantity: number;
+  hasIva: boolean;
+}
+
+interface Proforma {
+  id: string;
+  clientName: string;
+  clientRuc: string;
+  items: ProformaItem[];
+  subtotal: number;
+  iva: number;
+  total: number;
+  status: 'BORRADOR' | 'ENVIADA' | 'CONVERTIDA';
+  createdAt: string;
+  notes: string;
+}
+
+interface BankAccount {
+  id: string;
+  bankName: string;
+  accountType: 'CORRIENTE' | 'AHORRO';
+  accountNumber: string;
+  balance: number;
+  currency: string;
+  createdAt: string;
+}
+
+interface BankMovement {
+  id: string;
+  accountId: string;
+  type: 'DEPOSITO' | 'RETIRO' | 'TRANSFERENCIA';
+  amount: number;
+  description: string;
+  date: string;
+}
+
 interface ReconciliationInvoice {
   id: string;
   claveAcceso: string;
@@ -173,10 +224,10 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 const BILLING_API_BASE = import.meta.env.VITE_BILLING_API_URL || 'http://localhost:3001';
 
 const AVAILABLE_BUSINESS_TYPES = [
-  "Industrias Manufactureras y Producción",
+  "Industrias Manufactureras y ProducciÃƒÂ³n",
   "Comercio al Por Mayor y Por Menor de Viveres en General",
   "Comercio al Por Mayor y Por Menor de Productos en General",
-  "Industrias de Extracción, Cultivo, Explotación, Conservación, etc",
+  "Industrias de ExtracciÃƒÂ³n, Cultivo, ExplotaciÃƒÂ³n, ConservaciÃƒÂ³n, etc",
   "Hoteleria y Turismo",
   "Restaurantes, Cafeterias o Similares",
   "Servicios de Contabilidad",
@@ -184,34 +235,34 @@ const AVAILABLE_BUSINESS_TYPES = [
   "Servicios Sociales y de Salud",
   "Servicios en General",
   "Servicios de Transporte",
-  "Servicios de Reparación de Automotores y Motocicletas"
+  "Servicios de ReparaciÃƒÂ³n de Automotores y Motocicletas"
 ];
 
 const ECUADOR_PROVINCES: Record<string, string[]> = {
-  "Pichincha": ["Quito", "Cayambe", "Mejía", "Rumiñahui", "Pedro Moncayo", "San Miguel de los Bancos", "Pedro Vicente Maldonado", "Puerto Quito"],
-  "Guayas": ["Guayaquil", "Durán", "Samborondón", "Milagro", "Daule", "Playas", "Naranjal", "Empalme", "Balzar", "Yaguachi"],
-  "Azuay": ["Cuenca", "Gualaceo", "Paute", "Girón", "Santa Isabel", "Chordeleg", "Sígsig"],
-  "Manabí": ["Manta", "Portoviejo", "Chone", "Montecristi", "Bahía de Caráquez", "Jipijapa", "Pedernales", "El Carmen"],
-  "Loja": ["Loja", "Catamayo", "Cariamanga", "Macará", "Saraguro", "Alamor"],
-  "Tungurahua": ["Ambato", "Baños", "Pelileo", "Píllaro", "Quero"],
-  "El Oro": ["Machala", "Pasaje", "Santa Rosa", "Huaquillas", "Arenillas", "Zaruma", "Piñas"],
-  "Santo Domingo de los Tsáchilas": ["Santo Domingo"],
-  "Los Ríos": ["Babahoyo", "Quevedo", "Vinces", "Ventanas", "Buena Fe"],
-  "Esmeraldas": ["Esmeraldas", "Atacames", "Quinindé", "San Lorenzo", "Muisne"],
+  "Pichincha": ["Quito", "Cayambe", "MejÃƒÂ­a", "RumiÃƒÂ±ahui", "Pedro Moncayo", "San Miguel de los Bancos", "Pedro Vicente Maldonado", "Puerto Quito"],
+  "Guayas": ["Guayaquil", "DurÃƒÂ¡n", "SamborondÃƒÂ³n", "Milagro", "Daule", "Playas", "Naranjal", "Empalme", "Balzar", "Yaguachi"],
+  "Azuay": ["Cuenca", "Gualaceo", "Paute", "GirÃƒÂ³n", "Santa Isabel", "Chordeleg", "SÃƒÂ­gsig"],
+  "ManabÃƒÂ­": ["Manta", "Portoviejo", "Chone", "Montecristi", "BahÃƒÂ­a de CarÃƒÂ¡quez", "Jipijapa", "Pedernales", "El Carmen"],
+  "Loja": ["Loja", "Catamayo", "Cariamanga", "MacarÃƒÂ¡", "Saraguro", "Alamor"],
+  "Tungurahua": ["Ambato", "BaÃƒÂ±os", "Pelileo", "PÃƒÂ­llaro", "Quero"],
+  "El Oro": ["Machala", "Pasaje", "Santa Rosa", "Huaquillas", "Arenillas", "Zaruma", "PiÃƒÂ±as"],
+  "Santo Domingo de los TsÃƒÂ¡chilas": ["Santo Domingo"],
+  "Los RÃƒÂ­os": ["Babahoyo", "Quevedo", "Vinces", "Ventanas", "Buena Fe"],
+  "Esmeraldas": ["Esmeraldas", "Atacames", "QuinindÃƒÂ©", "San Lorenzo", "Muisne"],
   "Imbabura": ["Ibarra", "Otavalo", "Cotacachi", "Atuntaqui", "Pimampiro"],
-  "Chimborazo": ["Riobamba", "Guano", "Chambo", "Alausí", "Colta"],
-  "Cotopaxi": ["Latacunga", "Salcedo", "Pujilí", "La Maná", "Saquisilí"],
-  "Santa Elena": ["Santa Elena", "Salinas", "La Libertad", "Montañita"],
-  "Carchi": ["Tulcán", "San Gabriel", "Bolívar"],
-  "Cañar": ["Azogues", "La Troncal", "Cañar", "Biblián"],
-  "Bolívar": ["Guaranda", "San Miguel", "Chimbo"],
-  "Morona Santiago": ["Macas", "Gualaquiza", "Sucúa"],
+  "Chimborazo": ["Riobamba", "Guano", "Chambo", "AlausÃƒÂ­", "Colta"],
+  "Cotopaxi": ["Latacunga", "Salcedo", "PujilÃƒÂ­", "La ManÃƒÂ¡", "SaquisilÃƒÂ­"],
+  "Santa Elena": ["Santa Elena", "Salinas", "La Libertad", "MontaÃƒÂ±ita"],
+  "Carchi": ["TulcÃƒÂ¡n", "San Gabriel", "BolÃƒÂ­var"],
+  "CaÃƒÂ±ar": ["Azogues", "La Troncal", "CaÃƒÂ±ar", "BibliÃƒÂ¡n"],
+  "BolÃƒÂ­var": ["Guaranda", "San Miguel", "Chimbo"],
+  "Morona Santiago": ["Macas", "Gualaquiza", "SucÃƒÂºa"],
   "Napo": ["Tena", "Archidona", "El Chaco"],
   "Pastaza": ["Puyo", "Mera", "Santa Clara"],
   "Zamora Chinchipe": ["Zamora", "Yantzaza", "El Pangui"],
-  "Galápagos": ["Puerto Ayora", "Puerto Baquerizo Moreno", "Puerto Villamil"],
+  "GalÃƒÂ¡pagos": ["Puerto Ayora", "Puerto Baquerizo Moreno", "Puerto Villamil"],
   "Orellana": ["El Coca", "Joyas de los Sachas", "Loreto"],
-  "Sucumbíos": ["Nueva Loja (Lago Agrio)", "Shushufindi", "Caspiscal"]
+  "SucumbÃƒÂ­os": ["Nueva Loja (Lago Agrio)", "Shushufindi", "Caspiscal"]
 };
 
 const BUSINESS_THEMES: Record<string, {
@@ -227,38 +278,38 @@ const BUSINESS_THEMES: Record<string, {
   textPrimary: string;
   metrics: { title: string; value: string; icon: string }[];
 }> = {
-  'Industrias Manufactureras y Producción': {
-    name: 'Manufactura y Producción',
+  'Industrias Manufactureras y ProducciÃƒÂ³n': {
+    name: 'Manufactura y ProducciÃƒÂ³n',
     accent: '#f59e0b',
     accentGlow: 'rgb(245, 158, 11)',
     accentSecondary: '#d97706',
     gradient: 'linear-gradient(135deg, rgb(245, 158, 11) 0%, rgb(5, 8, 20) 100%)',
-    icon: '🏭',
-    banner: 'Consola de Control de Producción y Manufactura',
+    icon: 'Ã°Å¸ÂÂ­',
+    banner: 'Consola de Control de ProducciÃƒÂ³n y Manufactura',
     bgDark: '#0f172a',
     panelDark: '#1e293b',
     textPrimary: '#f8fafc',
     metrics: [
-      { title: 'Lotes Producidos', value: '42 Lotes', icon: '📦' },
-      { title: 'Eficiencia de Planta', value: '94.2%', icon: '⚡' },
-      { title: 'Materia Prima Disponible', value: '82%', icon: '🧱' }
+      { title: 'Lotes Producidos', value: '42 Lotes', icon: 'Ã°Å¸â€œÂ¦' },
+      { title: 'Eficiencia de Planta', value: '94.2%', icon: 'Ã¢Å¡Â¡' },
+      { title: 'Materia Prima Disponible', value: '82%', icon: 'Ã°Å¸Â§Â±' }
     ]
   },
   'Comercio al Por Mayor y Por Menor de Viveres en General': {
-    name: 'Comercio de Víveres',
+    name: 'Comercio de VÃƒÂ­veres',
     accent: '#10b981',
     accentGlow: 'rgb(16, 185, 129)',
     accentSecondary: '#059669',
     gradient: 'linear-gradient(135deg, rgb(16, 185, 129) 0%, rgb(5, 8, 20) 100%)',
-    icon: '🛒',
-    banner: 'Portal Comercial y Control de Víveres en General',
+    icon: 'Ã°Å¸â€ºâ€™',
+    banner: 'Portal Comercial y Control de VÃƒÂ­veres en General',
     bgDark: '#022c22',
     panelDark: '#064e3b',
     textPrimary: '#f0fdf4',
     metrics: [
-      { title: 'Stock Crítico Víveres', value: '3 SKU', icon: '⚠️' },
-      { title: 'Venta POS Rápida', value: '$1,245.50', icon: '⚡' },
-      { title: 'Margen Promedio', value: '18.5%', icon: '📈' }
+      { title: 'Stock CrÃƒÂ­tico VÃƒÂ­veres', value: '3 SKU', icon: 'Ã¢Å¡Â Ã¯Â¸Â' },
+      { title: 'Venta POS RÃƒÂ¡pida', value: '$1,245.50', icon: 'Ã¢Å¡Â¡' },
+      { title: 'Margen Promedio', value: '18.5%', icon: 'Ã°Å¸â€œË†' }
     ]
   },
   'Comercio al Por Mayor y Por Menor de Productos en General': {
@@ -267,66 +318,66 @@ const BUSINESS_THEMES: Record<string, {
     accentGlow: 'rgb(168, 85, 247)',
     accentSecondary: '#7c3aed',
     gradient: 'linear-gradient(135deg, rgb(168, 85, 247) 0%, rgb(5, 8, 20) 100%)',
-    icon: '📦',
-    banner: 'Ecosistema de Inventario y Distribución de Productos',
+    icon: 'Ã°Å¸â€œÂ¦',
+    banner: 'Ecosistema de Inventario y DistribuciÃƒÂ³n de Productos',
     bgDark: '#1e1b4b',
     panelDark: '#312e81',
     textPrimary: '#e0e7ff',
     metrics: [
-      { title: 'Rotación de Inventario', value: '14.8 días', icon: '🔄' },
-      { title: 'Productos Bajo Umbral', value: '12 ítems', icon: '🛑' },
-      { title: 'Pedidos Despachados', value: '89 Hoy', icon: '🚚' }
+      { title: 'RotaciÃƒÂ³n de Inventario', value: '14.8 dÃƒÂ­as', icon: 'Ã°Å¸â€â€ž' },
+      { title: 'Productos Bajo Umbral', value: '12 ÃƒÂ­tems', icon: 'Ã°Å¸â€ºâ€˜' },
+      { title: 'Pedidos Despachados', value: '89 Hoy', icon: 'Ã°Å¸Å¡Å¡' }
     ]
   },
-  'Industrias de Extracción, Cultivo, Explotación, Conservación, etc': {
-    name: 'Extracción y Cultivo',
+  'Industrias de ExtracciÃƒÂ³n, Cultivo, ExplotaciÃƒÂ³n, ConservaciÃƒÂ³n, etc': {
+    name: 'ExtracciÃƒÂ³n y Cultivo',
     accent: '#22c55e',
     accentGlow: 'rgb(34, 197, 94)',
     accentSecondary: '#15803d',
     gradient: 'linear-gradient(135deg, rgb(34, 197, 94) 0%, rgb(5, 8, 20) 100%)',
-    icon: '🚜',
-    banner: 'Terminal de Gestión Agrícola, Cultivo y Conservación',
+    icon: 'Ã°Å¸Å¡Å“',
+    banner: 'Terminal de GestiÃƒÂ³n AgrÃƒÂ­cola, Cultivo y ConservaciÃƒÂ³n',
     bgDark: '#052e16',
     panelDark: '#14532d',
     textPrimary: '#f0fdf4',
     metrics: [
-      { title: 'Cosecha Estimada', value: '12.5 Toneladas', icon: '🌾' },
-      { title: 'Humedad de Suelo', value: '62.4%', icon: '💧' },
-      { title: 'Costo de Operación', value: '$840.00 / Ha', icon: '💵' }
+      { title: 'Cosecha Estimada', value: '12.5 Toneladas', icon: 'Ã°Å¸Å’Â¾' },
+      { title: 'Humedad de Suelo', value: '62.4%', icon: 'Ã°Å¸â€™Â§' },
+      { title: 'Costo de OperaciÃƒÂ³n', value: '$840.00 / Ha', icon: 'Ã°Å¸â€™Âµ' }
     ]
   },
   'Hoteleria y Turismo': {
-    name: 'Hotelería y Turismo',
+    name: 'HotelerÃƒÂ­a y Turismo',
     accent: '#eab308',
     accentGlow: 'rgb(234, 179, 8)',
     accentSecondary: '#ca8a04',
     gradient: 'linear-gradient(135deg, rgb(234, 179, 8) 0%, rgb(5, 8, 20) 100%)',
-    icon: '🏨',
-    banner: 'Plataforma Hotelera y Servicios Turísticos',
+    icon: 'Ã°Å¸ÂÂ¨',
+    banner: 'Plataforma Hotelera y Servicios TurÃƒÂ­sticos',
     bgDark: '#1c1917',
     panelDark: '#292524',
     textPrimary: '#fafaf9',
     metrics: [
-      { title: 'Ocupación de Habitaciones', value: '78.5%', icon: '🔑' },
-      { title: 'Check-ins Pendientes', value: '6 hoy', icon: '🚪' },
-      { title: 'Servicios de Hospedaje', value: '$450.00 extra', icon: '🍽️' }
+      { title: 'OcupaciÃƒÂ³n de Habitaciones', value: '78.5%', icon: 'Ã°Å¸â€â€˜' },
+      { title: 'Check-ins Pendientes', value: '6 hoy', icon: 'Ã°Å¸Å¡Âª' },
+      { title: 'Servicios de Hospedaje', value: '$450.00 extra', icon: 'Ã°Å¸ÂÂ½Ã¯Â¸Â' }
     ]
   },
   'Restaurantes, Cafeterias o Similares': {
-    name: 'Restaurantes y Cafeterías',
+    name: 'Restaurantes y CafeterÃƒÂ­as',
     accent: '#f97316',
     accentGlow: 'rgb(249, 115, 22)',
     accentSecondary: '#ea580c',
     gradient: 'linear-gradient(135deg, rgb(249, 115, 22) 0%, rgb(5, 8, 20) 100%)',
-    icon: '🍔',
-    banner: 'Consola Operativa Gastronómica y Restaurantes',
+    icon: 'Ã°Å¸Ââ€',
+    banner: 'Consola Operativa GastronÃƒÂ³mica y Restaurantes',
     bgDark: '#2a1a15',
     panelDark: '#3e2723',
     textPrimary: '#efebe9',
     metrics: [
-      { title: 'Mesas Ocupadas', value: '14 / 20', icon: '🪑' },
-      { title: 'Ticket Promedio', value: '$22.40', icon: '💰' },
-      { title: 'Ventas del Turno', value: '$856.20', icon: '🔥' }
+      { title: 'Mesas Ocupadas', value: '14 / 20', icon: 'Ã°Å¸Âªâ€˜' },
+      { title: 'Ticket Promedio', value: '$22.40', icon: 'Ã°Å¸â€™Â°' },
+      { title: 'Ventas del Turno', value: '$856.20', icon: 'Ã°Å¸â€Â¥' }
     ]
   },
   'Servicios de Contabilidad': {
@@ -335,15 +386,15 @@ const BUSINESS_THEMES: Record<string, {
     accentGlow: 'rgb(6, 182, 212)',
     accentSecondary: '#0891b2',
     gradient: 'linear-gradient(135deg, rgb(6, 182, 212) 0%, rgb(5, 8, 20) 100%)',
-    icon: '💼',
-    banner: 'Escritorio de Gestión Contable y Tributaria Profesional',
+    icon: 'Ã°Å¸â€™Â¼',
+    banner: 'Escritorio de GestiÃƒÂ³n Contable y Tributaria Profesional',
     bgDark: '#082f49',
     panelDark: '#0c4a6e',
     textPrimary: '#f0f9ff',
     metrics: [
-      { title: 'Reportes Firmados', value: '18 / 24', icon: '📝' },
-      { title: 'Impuestos Declarados', value: '100% Completado', icon: '🏛️' },
-      { title: 'Clientes Activos', value: '54 Empresas', icon: '🤝' }
+      { title: 'Reportes Firmados', value: '18 / 24', icon: 'Ã°Å¸â€œÂ' },
+      { title: 'Impuestos Declarados', value: '100% Completado', icon: 'Ã°Å¸Ââ€ºÃ¯Â¸Â' },
+      { title: 'Clientes Activos', value: '54 Empresas', icon: 'Ã°Å¸Â¤Â' }
     ]
   },
   'Actividades Profesionales': {
@@ -352,15 +403,15 @@ const BUSINESS_THEMES: Record<string, {
     accentGlow: 'rgb(59, 130, 246)',
     accentSecondary: '#2563eb',
     gradient: 'linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(5, 8, 20) 100%)',
-    icon: '🎓',
-    banner: 'Escritorio de Consultoría y Servicios Profesionales',
+    icon: 'Ã°Å¸Å½â€œ',
+    banner: 'Escritorio de ConsultorÃƒÂ­a y Servicios Profesionales',
     bgDark: '#0f172a',
     panelDark: '#1e293b',
     textPrimary: '#f8fafc',
     metrics: [
-      { title: 'Horas Facturables', value: '38.5 hrs', icon: '⏳' },
-      { title: 'Honorarios del Mes', value: '$4,800.00', icon: '💵' },
-      { title: 'Casos/Proyectos Activos', value: '9 pendientes', icon: '📂' }
+      { title: 'Horas Facturables', value: '38.5 hrs', icon: 'Ã¢ÂÂ³' },
+      { title: 'Honorarios del Mes', value: '$4,800.00', icon: 'Ã°Å¸â€™Âµ' },
+      { title: 'Casos/Proyectos Activos', value: '9 pendientes', icon: 'Ã°Å¸â€œâ€š' }
     ]
   },
   'Servicios Sociales y de Salud': {
@@ -369,15 +420,15 @@ const BUSINESS_THEMES: Record<string, {
     accentGlow: 'rgb(13, 148, 136)',
     accentSecondary: '#0f766e',
     gradient: 'linear-gradient(135deg, rgb(13, 148, 136) 0%, rgb(5, 8, 20) 100%)',
-    icon: '🩺',
+    icon: 'Ã°Å¸Â©Âº',
     banner: 'Portal de Servicios de Salud y Bienestar Social',
     bgDark: '#042f2e',
     panelDark: '#115e59',
     textPrimary: '#f0fdfa',
     metrics: [
-      { title: 'Pacientes Atendidos', value: '15 Hoy', icon: '🧑‍⚕️' },
-      { title: 'Consultas Reservadas', value: '28 de esta semana', icon: '🗓️' },
-      { title: 'Historiales Clínicos', value: '412 Guardados', icon: '🗂️' }
+      { title: 'Pacientes Atendidos', value: '15 Hoy', icon: 'Ã°Å¸Â§â€˜Ã¢â‚¬ÂÃ¢Å¡â€¢Ã¯Â¸Â' },
+      { title: 'Consultas Reservadas', value: '28 de esta semana', icon: 'Ã°Å¸â€”â€œÃ¯Â¸Â' },
+      { title: 'Historiales ClÃƒÂ­nicos', value: '412 Guardados', icon: 'Ã°Å¸â€”â€šÃ¯Â¸Â' }
     ]
   },
   'Servicios en General': {
@@ -386,15 +437,15 @@ const BUSINESS_THEMES: Record<string, {
     accentGlow: 'rgb(99, 102, 241)',
     accentSecondary: '#4f46e5',
     gradient: 'linear-gradient(135deg, rgb(99, 102, 241) 0%, rgb(5, 8, 20) 100%)',
-    icon: '🔧',
-    banner: 'Consola General de Gestión de Servicios',
+    icon: 'Ã°Å¸â€Â§',
+    banner: 'Consola General de GestiÃƒÂ³n de Servicios',
     bgDark: '#111827',
     panelDark: '#1f2937',
     textPrimary: '#f9fafb',
     metrics: [
-      { title: 'Servicios Completados', value: '344 órdenes', icon: '✅' },
-      { title: 'Calificación Promedio', value: '4.9 ⭐', icon: '⭐' },
-      { title: 'Órdenes en Progreso', value: '5 activas', icon: '🛠️' }
+      { title: 'Servicios Completados', value: '344 ÃƒÂ³rdenes', icon: 'Ã¢Å“â€¦' },
+      { title: 'CalificaciÃƒÂ³n Promedio', value: '4.9 Ã¢Â­Â', icon: 'Ã¢Â­Â' },
+      { title: 'Ãƒâ€œrdenes en Progreso', value: '5 activas', icon: 'Ã°Å¸â€ºÂ Ã¯Â¸Â' }
     ]
   },
   'Servicios de Transporte': {
@@ -403,32 +454,32 @@ const BUSINESS_THEMES: Record<string, {
     accentGlow: 'rgb(239, 68, 68)',
     accentSecondary: '#dc2626',
     gradient: 'linear-gradient(135deg, rgb(239, 68, 68) 0%, rgb(5, 8, 20) 100%)',
-    icon: '🚚',
-    banner: 'Terminal Logístico y Despacho de Transporte',
+    icon: 'Ã°Å¸Å¡Å¡',
+    banner: 'Terminal LogÃƒÂ­stico y Despacho de Transporte',
     bgDark: '#450a0a',
     panelDark: '#7f1d1d',
     textPrimary: '#fef2f2',
     metrics: [
-      { title: 'Vehículos en Ruta', value: '5 Activos', icon: '🚛' },
-      { title: 'Rutas Despachadas', value: '12 Hoy', icon: '🗺️' },
-      { title: 'Costo Combustible', value: '$384.20', icon: '⛽' }
+      { title: 'VehÃƒÂ­culos en Ruta', value: '5 Activos', icon: 'Ã°Å¸Å¡â€º' },
+      { title: 'Rutas Despachadas', value: '12 Hoy', icon: 'Ã°Å¸â€”ÂºÃ¯Â¸Â' },
+      { title: 'Costo Combustible', value: '$384.20', icon: 'Ã¢â€ºÂ½' }
     ]
   },
-  'Servicios de Reparación de Automotores y Motocicletas': {
-    name: 'Reparación Automotriz',
+  'Servicios de ReparaciÃƒÂ³n de Automotores y Motocicletas': {
+    name: 'ReparaciÃƒÂ³n Automotriz',
     accent: '#84cc16',
     accentGlow: 'rgb(132, 204, 22)',
     accentSecondary: '#65a30d',
     gradient: 'linear-gradient(135deg, rgb(132, 204, 22) 0%, rgb(5, 8, 20) 100%)',
-    icon: '🏍️',
+    icon: 'Ã°Å¸ÂÂÃ¯Â¸Â',
     banner: 'Consola Operativa de Taller Automotriz y Motos',
     bgDark: '#1c1d17',
     panelDark: '#2d2e24',
     textPrimary: '#f7fee7',
     metrics: [
-      { title: 'Vehículos en Taller', value: '8 en Reparación', icon: '🚗' },
-      { title: 'Trabajos Entregados', value: '14 esta semana', icon: '🔧' },
-      { title: 'Repuestos Utilizados', value: '38 Unidades', icon: '⚙️' }
+      { title: 'VehÃƒÂ­culos en Taller', value: '8 en ReparaciÃƒÂ³n', icon: 'Ã°Å¸Å¡â€”' },
+      { title: 'Trabajos Entregados', value: '14 esta semana', icon: 'Ã°Å¸â€Â§' },
+      { title: 'Repuestos Utilizados', value: '38 Unidades', icon: 'Ã¢Å¡â„¢Ã¯Â¸Â' }
     ]
   },
   'default': {
@@ -437,15 +488,15 @@ const BUSINESS_THEMES: Record<string, {
     accentGlow: 'rgb(33, 57, 147)',
     accentSecondary: '#3b53a4',
     gradient: 'linear-gradient(135deg, rgb(33, 57, 147) 0%, rgb(5, 8, 20) 100%)',
-    icon: '💻',
+    icon: 'Ã°Å¸â€™Â»',
     banner: 'Consola General de Control y Contabilidad',
     bgDark: '#E8EAE9',
     panelDark: '#FFFFFF',
     textPrimary: '#111827',
     metrics: [
-      { title: 'Estado del Sistema', value: 'Operativo', icon: '✔️' },
-      { title: 'SRI Integración', value: 'Simulador Local', icon: '🔌' },
-      { title: 'Última Actividad', value: 'Hace un momento', icon: '⏳' }
+      { title: 'Estado del Sistema', value: 'Operativo', icon: 'Ã¢Å“â€Ã¯Â¸Â' },
+      { title: 'SRI IntegraciÃƒÂ³n', value: 'Simulador Local', icon: 'Ã°Å¸â€Å’' },
+      { title: 'ÃƒÅ¡ltima Actividad', value: 'Hace un momento', icon: 'Ã¢ÂÂ³' }
     ]
   }
 };
@@ -603,13 +654,68 @@ export default function App() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
   // Employee management states
-  const [ventasSubTab, setVentasSubTab] = useState<'facturas' | 'empleados' | 'facturacion_avanzada'>('facturacion_avanzada');
+  const [ventasSubTab, setVentasSubTab] = useState<'facturas' | 'empleados' | 'facturacion_avanzada' | 'clientes' | 'proformas' | 'nomina'>('facturacion_avanzada');
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [employeesLoading, setEmployeesLoading] = useState(false);
   const [empName, setEmpName] = useState('');
   const [empEmail, setEmpEmail] = useState('');
   const [empPassword, setEmpPassword] = useState('');
   const [empConfirmPassword, setEmpConfirmPassword] = useState('');
+
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Customer Directory States Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  const [customers, setCustomers] = useState<Customer[]>(() => {
+    try { return JSON.parse(localStorage.getItem('aura_customers') || '[]'); } catch { return []; }
+  });
+  const [customerSearch, setCustomerSearch] = useState('');
+  const [customerFormMode, setCustomerFormMode] = useState<'create' | 'edit'>('create');
+  const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null);
+  const [custName, setCustName] = useState('');
+  const [custRuc, setCustRuc] = useState('');
+  const [custEmail, setCustEmail] = useState('');
+  const [custPhone, setCustPhone] = useState('');
+  const [custAddress, setCustAddress] = useState('');
+
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Proformas States Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  const [proformas, setProformas] = useState<Proforma[]>(() => {
+    try { return JSON.parse(localStorage.getItem('aura_proformas') || '[]'); } catch { return []; }
+  });
+  const [proformaSearch, setProformaSearch] = useState('');
+  const [proformaView, setProformaView] = useState<'list' | 'create'>('list');
+  const [proformaClientName, setProformaClientName] = useState('');
+  const [proformaClientRuc, setProformaClientRuc] = useState('');
+  const [proformaNotes, setProformaNotes] = useState('');
+  const [proformaItems, setProformaItems] = useState<{ productId: string; quantity: number }[]>([
+    { productId: '', quantity: 1 }
+  ]);
+
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Payroll / NÃƒÂ³mina States Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  const [payrollEmployeeId, setPayrollEmployeeId] = useState('');
+  const [payrollSalary, setPayrollSalary] = useState(450);
+  const [payrollBonus, setPayrollBonus] = useState(0);
+  const [payrollExtras, setPayrollExtras] = useState(0);
+  const [payrollOtherDeductions, setPayrollOtherDeductions] = useState(0);
+  const [payrollRoles, setPayrollRoles] = useState<any[]>(() => {
+    try { return JSON.parse(localStorage.getItem('aura_payroll') || '[]'); } catch { return []; }
+  });
+  const [payrollMonth, setPayrollMonth] = useState(() => new Date().toISOString().slice(0, 7));
+
+  // Ã¢â€â‚¬Ã¢â€â‚¬ Bank Accounts States Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>(() => {
+    try { return JSON.parse(localStorage.getItem('aura_banks') || '[]'); } catch { return []; }
+  });
+  const [bankMovements, setBankMovements] = useState<BankMovement[]>(() => {
+    try { return JSON.parse(localStorage.getItem('aura_bank_movements') || '[]'); } catch { return []; }
+  });
+  const [bankView, setBankView] = useState<'list' | 'form' | 'movements'>('list');
+  const [selectedBankAccountId, setSelectedBankAccountId] = useState('');
+  const [bankName, setBankName] = useState('');
+  const [bankType, setBankType] = useState<'CORRIENTE' | 'AHORRO'>('CORRIENTE');
+  const [bankNumber, setBankNumber] = useState('');
+  const [bankInitialBalance, setBankInitialBalance] = useState(0);
+  const [movType, setMovType] = useState<'DEPOSITO' | 'RETIRO' | 'TRANSFERENCIA'>('DEPOSITO');
+  const [movAmount, setMovAmount] = useState(0);
+  const [movDesc, setMovDesc] = useState('');
+  const [movDate, setMovDate] = useState(new Date().toISOString().slice(0, 10));
 
 
   // Form States (New Product & Modification)
@@ -729,7 +835,7 @@ export default function App() {
   const [manualEntryDate, setManualEntryDate] = useState(new Date().toISOString().slice(0, 10));
   const [manualEntryLines, setManualEntryLines] = useState<any[]>([
     { accountCode: '1.01.01', accountName: 'Caja/Bancos', debit: 0, credit: 0 },
-    { accountCode: '4.01.01', accountName: 'Ventas de Servicios/Mercaderías', debit: 0, credit: 0 }
+    { accountCode: '4.01.01', accountName: 'Ventas de Servicios/MercaderÃƒÂ­as', debit: 0, credit: 0 }
   ]);
 
   // Modal / XML states
@@ -1136,7 +1242,7 @@ export default function App() {
     return (
       <div className="flex-center loading-screen">
         <div className="spinner"></div>
-        <p>Cargando sesión contable...</p>
+        <p>Cargando sesiÃƒÂ³n contable...</p>
       </div>
     );
   }
@@ -1167,7 +1273,7 @@ export default function App() {
       setViewMode('app');
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
-      setAuthFormError(errMsg || 'Error en la autenticación');
+      setAuthFormError(errMsg || 'Error en la autenticaciÃƒÂ³n');
     }
   };
 
@@ -1175,7 +1281,7 @@ export default function App() {
   const handleSaveCompany = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!compIdentificacion || !compRazonSocial) {
-      alert('Por favor complete la identificación y razón social.');
+      alert('Por favor complete la identificaciÃƒÂ³n y razÃƒÂ³n social.');
       return;
     }
 
@@ -1211,7 +1317,7 @@ export default function App() {
       // Sutil retraso artificial para visualizar la barra de progreso
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      alert(companyFormAction === 'create' ? 'Empresa creada con éxito' : 'Empresa modificada con éxito');
+      alert(companyFormAction === 'create' ? 'Empresa creada con ÃƒÂ©xito' : 'Empresa modificada con ÃƒÂ©xito');
       setCompType('RUC');
       setCompIdentificacion('');
       setCompRazonSocial('');
@@ -1222,14 +1328,14 @@ export default function App() {
       void fetchCompanies();
     } catch (err) {
       console.error(err);
-      alert('Error de conexión con el servidor.');
+      alert('Error de conexiÃƒÂ³n con el servidor.');
     } finally {
       setIsCreatingCompany(false);
     }
   };
 
   const handleDeleteCompany = async (id: string, name: string) => {
-    if (!confirm(`¿Está seguro de eliminar la empresa "${name}"? Esta acción no se puede deshacer.`)) {
+    if (!confirm(`Ã‚Â¿EstÃƒÂ¡ seguro de eliminar la empresa "${name}"? Esta acciÃƒÂ³n no se puede deshacer.`)) {
       return;
     }
 
@@ -1247,14 +1353,14 @@ export default function App() {
         return;
       }
 
-      alert('Empresa eliminada con éxito');
+      alert('Empresa eliminada con ÃƒÂ©xito');
       if (selectedCompany?.id === id) {
         setSelectedCompany(null);
       }
       void fetchCompanies();
     } catch (err) {
       console.error(err);
-      alert('Error de conexión con el servidor.');
+      alert('Error de conexiÃƒÂ³n con el servidor.');
     }
   };
 
@@ -1331,7 +1437,7 @@ export default function App() {
           }),
         }).then(resAsset => {
           if (resAsset.ok) {
-            console.log('Activo Fijo creado automáticamente desde producto.');
+            console.log('Activo Fijo creado automÃƒÂ¡ticamente desde producto.');
             void fetchAssets();
           }
         }).catch(errAsset => console.error('Failed to create asset automatically:', errAsset));
@@ -1378,7 +1484,7 @@ export default function App() {
         return;
       }
 
-      alert('Producto actualizado con éxito');
+      alert('Producto actualizado con ÃƒÂ©xito');
       setSearchSku('');
       setUpdateProductPrice(0);
       setUpdateProductCategoryId('');
@@ -1407,7 +1513,7 @@ export default function App() {
 
       if (!res.ok) {
         const errData = await res.json();
-        alert(errData.message || 'Error al crear categoría');
+        alert(errData.message || 'Error al crear categorÃƒÂ­a');
         return;
       }
 
@@ -1419,7 +1525,7 @@ export default function App() {
   };
 
   const handleDeleteProduct = async (productId: string, productName: string) => {
-    if (!window.confirm(`¿Estás seguro de que deseas eliminar el producto "${productName}" y todos sus movimientos de Kárdex asociados?`)) {
+    if (!window.confirm(`Ã‚Â¿EstÃƒÂ¡s seguro de que deseas eliminar el producto "${productName}" y todos sus movimientos de KÃƒÂ¡rdex asociados?`)) {
       return;
     }
     try {
@@ -1548,7 +1654,7 @@ export default function App() {
         method: 'POST',
       });
       if (res.ok) {
-        alert('Factura firmada y autorizada enviada con éxito al correo del cliente.');
+        alert('Factura firmada y autorizada enviada con ÃƒÂ©xito al correo del cliente.');
         fetchInvoices();
       } else {
         alert('Error al enviar factura al cliente');
@@ -1619,13 +1725,13 @@ export default function App() {
         setSriConfigHasSignature(data.hasSignature);
         setSriSignatureBase64('');
         setSriSignaturePassword('');
-        alert('Configuración del SRI guardada correctamente.');
+        alert('ConfiguraciÃƒÂ³n del SRI guardada correctamente.');
       } else {
-        alert('Error al guardar la configuración del SRI.');
+        alert('Error al guardar la configuraciÃƒÂ³n del SRI.');
       }
     } catch (err) {
       console.error('Error saving SRI config:', err);
-      alert('Error de conexión al guardar la configuración.');
+      alert('Error de conexiÃƒÂ³n al guardar la configuraciÃƒÂ³n.');
     } finally {
       setSriSaving(false);
     }
@@ -1690,9 +1796,9 @@ export default function App() {
       if (res.ok) {
         const data = await res.json();
         if (data.length > 0) {
-          alert(`Sincronización exitosa. Se descargaron instantáneamente del SRI ${data.length} facturas de compras de proveedores y se actualizó el inventario.`);
+          alert(`SincronizaciÃƒÂ³n exitosa. Se descargaron instantÃƒÂ¡neamente del SRI ${data.length} facturas de compras de proveedores y se actualizÃƒÂ³ el inventario.`);
         } else {
-          alert('Sincronización exitosa. No hay nuevas compras pendientes en el SRI.');
+          alert('SincronizaciÃƒÂ³n exitosa. No hay nuevas compras pendientes en el SRI.');
         }
         fetchPurchases();
         fetchProducts();
@@ -1704,7 +1810,7 @@ export default function App() {
     }
   };
 
-  // Actions - Caja / Conciliación
+  // Actions - Caja / ConciliaciÃƒÂ³n
   const handleCreateCashTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -1726,7 +1832,7 @@ export default function App() {
 
       if (!res.ok) {
         const errData = await res.json();
-        alert(errData.message || 'Error al registrar transacción de caja');
+        alert(errData.message || 'Error al registrar transacciÃƒÂ³n de caja');
         return;
       }
 
@@ -1759,9 +1865,9 @@ export default function App() {
 
       const data = await res.json();
       if (data.length > 0) {
-        alert(`Sincronización de retenciones exitosa. Se importaron ${data.length} retenciones del SRI y se aplicó la auto-conciliación.`);
+        alert(`SincronizaciÃƒÂ³n de retenciones exitosa. Se importaron ${data.length} retenciones del SRI y se aplicÃƒÂ³ la auto-conciliaciÃƒÂ³n.`);
       } else {
-        alert('Sincronización de retenciones exitosa. No hay nuevas retenciones en el SRI.');
+        alert('SincronizaciÃƒÂ³n de retenciones exitosa. No hay nuevas retenciones en el SRI.');
       }
       fetchReconciliationSummary();
     } catch (err) {
@@ -1800,7 +1906,7 @@ export default function App() {
       setManualEntryDesc('');
       setManualEntryLines([
         { accountCode: '1.01.01', accountName: 'Caja/Bancos', debit: 0, credit: 0 },
-        { accountCode: '4.01.01', accountName: 'Ventas de Servicios/Mercaderías', debit: 0, credit: 0 }
+        { accountCode: '4.01.01', accountName: 'Ventas de Servicios/MercaderÃƒÂ­as', debit: 0, credit: 0 }
       ]);
       fetchAccountingData();
     } catch (err) {
@@ -1812,11 +1918,11 @@ export default function App() {
   const handleCreateEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
     if (empPassword !== empConfirmPassword) {
-      alert('Las contraseñas no coinciden.');
+      alert('Las contraseÃƒÂ±as no coinciden.');
       return;
     }
     if (empPassword.length < 6) {
-      alert('La contraseña debe tener al menos 6 caracteres.');
+      alert('La contraseÃƒÂ±a debe tener al menos 6 caracteres.');
       return;
     }
     try {
@@ -1850,7 +1956,7 @@ export default function App() {
   };
 
   const handleDeleteEmployee = async (id: string) => {
-    if (!confirm('¿Estás seguro de que deseas eliminar este empleado? Ya no podrá ingresar al sistema de facturación.')) return;
+    if (!confirm('Ã‚Â¿EstÃƒÂ¡s seguro de que deseas eliminar este empleado? Ya no podrÃƒÂ¡ ingresar al sistema de facturaciÃƒÂ³n.')) return;
     try {
       const res = await fetch(`${API_BASE}/employees/${id}`, {
         method: 'DELETE',
@@ -1866,6 +1972,186 @@ export default function App() {
     } catch (err) {
       console.error('Error deleting employee:', err);
     }
+  };
+
+
+  // -- Handlers: Customer Directory ------------------------------------------
+  const saveCustomersToStorage = (list: Customer[]) => {
+    localStorage.setItem('aura_customers', JSON.stringify(list));
+  };
+
+  const handleSaveCustomer = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (customerFormMode === 'create') {
+      const newCust = {
+        id: crypto.randomUUID(),
+        name: custName, ruc: custRuc, email: custEmail, phone: custPhone, address: custAddress,
+        createdAt: new Date().toISOString(),
+      };
+      const updated = [...customers, newCust];
+      setCustomers(updated); saveCustomersToStorage(updated);
+    } else {
+      const updated = customers.map(c =>
+        c.id === editingCustomerId
+          ? { ...c, name: custName, ruc: custRuc, email: custEmail, phone: custPhone, address: custAddress }
+          : c
+      );
+      setCustomers(updated); saveCustomersToStorage(updated);
+    }
+    setCustName(''); setCustRuc(''); setCustEmail(''); setCustPhone(''); setCustAddress('');
+    setCustomerFormMode('create'); setEditingCustomerId(null);
+  };
+
+  const handleEditCustomer = (c: Customer) => {
+    setCustomerFormMode('edit'); setEditingCustomerId(c.id);
+    setCustName(c.name); setCustRuc(c.ruc); setCustEmail(c.email);
+    setCustPhone(c.phone); setCustAddress(c.address);
+  };
+
+  const handleDeleteCustomer = (id: string) => {
+    if (!confirm('Eliminar este cliente del directorio?')) return;
+    const updated = customers.filter(c => c.id !== id);
+    setCustomers(updated); saveCustomersToStorage(updated);
+  };
+
+  // -- Handlers: Proformas ---------------------------------------------------
+  const saveProformasToStorage = (list: Proforma[]) => {
+    localStorage.setItem('aura_proformas', JSON.stringify(list));
+  };
+
+  const handleCreateProforma = (e: React.FormEvent) => {
+    e.preventDefault();
+    let subtotal = 0, iva = 0, total = 0;
+    const items: ProformaItem[] = [];
+    proformaItems.forEach(item => {
+      const prod = products.find(p => p.id === item.productId);
+      if (prod) {
+        const lineTotal = prod.price * item.quantity;
+        total += lineTotal;
+        if (prod.hasIva) {
+          const ls = lineTotal / (1 + globalIvaRate / 100);
+          subtotal += ls; iva += lineTotal - ls;
+        } else { subtotal += lineTotal; }
+        items.push({ productId: prod.id, productName: prod.name, productSku: prod.sku,
+          price: prod.price, quantity: item.quantity, hasIva: prod.hasIva });
+      }
+    });
+    const newProforma = {
+      id: crypto.randomUUID(), clientName: proformaClientName, clientRuc: proformaClientRuc,
+      items, subtotal: Number(subtotal.toFixed(2)), iva: Number(iva.toFixed(2)),
+      total: Number(total.toFixed(2)), status: 'BORRADOR' as const,
+      createdAt: new Date().toISOString(), notes: proformaNotes,
+    };
+    const updated = [...proformas, newProforma];
+    setProformas(updated); saveProformasToStorage(updated);
+    setProformaClientName(''); setProformaClientRuc(''); setProformaNotes('');
+    setProformaItems([{ productId: '', quantity: 1 }]); setProformaView('list');
+  };
+
+  const handleUpdateProformaStatus = (id: string, status: Proforma['status']) => {
+    const updated = proformas.map(p => p.id === id ? { ...p, status } : p);
+    setProformas(updated); saveProformasToStorage(updated);
+  };
+
+  const handleConvertProformaToInvoice = (p: Proforma) => {
+    setNewClientName(p.clientName);
+    const items = p.items.map(i => ({ productId: i.productId, quantity: i.quantity }));
+    setInvoiceItems(items.length > 0 ? items : [{ productId: '', quantity: 1 }]);
+    handleUpdateProformaStatus(p.id, 'CONVERTIDA');
+    setActiveTab('ventas'); setVentasSubTab('facturas');
+  };
+
+  const handleDeleteProforma = (id: string) => {
+    if (!confirm('Eliminar esta proforma?')) return;
+    const updated = proformas.filter(p => p.id !== id);
+    setProformas(updated); saveProformasToStorage(updated);
+  };
+
+  // -- Handlers: Payroll (Nomina) --------------------------------------------
+  const IESS_EMPLOYEE_RATE = 0.0945;
+  const IESS_EMPLOYER_RATE = 0.1115;
+
+  const payrollCalc = React.useMemo(() => {
+    const gross = payrollSalary + payrollBonus + payrollExtras;
+    const iessEmployee = Number((gross * IESS_EMPLOYEE_RATE).toFixed(2));
+    const iessEmployer = Number((gross * IESS_EMPLOYER_RATE).toFixed(2));
+    const net = Number((gross - iessEmployee - payrollOtherDeductions).toFixed(2));
+    return { gross, iessEmployee, iessEmployer, net };
+  }, [payrollSalary, payrollBonus, payrollExtras, payrollOtherDeductions]);
+
+  const handleGeneratePayroll = (e: React.FormEvent) => {
+    e.preventDefault();
+    const emp = employees.find(em => em.id === payrollEmployeeId);
+    const newRole = {
+      id: crypto.randomUUID(), employeeId: payrollEmployeeId,
+      employeeName: emp?.name || 'Empleado', month: payrollMonth,
+      salary: payrollSalary, bonus: payrollBonus, extras: payrollExtras,
+      gross: payrollCalc.gross, iessEmployee: payrollCalc.iessEmployee,
+      iessEmployer: payrollCalc.iessEmployer, otherDeductions: payrollOtherDeductions,
+      net: payrollCalc.net, createdAt: new Date().toISOString(),
+    };
+    const updated = [...payrollRoles, newRole];
+    setPayrollRoles(updated); localStorage.setItem('aura_payroll', JSON.stringify(updated));
+    alert('Rol de pago generado para ' + (emp?.name || 'Empleado') + ' - ' + payrollMonth);
+  };
+
+  const handleExportPayrollCSV = () => {
+    if (payrollRoles.length === 0) { alert('No hay roles de pago generados.'); return; }
+    const headers = 'Empleado,Periodo,Salario Base,Bonos,Horas Extra,Ingreso Bruto,IESS Empleado (9.45%),Patronal (11.15%),Otras Deducciones,Salario Neto';
+    const rows = payrollRoles.map(r =>
+      '"' + r.employeeName + '","' + r.month + '",' + r.salary + ',' + r.bonus + ',' + r.extras + ',' +
+      r.gross + ',' + r.iessEmployee + ',' + r.iessEmployer + ',' + r.otherDeductions + ',' + r.net
+    ).join('\n');
+    const csv = headers + '\n' + rows;
+    const el = document.createElement('a');
+    el.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    el.download = 'nomina_' + payrollMonth + '.csv';
+    document.body.appendChild(el); el.click(); document.body.removeChild(el);
+  };
+
+  // -- Handlers: Bank Accounts -----------------------------------------------
+  const saveBanksToStorage = (accounts: BankAccount[], movements: BankMovement[]) => {
+    localStorage.setItem('aura_banks', JSON.stringify(accounts));
+    localStorage.setItem('aura_bank_movements', JSON.stringify(movements));
+  };
+
+  const handleCreateBankAccount = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newAcc = {
+      id: crypto.randomUUID(), bankName, accountType: bankType,
+      accountNumber: bankNumber, balance: bankInitialBalance,
+      currency: 'USD', createdAt: new Date().toISOString(),
+    };
+    const updatedAccounts = [...bankAccounts, newAcc];
+    setBankAccounts(updatedAccounts); saveBanksToStorage(updatedAccounts, bankMovements);
+    setBankName(''); setBankNumber(''); setBankInitialBalance(0); setBankView('list');
+  };
+
+  const handleDeleteBankAccount = (id: string) => {
+    if (!confirm('Eliminar esta cuenta bancaria?')) return;
+    const updatedAccounts = bankAccounts.filter(a => a.id !== id);
+    const updatedMov = bankMovements.filter(m => m.accountId !== id);
+    setBankAccounts(updatedAccounts); setBankMovements(updatedMov);
+    saveBanksToStorage(updatedAccounts, updatedMov);
+    if (selectedBankAccountId === id) setSelectedBankAccountId('');
+  };
+
+  const handleCreateBankMovement = (e: React.FormEvent) => {
+    e.preventDefault();
+    const sign = movType === 'DEPOSITO' ? 1 : -1;
+    const newMov = {
+      id: crypto.randomUUID(), accountId: selectedBankAccountId,
+      type: movType, amount: movAmount, description: movDesc, date: movDate,
+    };
+    const updatedMov = [...bankMovements, newMov];
+    const updatedAccounts = bankAccounts.map(a =>
+      a.id === selectedBankAccountId
+        ? { ...a, balance: Number((a.balance + sign * movAmount).toFixed(2)) }
+        : a
+    );
+    setBankMovements(updatedMov); setBankAccounts(updatedAccounts);
+    saveBanksToStorage(updatedAccounts, updatedMov);
+    setMovAmount(0); setMovDesc('');
   };
 
   // Actions - Assets
@@ -1914,11 +2200,11 @@ export default function App() {
         body: JSON.stringify({ period }),
       });
       if (res.ok) {
-        alert('Depreciación de fin de mes calculada y contabilizada exitosamente en el Libro Diario.');
+        alert('DepreciaciÃƒÂ³n de fin de mes calculada y contabilizada exitosamente en el Libro Diario.');
         fetchDepreciations();
       } else {
         const errData = await res.json();
-        alert(errData.message || 'Error al calcular depreciación');
+        alert(errData.message || 'Error al calcular depreciaciÃƒÂ³n');
       }
     } catch (err) {
       console.error(err);
@@ -1927,7 +2213,7 @@ export default function App() {
 
   const handleExportReconciliation = () => {
     if (!recoSummary) {
-      alert('No hay datos de conciliación disponibles para exportar.');
+      alert('No hay datos de conciliaciÃƒÂ³n disponibles para exportar.');
       return;
     }
     
@@ -2114,7 +2400,7 @@ export default function App() {
             {!isSidebarCollapsed && <span>{label}</span>}
           </div>
           {!isSidebarCollapsed && (
-            <span style={{ fontSize: '12px', color: isAnyActive ? '#213993' : 'var(--text-muted)', transform: 'scale(0.85)' }}>►</span>
+            <span style={{ fontSize: '12px', color: isAnyActive ? '#213993' : 'var(--text-muted)', transform: 'scale(0.85)' }}>Ã¢â€“Âº</span>
           )}
         </button>
 
@@ -2123,7 +2409,7 @@ export default function App() {
             className="glass-panel flyout-submenu" 
             style={{
               position: 'absolute',
-              left: isSidebarCollapsed ? '75px' : '265px',
+              left: isSidebarCollapsed ? '62px' : '224px',
               top: '0',
               width: '230px',
               background: '#ffffff',
@@ -2186,41 +2472,41 @@ export default function App() {
   const renderRoadmapAccordion = () => {
     const roadmapData = [
       {
-        id: 'facturacion', icon: '🛒', label: 'Facturación',
+        id: 'facturacion', icon: 'Ã°Å¸â€ºâ€™', label: 'FacturaciÃƒÂ³n',
         items: [
           'Correo con datos (cliente, productos, total)',
           'Ver detalles de la factura',
           'Restricciones de cambios',
-          'Límite consumidor final ($50)'
+          'LÃƒÂ­mite consumidor final ($50)'
         ]
       },
       {
-        id: 'productos', icon: '📦', label: 'Productos e Inventario',
+        id: 'productos', icon: 'Ã°Å¸â€œÂ¦', label: 'Productos e Inventario',
         items: [
           'Tipo de productos (Gasto / Venta)',
-          'Módulo de escáner código de barras'
+          'MÃƒÂ³dulo de escÃƒÂ¡ner cÃƒÂ³digo de barras'
         ]
       },
       {
-        id: 'configuracion', icon: '⚙️', label: 'Configuración y Empresas',
+        id: 'configuracion', icon: 'Ã¢Å¡â„¢Ã¯Â¸Â', label: 'ConfiguraciÃƒÂ³n y Empresas',
         items: [
           'Panel de servicio para configurar',
-          'Tipos de empresa (Comercial, Servicios, Producción, Transporte)',
-          'Sincronizaciones automáticas programadas'
+          'Tipos de empresa (Comercial, Servicios, ProducciÃƒÂ³n, Transporte)',
+          'Sincronizaciones automÃƒÂ¡ticas programadas'
         ]
       },
       {
-        id: 'activos', icon: '🏠', label: 'Activos Fijos',
+        id: 'activos', icon: 'Ã°Å¸ÂÂ ', label: 'Activos Fijos',
         items: [
           'Tipo de activo fijo por tipo de producto'
         ]
       },
       {
-        id: 'sistema', icon: '🚀', label: 'Sistema y Mejoras',
+        id: 'sistema', icon: 'Ã°Å¸Å¡â‚¬', label: 'Sistema y Mejoras',
         items: [
           'Buscadores mejorados',
-          'Funciones mejoradas asíncronas (async)',
-          'Exportación de datos opcional (conciliaciones)'
+          'Funciones mejoradas asÃƒÂ­ncronas (async)',
+          'ExportaciÃƒÂ³n de datos opcional (conciliaciones)'
         ]
       }
     ];
@@ -2252,7 +2538,7 @@ export default function App() {
           }}
           title="Nuevas Funciones"
         >
-          <span className="icon" style={{ fontSize: '1.5rem', margin: 0 }}>🎯</span>
+          <span className="icon" style={{ fontSize: '1.5rem', margin: 0 }}>Ã°Å¸Å½Â¯</span>
         </button>
       );
     }
@@ -2289,11 +2575,11 @@ export default function App() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span className="icon" style={{ fontSize: '1.2rem' }}>🎯</span>
+            <span className="icon" style={{ fontSize: '1.2rem' }}>Ã°Å¸Å½Â¯</span>
             {!isSidebarCollapsed && <span>Nuevas Funciones</span>}
           </div>
           {!isSidebarCollapsed && (
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)', transform: 'scale(0.85)' }}>►</span>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)', transform: 'scale(0.85)' }}>Ã¢â€“Âº</span>
           )}
         </button>
 
@@ -2302,7 +2588,7 @@ export default function App() {
             className="glass-panel flyout-submenu" 
             style={{
               position: 'absolute',
-              left: isSidebarCollapsed ? '75px' : '265px',
+              left: isSidebarCollapsed ? '62px' : '224px',
               top: '0',
               width: '280px',
               background: '#ffffff',
@@ -2353,135 +2639,135 @@ export default function App() {
                 </h1>
               )}
               <button className="sidebar-toggle" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} style={{ flexShrink: 0 }}>
-                {isSidebarCollapsed ? '›' : '‹'}
+                {isSidebarCollapsed ? 'Ã¢â‚¬Âº' : 'Ã¢â‚¬Â¹'}
               </button>
             </div>
 
             <nav className="sidebar-nav" style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 180px)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
               {renderRoadmapAccordion()}
-              {renderAccordion('admin', '⚙️', 'Administración', isAdministrationExpanded, setIsAdministrationExpanded, [
-                { label: 'Gestión Empresas', icon: '🏢', onClick: () => { setActiveTab('admin'); setAdminSubTab('empresas'); }, isActive: activeTab === 'admin' && adminSubTab === 'empresas' },
-                { label: 'Administrador Sucursales', icon: '🏪', onClick: () => { setActiveTab('admin'); setAdminSubTab('sucursales'); }, isActive: activeTab === 'admin' && adminSubTab === 'sucursales' },
-                { label: 'Integraciones', icon: '🔌', onClick: () => { setActiveTab('admin'); setAdminSubTab('integraciones'); }, isActive: activeTab === 'admin' && adminSubTab === 'integraciones' },
-                { label: 'Actividades Sistema', icon: '⚙️', onClick: () => { setActiveTab('admin'); setAdminSubTab('actividades'); }, isActive: activeTab === 'admin' && adminSubTab === 'actividades' }
+              {renderAccordion('admin', 'Ã¢Å¡â„¢Ã¯Â¸Â', 'AdministraciÃƒÂ³n', isAdministrationExpanded, setIsAdministrationExpanded, [
+                { label: 'GestiÃƒÂ³n Empresas', icon: 'Ã°Å¸ÂÂ¢', onClick: () => { setActiveTab('admin'); setAdminSubTab('empresas'); }, isActive: activeTab === 'admin' && adminSubTab === 'empresas' },
+                { label: 'Administrador Sucursales', icon: 'Ã°Å¸ÂÂª', onClick: () => { setActiveTab('admin'); setAdminSubTab('sucursales'); }, isActive: activeTab === 'admin' && adminSubTab === 'sucursales' },
+                { label: 'Integraciones', icon: 'Ã°Å¸â€Å’', onClick: () => { setActiveTab('admin'); setAdminSubTab('integraciones'); }, isActive: activeTab === 'admin' && adminSubTab === 'integraciones' },
+                { label: 'Actividades Sistema', icon: 'Ã¢Å¡â„¢Ã¯Â¸Â', onClick: () => { setActiveTab('admin'); setAdminSubTab('actividades'); }, isActive: activeTab === 'admin' && adminSubTab === 'actividades' }
               ])}
 
-              {renderAccordion('ventas', '🛒', 'Ventas', isVentasExpanded, setIsVentasExpanded, [
-                { label: 'Facturación', icon: '🛒', onClick: () => { setActiveTab('ventas'); setVentasSubTab('facturas'); }, isActive: activeTab === 'ventas' && ventasSubTab === 'facturas' },
-                { label: 'Proformas', icon: '📃', onClick: () => setSimulatedModule('Proformas') },
-                { label: 'Pedidos', icon: '📦', onClick: () => setSimulatedModule('Pedidos de Clientes') },
-                { label: 'Entregas por Facturar', icon: '🚚', onClick: () => setSimulatedModule('Entregas por Facturar') },
-                { label: 'Entregas Parciales', icon: '🚛', onClick: () => setSimulatedModule('Entregas Parciales') },
-                { label: 'Autorizar Documentos', icon: '✉️', onClick: () => setSimulatedModule('Autorizar Documentos SRI') },
-                { label: 'Clientes', icon: '🙂', onClick: () => setSimulatedModule('Directorio de Clientes') },
-                { label: 'Prospecto', icon: '🎯', onClick: () => setSimulatedModule('Prospectos y Leads') },
-                { label: 'Marketing Whatsapp', icon: '💬', onClick: () => setSimulatedModule('Marketing Whatsapp') },
-                { label: 'Grupo Clientes', icon: '👥', onClick: () => setSimulatedModule('Grupos de Clientes') },
-                { label: 'Zonas Clientes', icon: '📌', onClick: () => setSimulatedModule('Zonas de Cobertura') },
-                { label: 'Rutas Clientes', icon: '📍', onClick: () => setSimulatedModule('Rutas de Despacho') },
-                { label: 'Secuencias', icon: '🔢', onClick: () => setSimulatedModule('Secuencias de Facturación') },
-                { label: 'Agentes Ventas', icon: '👤', onClick: () => setSimulatedModule('Vendedores y Comisiones') },
-                { label: 'Tarjetas de Crédito', icon: '💳', onClick: () => setSimulatedModule('Tarjetas de Crédito y POS') },
-                { label: 'Facturación por Lotes', icon: '🛒', onClick: () => setSimulatedModule('Facturación Masiva') },
-                { label: 'Facturas Servicios', icon: '📄', onClick: () => setSimulatedModule('Facturas de Servicios') },
-                { label: 'Localizar Vendedores', icon: '🗺️', onClick: () => setSimulatedModule('Localización GPS Vendedores') },
-                { label: 'Despacho', icon: '📦', onClick: () => setSimulatedModule('Módulo de Despacho') },
-                { label: 'Recepción', icon: '📥', onClick: () => setSimulatedModule('Módulo de Recepción') }
+              {renderAccordion('ventas', 'Ã°Å¸â€ºâ€™', 'Ventas', isVentasExpanded, setIsVentasExpanded, [
+                { label: 'FacturaciÃƒÂ³n', icon: 'Ã°Å¸â€ºâ€™', onClick: () => { setActiveTab('ventas'); setVentasSubTab('facturas'); }, isActive: activeTab === 'ventas' && ventasSubTab === 'facturas' },
+                { label: 'Proformas', icon: 'Ã°Å¸â€œÆ’', onClick: () => { setActiveTab('ventas'); setVentasSubTab('proformas'); } },
+                { label: 'Pedidos', icon: 'Ã°Å¸â€œÂ¦', onClick: () => setSimulatedModule('Pedidos de Clientes') },
+                { label: 'Entregas por Facturar', icon: 'Ã°Å¸Å¡Å¡', onClick: () => setSimulatedModule('Entregas por Facturar') },
+                { label: 'Entregas Parciales', icon: 'Ã°Å¸Å¡â€º', onClick: () => setSimulatedModule('Entregas Parciales') },
+                { label: 'Autorizar Documentos', icon: 'Ã¢Å“â€°Ã¯Â¸Â', onClick: () => setSimulatedModule('Autorizar Documentos SRI') },
+                { label: 'Clientes', icon: 'Ã°Å¸â„¢â€š', onClick: () => { setActiveTab('ventas'); setVentasSubTab('clientes'); }, isActive: activeTab === 'ventas' && ventasSubTab === 'clientes' },
+                { label: 'Prospecto', icon: 'Ã°Å¸Å½Â¯', onClick: () => setSimulatedModule('Prospectos y Leads') },
+                { label: 'Marketing Whatsapp', icon: 'Ã°Å¸â€™Â¬', onClick: () => setSimulatedModule('Marketing Whatsapp') },
+                { label: 'Grupo Clientes', icon: 'Ã°Å¸â€˜Â¥', onClick: () => setSimulatedModule('Grupos de Clientes') },
+                { label: 'Zonas Clientes', icon: 'Ã°Å¸â€œÅ’', onClick: () => setSimulatedModule('Zonas de Cobertura') },
+                { label: 'Rutas Clientes', icon: 'Ã°Å¸â€œÂ', onClick: () => setSimulatedModule('Rutas de Despacho') },
+                { label: 'Secuencias', icon: 'Ã°Å¸â€Â¢', onClick: () => setSimulatedModule('Secuencias de FacturaciÃƒÂ³n') },
+                { label: 'Agentes Ventas', icon: 'Ã°Å¸â€˜Â¤', onClick: () => setSimulatedModule('Vendedores y Comisiones') },
+                { label: 'Tarjetas de CrÃƒÂ©dito', icon: 'Ã°Å¸â€™Â³', onClick: () => setSimulatedModule('Tarjetas de CrÃƒÂ©dito y POS') },
+                { label: 'FacturaciÃƒÂ³n por Lotes', icon: 'Ã°Å¸â€ºâ€™', onClick: () => setSimulatedModule('FacturaciÃƒÂ³n Masiva') },
+                { label: 'Facturas Servicios', icon: 'Ã°Å¸â€œâ€ž', onClick: () => setSimulatedModule('Facturas de Servicios') },
+                { label: 'Localizar Vendedores', icon: 'Ã°Å¸â€”ÂºÃ¯Â¸Â', onClick: () => setSimulatedModule('LocalizaciÃƒÂ³n GPS Vendedores') },
+                { label: 'Despacho', icon: 'Ã°Å¸â€œÂ¦', onClick: () => setSimulatedModule('MÃƒÂ³dulo de Despacho') },
+                { label: 'RecepciÃƒÂ³n', icon: 'Ã°Å¸â€œÂ¥', onClick: () => setSimulatedModule('MÃƒÂ³dulo de RecepciÃƒÂ³n') }
               ])}
 
-              {renderAccordion('compras', '🚚', 'Compras', isComprasExpanded, setIsComprasExpanded, [
-                { label: 'Orden Compra', icon: '📋', onClick: () => setSimulatedModule('Órdenes de Compra') },
-                { label: 'Recepción Compra', icon: '🚚', onClick: () => setSimulatedModule('Recepción de Mercaderías') },
-                { label: 'Compras', icon: '🛒', onClick: () => setActiveTab('proveedores'), isActive: activeTab === 'proveedores' },
-                { label: 'Proveedores', icon: '👤', onClick: () => setSimulatedModule('Directorio de Proveedores') },
-                { label: 'Grupo Proveedores', icon: '👥', onClick: () => setSimulatedModule('Grupos de Proveedores') },
-                { label: 'Tarifas', icon: '💵', onClick: () => setSimulatedModule('Tarifas de Precios') },
-                { label: 'Productos', icon: '📦', onClick: () => setActiveTab('kardex'), isActive: activeTab === 'kardex' },
-                { label: 'Servicios', icon: '⚙️', onClick: () => setSimulatedModule('Catálogo de Servicios') },
-                { label: 'Gastos', icon: '📉', onClick: () => setSimulatedModule('Registro de Gastos') },
-                { label: 'Kardex', icon: '📊', onClick: () => setActiveTab('kardex'), isActive: activeTab === 'kardex' },
-                { label: 'Actualizar Existencias', icon: '🔄', onClick: () => setSimulatedModule('Actualización de Existencias') },
-                { label: 'Análisis de Compra', icon: '📈', onClick: () => setSimulatedModule('Análisis de Compras') },
-                { label: 'Línea Productos', icon: '📦', onClick: () => setSimulatedModule('Líneas de Productos') },
-                { label: 'Productos Categorias', icon: '📁', onClick: () => setSimulatedModule('Categorías de Productos') },
-                { label: 'Sub Categorías', icon: '📂', onClick: () => setSimulatedModule('Sub Categorías') },
-                { label: 'Sub Grupos', icon: '👥', onClick: () => setSimulatedModule('Sub Grupos') },
-                { label: 'Almacenes', icon: '🏬', onClick: () => setSimulatedModule('Bodegas y Almacenes') },
-                { label: 'Kits', icon: '📦', onClick: () => setSimulatedModule('Kits de Productos') },
-                { label: 'Medidas', icon: '📏', onClick: () => setSimulatedModule('Unidades de Medida') },
-                { label: 'Movimientos Inventario', icon: '💳', onClick: () => setSimulatedModule('Movimientos de Bodega') },
-                { label: 'Toma Física', icon: '📝', onClick: () => setSimulatedModule('Inventario Físico') },
-                { label: 'Ingresos', icon: '➕', onClick: () => setSimulatedModule('Ingresos de Bodega') },
-                { label: 'Salidas', icon: '➖', onClick: () => setSimulatedModule('Salidas de Bodega') },
-                { label: 'Aprobar Transferencias', icon: '📋', onClick: () => setSimulatedModule('Aprobación de Transferencias') },
-                { label: 'Transferencias de Almacenes', icon: '🔄', onClick: () => setSimulatedModule('Transferencias entre Bodegas') }
+              {renderAccordion('compras', 'Ã°Å¸Å¡Å¡', 'Compras', isComprasExpanded, setIsComprasExpanded, [
+                { label: 'Orden Compra', icon: 'Ã°Å¸â€œâ€¹', onClick: () => setSimulatedModule('Ãƒâ€œrdenes de Compra') },
+                { label: 'RecepciÃƒÂ³n Compra', icon: 'Ã°Å¸Å¡Å¡', onClick: () => setSimulatedModule('RecepciÃƒÂ³n de MercaderÃƒÂ­as') },
+                { label: 'Compras', icon: 'Ã°Å¸â€ºâ€™', onClick: () => setActiveTab('proveedores'), isActive: activeTab === 'proveedores' },
+                { label: 'Proveedores', icon: 'Ã°Å¸â€˜Â¤', onClick: () => setSimulatedModule('Directorio de Proveedores') },
+                { label: 'Grupo Proveedores', icon: 'Ã°Å¸â€˜Â¥', onClick: () => setSimulatedModule('Grupos de Proveedores') },
+                { label: 'Tarifas', icon: 'Ã°Å¸â€™Âµ', onClick: () => setSimulatedModule('Tarifas de Precios') },
+                { label: 'Productos', icon: 'Ã°Å¸â€œÂ¦', onClick: () => setActiveTab('kardex'), isActive: activeTab === 'kardex' },
+                { label: 'Servicios', icon: 'Ã¢Å¡â„¢Ã¯Â¸Â', onClick: () => setSimulatedModule('CatÃƒÂ¡logo de Servicios') },
+                { label: 'Gastos', icon: 'Ã°Å¸â€œâ€°', onClick: () => setSimulatedModule('Registro de Gastos') },
+                { label: 'Kardex', icon: 'Ã°Å¸â€œÅ ', onClick: () => setActiveTab('kardex'), isActive: activeTab === 'kardex' },
+                { label: 'Actualizar Existencias', icon: 'Ã°Å¸â€â€ž', onClick: () => setSimulatedModule('ActualizaciÃƒÂ³n de Existencias') },
+                { label: 'AnÃƒÂ¡lisis de Compra', icon: 'Ã°Å¸â€œË†', onClick: () => setSimulatedModule('AnÃƒÂ¡lisis de Compras') },
+                { label: 'LÃƒÂ­nea Productos', icon: 'Ã°Å¸â€œÂ¦', onClick: () => setSimulatedModule('LÃƒÂ­neas de Productos') },
+                { label: 'Productos Categorias', icon: 'Ã°Å¸â€œÂ', onClick: () => setSimulatedModule('CategorÃƒÂ­as de Productos') },
+                { label: 'Sub CategorÃƒÂ­as', icon: 'Ã°Å¸â€œâ€š', onClick: () => setSimulatedModule('Sub CategorÃƒÂ­as') },
+                { label: 'Sub Grupos', icon: 'Ã°Å¸â€˜Â¥', onClick: () => setSimulatedModule('Sub Grupos') },
+                { label: 'Almacenes', icon: 'Ã°Å¸ÂÂ¬', onClick: () => setSimulatedModule('Bodegas y Almacenes') },
+                { label: 'Kits', icon: 'Ã°Å¸â€œÂ¦', onClick: () => setSimulatedModule('Kits de Productos') },
+                { label: 'Medidas', icon: 'Ã°Å¸â€œÂ', onClick: () => setSimulatedModule('Unidades de Medida') },
+                { label: 'Movimientos Inventario', icon: 'Ã°Å¸â€™Â³', onClick: () => setSimulatedModule('Movimientos de Bodega') },
+                { label: 'Toma FÃƒÂ­sica', icon: 'Ã°Å¸â€œÂ', onClick: () => setSimulatedModule('Inventario FÃƒÂ­sico') },
+                { label: 'Ingresos', icon: 'Ã¢Å¾â€¢', onClick: () => setSimulatedModule('Ingresos de Bodega') },
+                { label: 'Salidas', icon: 'Ã¢Å¾â€“', onClick: () => setSimulatedModule('Salidas de Bodega') },
+                { label: 'Aprobar Transferencias', icon: 'Ã°Å¸â€œâ€¹', onClick: () => setSimulatedModule('AprobaciÃƒÂ³n de Transferencias') },
+                { label: 'Transferencias de Almacenes', icon: 'Ã°Å¸â€â€ž', onClick: () => setSimulatedModule('Transferencias entre Bodegas') }
               ])}
 
-              {renderAccordion('tesoreria', '💵', 'Tesorería', isTesoreriaExpanded, setIsTesoreriaExpanded, [
-                { label: 'Cajas', icon: '👛', onClick: () => setActiveTab('caja'), isActive: activeTab === 'caja' },
-                { label: 'Movimientos de Caja', icon: '💵', onClick: () => setSimulatedModule('Movimientos de Caja') },
-                { label: 'Depósitos', icon: '🏛️', onClick: () => setSimulatedModule('Depósitos') },
-                { label: 'Liquidación Vouchers', icon: '💳', onClick: () => setSimulatedModule('Liquidación Vouchers') },
-                { label: 'Bancos', icon: '🏛️', onClick: () => setSimulatedModule('Bancos') },
-                { label: 'Movimientos de Bancos', icon: '💳', onClick: () => setSimulatedModule('Movimientos de Bancos') },
-                { label: 'Cierre Caja', icon: '🔒', onClick: () => setSimulatedModule('Cierre Caja') }
+              {renderAccordion('tesoreria', 'Ã°Å¸â€™Âµ', 'TesorerÃƒÂ­a', isTesoreriaExpanded, setIsTesoreriaExpanded, [
+                { label: 'Cajas', icon: 'Ã°Å¸â€˜â€º', onClick: () => setActiveTab('caja'), isActive: activeTab === 'caja' },
+                { label: 'Movimientos de Caja', icon: 'Ã°Å¸â€™Âµ', onClick: () => setSimulatedModule('Movimientos de Caja') },
+                { label: 'DepÃƒÂ³sitos', icon: 'Ã°Å¸Ââ€ºÃ¯Â¸Â', onClick: () => setSimulatedModule('DepÃƒÂ³sitos') },
+                { label: 'LiquidaciÃƒÂ³n Vouchers', icon: 'Ã°Å¸â€™Â³', onClick: () => setSimulatedModule('LiquidaciÃƒÂ³n Vouchers') },
+                { label: 'Bancos', icon: 'Ã°Å¸Ââ€ºÃ¯Â¸Â', onClick: () => { setActiveTab('caja'); setBankView('list'); setSimulatedModule(null); } },
+                { label: 'Movimientos de Bancos', icon: 'Ã°Å¸â€™Â³', onClick: () => setSimulatedModule('Movimientos de Bancos') },
+                { label: 'Cierre Caja', icon: 'Ã°Å¸â€â€™', onClick: () => setSimulatedModule('Cierre Caja') }
               ])}
 
-              {renderAccordion('cartera', '💼', 'Cartera', isCarteraExpanded, setIsCarteraExpanded, [
-                { label: 'Control de Cobros', icon: '📑', onClick: () => setSimulatedModule('Control de Cobros') },
-                { label: 'Antigüedad de Cartera', icon: '📊', onClick: () => setSimulatedModule('Antigüedad de Cartera') }
+              {renderAccordion('cartera', 'Ã°Å¸â€™Â¼', 'Cartera', isCarteraExpanded, setIsCarteraExpanded, [
+                { label: 'Control de Cobros', icon: 'Ã°Å¸â€œâ€˜', onClick: () => setSimulatedModule('Control de Cobros') },
+                { label: 'AntigÃƒÂ¼edad de Cartera', icon: 'Ã°Å¸â€œÅ ', onClick: () => setSimulatedModule('AntigÃƒÂ¼edad de Cartera') }
               ])}
 
-              {renderAccordion('pagos', '👛', 'Pagos', isPagosExpanded, setIsPagosExpanded, [
-                { label: 'Pago a Proveedores', icon: '💸', onClick: () => setSimulatedModule('Pago a Proveedores') },
-                { label: 'Egresos de Caja', icon: '🧾', onClick: () => setSimulatedModule('Egresos de Caja') }
+              {renderAccordion('pagos', 'Ã°Å¸â€˜â€º', 'Pagos', isPagosExpanded, setIsPagosExpanded, [
+                { label: 'Pago a Proveedores', icon: 'Ã°Å¸â€™Â¸', onClick: () => setSimulatedModule('Pago a Proveedores') },
+                { label: 'Egresos de Caja', icon: 'Ã°Å¸Â§Â¾', onClick: () => setSimulatedModule('Egresos de Caja') }
               ])}
 
-              {renderAccordion('nomina', '👥', 'Nómina', isNominaExpanded, setIsNominaExpanded, [
-                { label: 'Empleados', icon: '👥', onClick: () => { setActiveTab('ventas'); setVentasSubTab('empleados'); }, isActive: activeTab === 'ventas' && ventasSubTab === 'empleados' },
-                { label: 'Roles de Pago', icon: '📄', onClick: () => setSimulatedModule('Roles de Pago') }
+              {renderAccordion('nomina', 'Ã°Å¸â€˜Â¥', 'NÃƒÂ³mina', isNominaExpanded, setIsNominaExpanded, [
+                { label: 'Empleados', icon: 'Ã°Å¸â€˜Â¥', onClick: () => { setActiveTab('ventas'); setVentasSubTab('empleados'); }, isActive: activeTab === 'ventas' && ventasSubTab === 'empleados' },
+                { label: 'Roles de Pago', icon: 'Ã°Å¸â€œâ€ž', onClick: () => { setActiveTab('ventas'); setVentasSubTab('nomina'); void fetchEmployees(); } }
               ])}
 
-              {renderAccordion('activos', '🏠', 'Activos', isActivosExpanded, setIsActivosExpanded, [
-                { label: 'Depreciación Activos', icon: '📉', onClick: () => setActiveTab('assets'), isActive: activeTab === 'assets' },
-                { label: 'Registro de Activos', icon: '📋', onClick: () => setActiveTab('assets'), isActive: activeTab === 'assets' }
+              {renderAccordion('activos', 'Ã°Å¸ÂÂ ', 'Activos', isActivosExpanded, setIsActivosExpanded, [
+                { label: 'DepreciaciÃƒÂ³n Activos', icon: 'Ã°Å¸â€œâ€°', onClick: () => setActiveTab('assets'), isActive: activeTab === 'assets' },
+                { label: 'Registro de Activos', icon: 'Ã°Å¸â€œâ€¹', onClick: () => setActiveTab('assets'), isActive: activeTab === 'assets' }
               ])}
 
-              {renderAccordion('contabilidad', '⚖️', 'Contabilidad', isContabilidadExpanded, setIsContabilidadExpanded, [
-                { label: 'Libro Diario', icon: '⚖️', onClick: () => setActiveTab('contabilidad'), isActive: activeTab === 'contabilidad' },
-                { label: 'Balance de Comprobación', icon: '📊', onClick: () => setActiveTab('contabilidad'), isActive: activeTab === 'contabilidad' },
-                { label: 'Asiento Manual', icon: '📝', onClick: () => setActiveTab('contabilidad'), isActive: activeTab === 'contabilidad' }
+              {renderAccordion('contabilidad', 'Ã¢Å¡â€“Ã¯Â¸Â', 'Contabilidad', isContabilidadExpanded, setIsContabilidadExpanded, [
+                { label: 'Libro Diario', icon: 'Ã¢Å¡â€“Ã¯Â¸Â', onClick: () => setActiveTab('contabilidad'), isActive: activeTab === 'contabilidad' },
+                { label: 'Balance de ComprobaciÃƒÂ³n', icon: 'Ã°Å¸â€œÅ ', onClick: () => setActiveTab('contabilidad'), isActive: activeTab === 'contabilidad' },
+                { label: 'Asiento Manual', icon: 'Ã°Å¸â€œÂ', onClick: () => setActiveTab('contabilidad'), isActive: activeTab === 'contabilidad' }
               ])}
 
-              {renderAccordion('produccion', '🏭', 'Producción', isProduccionExpanded, setIsProduccionExpanded, [
-                { label: 'Órdenes de Fabricación', icon: '🏭', onClick: () => setSimulatedModule('Órdenes de Fabricación') },
-                { label: 'Fórmulas y Recetas', icon: '📋', onClick: () => setSimulatedModule('Fórmulas y Recetas') }
+              {renderAccordion('produccion', 'Ã°Å¸ÂÂ­', 'ProducciÃƒÂ³n', isProduccionExpanded, setIsProduccionExpanded, [
+                { label: 'Ãƒâ€œrdenes de FabricaciÃƒÂ³n', icon: 'Ã°Å¸ÂÂ­', onClick: () => setSimulatedModule('Ãƒâ€œrdenes de FabricaciÃƒÂ³n') },
+                { label: 'FÃƒÂ³rmulas y Recetas', icon: 'Ã°Å¸â€œâ€¹', onClick: () => setSimulatedModule('FÃƒÂ³rmulas y Recetas') }
               ])}
 
-              {renderAccordion('garantias', '🔧', 'Garantías', isGarantiasExpanded, setIsGarantiasExpanded, [
-                { label: 'Orden de Servicio', icon: '🔧', onClick: () => setSimulatedModule('Orden de Servicio') },
-                { label: 'Control de Equipos', icon: '📦', onClick: () => setSimulatedModule('Control de Equipos') }
+              {renderAccordion('garantias', 'Ã°Å¸â€Â§', 'GarantÃƒÂ­as', isGarantiasExpanded, setIsGarantiasExpanded, [
+                { label: 'Orden de Servicio', icon: 'Ã°Å¸â€Â§', onClick: () => setSimulatedModule('Orden de Servicio') },
+                { label: 'Control de Equipos', icon: 'Ã°Å¸â€œÂ¦', onClick: () => setSimulatedModule('Control de Equipos') }
               ])}
 
-              {renderAccordion('talleres', '🚗', 'Talleres Vehículos', isTalleresExpanded, setIsTalleresExpanded, [
-                { label: 'Orden de Trabajo', icon: '🚗', onClick: () => setSimulatedModule('Orden de Trabajo') },
-                { label: 'Historial de Vehículos', icon: '🛠️', onClick: () => setSimulatedModule('Historial de Vehículos') }
+              {renderAccordion('talleres', 'Ã°Å¸Å¡â€”', 'Talleres VehÃƒÂ­culos', isTalleresExpanded, setIsTalleresExpanded, [
+                { label: 'Orden de Trabajo', icon: 'Ã°Å¸Å¡â€”', onClick: () => setSimulatedModule('Orden de Trabajo') },
+                { label: 'Historial de VehÃƒÂ­culos', icon: 'Ã°Å¸â€ºÂ Ã¯Â¸Â', onClick: () => setSimulatedModule('Historial de VehÃƒÂ­culos') }
               ])}
 
-              {renderAccordion('restaurante', '🍽️', 'Restaurante', isRestauranteExpanded, setIsRestauranteExpanded, [
-                { label: 'Control de Mesas', icon: '🍽️', onClick: () => setSimulatedModule('Control de Mesas') },
-                { label: 'Menú y Categorías', icon: '🍕', onClick: () => setSimulatedModule('Menú y Categorías') }
+              {renderAccordion('restaurante', 'Ã°Å¸ÂÂ½Ã¯Â¸Â', 'Restaurante', isRestauranteExpanded, setIsRestauranteExpanded, [
+                { label: 'Control de Mesas', icon: 'Ã°Å¸ÂÂ½Ã¯Â¸Â', onClick: () => setSimulatedModule('Control de Mesas') },
+                { label: 'MenÃƒÂº y CategorÃƒÂ­as', icon: 'Ã°Å¸Ââ€¢', onClick: () => setSimulatedModule('MenÃƒÂº y CategorÃƒÂ­as') }
               ])}
 
-              {renderAccordion('informes', '📈', 'Informes', isInformesExpanded, setIsInformesExpanded, [
-                { label: 'SRI Reporte Form 104', icon: '🏛️', onClick: () => { setActiveTab('sri'); setSriSubTab('formulario'); }, isActive: activeTab === 'sri' && sriSubTab === 'formulario' },
-                { label: 'Reportes ATS', icon: '📂', onClick: () => { setActiveTab('sri'); setSriSubTab('ats'); }, isActive: activeTab === 'sri' && sriSubTab === 'ats' }
+              {renderAccordion('informes', 'Ã°Å¸â€œË†', 'Informes', isInformesExpanded, setIsInformesExpanded, [
+                { label: 'SRI Reporte Form 104', icon: 'Ã°Å¸Ââ€ºÃ¯Â¸Â', onClick: () => { setActiveTab('sri'); setSriSubTab('formulario'); }, isActive: activeTab === 'sri' && sriSubTab === 'formulario' },
+                { label: 'Reportes ATS', icon: 'Ã°Å¸â€œâ€š', onClick: () => { setActiveTab('sri'); setSriSubTab('ats'); }, isActive: activeTab === 'sri' && sriSubTab === 'ats' }
               ])}
             </nav>
 
             <div className="sidebar-footer">
               <div className="user-profile-badge" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="user-avatar" style={{ fontSize: '1.5rem' }}>🏢</span>
+                <span className="user-avatar" style={{ fontSize: '1.5rem' }}>Ã°Å¸ÂÂ¢</span>
                 {!isSidebarCollapsed && (
                   <div className="user-info" style={{ display: 'flex', flexDirection: 'column', fontSize: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -2524,7 +2810,7 @@ export default function App() {
                 )}
               </div>
               <button className="logout-btn" onClick={logout} style={{ fontSize: isSidebarCollapsed ? '0px' : '12px' }}>
-                {isSidebarCollapsed ? '🚪' : 'Cerrar Sesión'}
+                {isSidebarCollapsed ? 'Ã°Å¸Å¡Âª' : 'Cerrar SesiÃƒÂ³n'}
               </button>
             </div>
           </aside>
@@ -2535,17 +2821,17 @@ export default function App() {
               <div className="top-bar-left" style={{ display: 'flex', alignItems: 'center', gap: '15px', height: '120px' }}>
                 {isSidebarCollapsed && (
                   <button className="sidebar-toggle" onClick={() => setIsSidebarCollapsed(false)}>
-                    ☰
+                    Ã¢ËœÂ°
                   </button>
                 )}
                 <div>
                   <h2 style={{ fontSize: '1.4rem', fontWeight: 'bold', margin: 0 }}>
-                    {activeTab === 'kardex' ? '📦 Inventario & Kárdex' :
-                      activeTab === 'ventas' ? '📈 Control de Ventas' :
-                        activeTab === 'proveedores' ? '🤝 Gestión de Proveedores' :
-                          activeTab === 'caja' ? '💵 Caja & Conciliación' :
-                            activeTab === 'contabilidad' ? '⚖️ Libro Diario Contable' :
-                              activeTab === 'sri' ? '🏛️ Reportes SRI Form 104' : '📉 Depreciación de Activos Fijos'}
+                    {activeTab === 'kardex' ? 'Ã°Å¸â€œÂ¦ Inventario & KÃƒÂ¡rdex' :
+                      activeTab === 'ventas' ? 'Ã°Å¸â€œË† Control de Ventas' :
+                        activeTab === 'proveedores' ? 'Ã°Å¸Â¤Â GestiÃƒÂ³n de Proveedores' :
+                          activeTab === 'caja' ? 'Ã°Å¸â€™Âµ Caja & ConciliaciÃƒÂ³n' :
+                            activeTab === 'contabilidad' ? 'Ã¢Å¡â€“Ã¯Â¸Â Libro Diario Contable' :
+                              activeTab === 'sri' ? 'Ã°Å¸Ââ€ºÃ¯Â¸Â Reportes SRI Form 104' : 'Ã°Å¸â€œâ€° DepreciaciÃƒÂ³n de Activos Fijos'}
                   </h2>
                   {activeEnvironment !== 'default' && (
                     <div style={{ fontSize: '11px', color: 'var(--cyan)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
@@ -2580,11 +2866,11 @@ export default function App() {
                     </select>
                   </div>
                 )}
-                <span className="top-bar-text" style={{ fontSize: '12px', }}>Ecosistema Autónomo AuraContable</span>
+                <span className="top-bar-text" style={{ fontSize: '12px', }}>Ecosistema AutÃƒÂ³nomo AuraContable</span>
 
                 {/* Global Auto Sync Selector */}
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginLeft: 'auto', marginRight: '10px' }}>
-                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>🔄 Auto-Sync:</span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Ã°Å¸â€â€ž Auto-Sync:</span>
                   <select
                     value={autoSyncInterval}
                     onChange={(e) => setAutoSyncInterval(e.target.value as any)}
@@ -2648,7 +2934,7 @@ export default function App() {
                   onMouseEnter={(e) => e.currentTarget.style.background = 'rgb(255, 255, 255)'}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'rgb(255, 255, 255)'}
                 >
-                  <span style={{ fontSize: '14px' }}>🔄</span> Refrescar
+                  <span style={{ fontSize: '14px' }}>Ã°Å¸â€â€ž</span> Refrescar
                 </button>
               </div>
             </header>
@@ -2748,7 +3034,7 @@ export default function App() {
                     onMouseEnter={(e) => e.currentTarget.style.background = '#dc2626'}
                     onMouseLeave={(e) => e.currentTarget.style.background = '#ef4444'}
                   >
-                    ✕
+                    Ã¢Å“â€¢
                   </button>
                 </div>
               )}
@@ -2786,11 +3072,11 @@ export default function App() {
                     {/* Products Table */}
                     <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '10px' }}>
-                        <h3 style={{ margin: 0 }}>Catálogo de Productos e IVA</h3>
+                        <h3 style={{ margin: 0 }}>CatÃƒÂ¡logo de Productos e IVA</h3>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                           <input
                             type="text"
-                            placeholder="🔍 Buscar SKU o nombre..."
+                            placeholder="Ã°Å¸â€Â Buscar SKU o nombre..."
                             value={productSearch}
                             onChange={(e) => setProductSearch(e.target.value)}
                             style={{ padding: '6px 12px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '13px', width: '200px', background: 'rgba(255,255,255,0.05)', color: '#fff' }}
@@ -2803,9 +3089,9 @@ export default function App() {
                         </div>
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', marginBottom: '1.5rem', borderTop: '1px solid rgb(255, 255, 255)', paddingTop: '0.8rem' }}>
-                        <span style={{ fontSize: '12px', fontWeight: 'bold', marginRight: '6px', }}>Categorías:</span>
+                        <span style={{ fontSize: '12px', fontWeight: 'bold', marginRight: '6px', }}>CategorÃƒÂ­as:</span>
                         <button className={`btn-sm ${categoryFilter === 'all' ? 'status-aura' : ''}`} onClick={() => setCategoryFilter('all')}>Todas</button>
-                        <button className={`btn-sm ${categoryFilter === 'none' ? 'status-no' : ''}`} onClick={() => setCategoryFilter('none')}>Sin Categoría</button>
+                        <button className={`btn-sm ${categoryFilter === 'none' ? 'status-no' : ''}`} onClick={() => setCategoryFilter('none')}>Sin CategorÃƒÂ­a</button>
                         {categories.map(cat => (
                           <button
                             key={cat.id}
@@ -2817,7 +3103,7 @@ export default function App() {
                         ))}
                       </div>
                       {productsLoading ? (
-                        <p>Cargando catálogo...</p>
+                        <p>Cargando catÃƒÂ¡logo...</p>
                       ) : filteredProducts.length === 0 ? (
                         <p>No se encontraron productos.</p>
                       ) : (
@@ -2830,7 +3116,7 @@ export default function App() {
                               <th>Costo ($)</th>
                               <th>Precio ($)</th>
                               <th>Afecto IVA</th>
-                              <th>Valorización ($)</th>
+                              <th>ValorizaciÃƒÂ³n ($)</th>
                               <th>Acciones</th>
                             </tr>
                           </thead>
@@ -2842,7 +3128,7 @@ export default function App() {
                                   <div>{p.name}</div>
                                   {p.category && (
                                     <span style={{ fontSize: '10px', background: 'rgb(255, 255, 255)', padding: '2px 6px', borderRadius: '4px', marginTop: '2px', display: 'inline-block' }}>
-                                      📂 {p.category.name}
+                                      Ã°Å¸â€œâ€š {p.category.name}
                                     </span>
                                   )}
                                 </td>
@@ -2885,7 +3171,7 @@ export default function App() {
                                     }}
                                     title="Eliminar producto y movimientos"
                                   >
-                                    🗑️ Eliminar
+                                    Ã°Å¸â€”â€˜Ã¯Â¸Â Eliminar
                                   </button>
                                 </td>
                               </tr>
@@ -2905,9 +3191,9 @@ export default function App() {
                           style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
                         >
                           <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
-                            📦 {productFormMode === 'create' ? 'Nuevo Producto' : 'Modificar Producto'}
+                            Ã°Å¸â€œÂ¦ {productFormMode === 'create' ? 'Nuevo Producto' : 'Modificar Producto'}
                           </h4>
-                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{isProductCollapseOpen ? '▲ Opciones' : '▼ Opciones'}</span>
+                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{isProductCollapseOpen ? 'Ã¢â€“Â² Opciones' : 'Ã¢â€“Â¼ Opciones'}</span>
                         </div>
                         
                         {isProductCollapseOpen && (
@@ -2952,7 +3238,7 @@ export default function App() {
                             {productFormMode === 'create' ? (
                               <form onSubmit={handleCreateProduct}>
                                 <div className="form-group">
-                                  <label>SKU (Código único):</label>
+                                  <label>SKU (CÃƒÂ³digo ÃƒÂºnico):</label>
                                   <input type="text" required value={newProductSku} onChange={e => setNewProductSku(e.target.value)} placeholder="Ej: BOOK-002" />
                                 </div>
                                 <div className="form-group">
@@ -3008,9 +3294,9 @@ export default function App() {
                                   </div>
                                 </div>
                                 <div className="form-group">
-                                  <label>Categoría (Opcional):</label>
+                                  <label>CategorÃƒÂ­a (Opcional):</label>
                                   <select value={selectedCategoryId} onChange={e => setSelectedCategoryId(e.target.value)}>
-                                    <option value="">Sin Categoría</option>
+                                    <option value="">Sin CategorÃƒÂ­a</option>
                                     {categories.map(cat => (
                                       <option key={cat.id} value={cat.id}>{cat.name}</option>
                                     ))}
@@ -3018,7 +3304,7 @@ export default function App() {
                                 </div>
                                 <div className="grid-2-form" style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
                                   <div className="form-group">
-                                    <label>Propósito de Compra/Venta:</label>
+                                    <label>PropÃƒÂ³sito de Compra/Venta:</label>
                                     <select value={newProductPurpose} onChange={e => setNewProductPurpose(e.target.value as any)}>
                                       <option value="VENTA">Para Venta</option>
                                       <option value="GASTO">Para Gasto (Compra)</option>
@@ -3029,9 +3315,9 @@ export default function App() {
                                     <div className="form-group">
                                       <label>Tipo de Activo Fijo (LORTI):</label>
                                       <select value={newProductAssetType} onChange={e => setNewProductAssetType(e.target.value as any)}>
-                                        <option value="COMPUTO">Equipos de Cómputo (3 años)</option>
-                                        <option value="VEHICULO">Vehículos (5 años)</option>
-                                        <option value="MAQUINARIA">Maquinaria / Muebles (10 años)</option>
+                                        <option value="COMPUTO">Equipos de CÃƒÂ³mputo (3 aÃƒÂ±os)</option>
+                                        <option value="VEHICULO">VehÃƒÂ­culos (5 aÃƒÂ±os)</option>
+                                        <option value="MAQUINARIA">Maquinaria / Muebles (10 aÃƒÂ±os)</option>
                                       </select>
                                     </div>
                                   )}
@@ -3103,7 +3389,7 @@ export default function App() {
                                         }}
                                       >
                                         <div style={{ color: '#fff', fontWeight: 'bold', marginBottom: '4px' }}>
-                                          ✓ Producto Identificado:
+                                          Ã¢Å“â€œ Producto Identificado:
                                         </div>
                                         <div style={{ color: 'var(--text-secondary)' }}>
                                           <strong>Nombre:</strong> {foundProduct.name}
@@ -3128,7 +3414,7 @@ export default function App() {
                                           fontWeight: '500',
                                         }}
                                       >
-                                        ⚠ No se encontró ningún producto con este SKU en el catálogo.
+                                        Ã¢Å¡Â  No se encontrÃƒÂ³ ningÃƒÂºn producto con este SKU en el catÃƒÂ¡logo.
                                       </div>
                                     )}
                                   </>
@@ -3149,7 +3435,7 @@ export default function App() {
                                     </div>
 
                                     <div className="form-group">
-                                      <label>Añadir Stock (Cantidad):</label>
+                                      <label>AÃƒÂ±adir Stock (Cantidad):</label>
                                       <input
                                         type="number"
                                         min={0}
@@ -3157,17 +3443,17 @@ export default function App() {
                                         onChange={e => setUpdateProductAddedStock(parseInt(e.target.value) || 0)}
                                       />
                                       <small style={{ fontSize: '10px', color: 'var(--text-secondary)', display: 'block', marginTop: '2px' }}>
-                                        Se registrará un ingreso en Kárdex por esta cantidad.
+                                        Se registrarÃƒÂ¡ un ingreso en KÃƒÂ¡rdex por esta cantidad.
                                       </small>
                                     </div>
 
                                     <div className="form-group">
-                                      <label>Categoría:</label>
+                                      <label>CategorÃƒÂ­a:</label>
                                       <select
                                         value={updateProductCategoryId}
                                         onChange={e => setUpdateProductCategoryId(e.target.value)}
                                       >
-                                        <option value="">Sin Categoría</option>
+                                        <option value="">Sin CategorÃƒÂ­a</option>
                                         {categories.map(cat => (
                                           <option key={cat.id} value={cat.id}>{cat.name}</option>
                                         ))}
@@ -3185,56 +3471,56 @@ export default function App() {
                         )}
                       </div>
 
-                      {/* ACCORDION 2: Categoría */}
+                      {/* ACCORDION 2: CategorÃƒÂ­a */}
                       <div className="card glass-panel" style={{ padding: '1.25rem', overflow: 'visible', display: 'flex', flexDirection: 'column' }}>
                         <div 
                           onClick={() => setIsCategoryCollapseOpen(!isCategoryCollapseOpen)}
                           style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
                         >
                           <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
-                            📁 Nueva Categoría
+                            Ã°Å¸â€œÂ Nueva CategorÃƒÂ­a
                           </h4>
-                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{isCategoryCollapseOpen ? '▲ Opciones' : '▼ Opciones'}</span>
+                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{isCategoryCollapseOpen ? 'Ã¢â€“Â² Opciones' : 'Ã¢â€“Â¼ Opciones'}</span>
                         </div>
                         
                         {isCategoryCollapseOpen && (
                           <div style={{ marginTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.25rem' }}>
                             <form onSubmit={handleCreateCategory}>
                               <div className="form-group">
-                                <label>Nombre de la Categoría:</label>
+                                <label>Nombre de la CategorÃƒÂ­a:</label>
                                 <input
                                   type="text"
                                   required
                                   value={newCategoryName}
                                   onChange={e => setNewCategoryName(e.target.value)}
-                                  placeholder="Ej: Electrónica, Servicios..."
+                                  placeholder="Ej: ElectrÃƒÂ³nica, Servicios..."
                                 />
                               </div>
-                              <button type="submit" className="btn btn-cyan w-full">Crear Categoría</button>
+                              <button type="submit" className="btn btn-cyan w-full">Crear CategorÃƒÂ­a</button>
                             </form>
                           </div>
                         )}
                       </div>
 
-                      {/* ACCORDION 3: Movimiento Kárdex */}
+                      {/* ACCORDION 3: Movimiento KÃƒÂ¡rdex */}
                       <div className="card glass-panel" style={{ padding: '1.25rem', overflow: 'visible', display: 'flex', flexDirection: 'column' }}>
                         <div 
                           onClick={() => setIsTxCollapseOpen(!isTxCollapseOpen)}
                           style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
                         >
                           <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
-                            🔄 Movimiento Kárdex
+                            Ã°Å¸â€â€ž Movimiento KÃƒÂ¡rdex
                           </h4>
-                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{isTxCollapseOpen ? '▲ Opciones' : '▼ Opciones'}</span>
+                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{isTxCollapseOpen ? 'Ã¢â€“Â² Opciones' : 'Ã¢â€“Â¼ Opciones'}</span>
                         </div>
                         
                         {isTxCollapseOpen && (
                           <div style={{ marginTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.25rem' }}>
                             <form onSubmit={handleCreateTransaction}>
                               <div className="form-group">
-                                <label>Filtrar por Categoría:</label>
+                                <label>Filtrar por CategorÃƒÂ­a:</label>
                                 <select value={kardexFilterCategoryId} onChange={e => setKardexFilterCategoryId(e.target.value)}>
-                                  <option value="all">Todas las Categorías</option>
+                                  <option value="all">Todas las CategorÃƒÂ­as</option>
                                   {categories.map(cat => (
                                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                                   ))}
@@ -3244,7 +3530,7 @@ export default function App() {
                                 <label>Seleccionar Producto:</label>
                                 <select value={selectedProductId} onChange={e => setSelectedProductId(e.target.value)}>
                                   {filteredKardexProducts.length === 0 ? (
-                                    <option value="">No hay productos en esta categoría</option>
+                                    <option value="">No hay productos en esta categorÃƒÂ­a</option>
                                   ) : (
                                     filteredKardexProducts.map(p => (
                                       <option key={p.id} value={p.id}>{p.name} ({p.sku}) - Stock: {p.stock}</option>
@@ -3265,7 +3551,7 @@ export default function App() {
                                   <input type="number" required min={1} value={txQty} onChange={e => setTxQty(parseInt(e.target.value) || 1)} />
                                 </div>
                               </div>
-                              <button type="submit" className="btn btn-indigo w-full">Guardar Transacción</button>
+                              <button type="submit" className="btn btn-indigo w-full">Guardar TransacciÃƒÂ³n</button>
                             </form>
                           </div>
                         )}
@@ -3275,7 +3561,7 @@ export default function App() {
 
                   {/* Kardex logs */}
                   <div className="table-container glass-panel" style={{ padding: '1.5rem', paddingTop: '2rem', marginTop: '1.5rem' }}>
-                    <h3>Últimos Movimientos de Kárdex</h3>
+                    <h3>ÃƒÅ¡ltimos Movimientos de KÃƒÂ¡rdex</h3>
                     {recentTransactions.length === 0 ? (
                       <p>No se han registrado movimientos de inventario.</p>
                     ) : (
@@ -3324,13 +3610,13 @@ export default function App() {
                   {/* Ventas Sub-navigation tabs */}
                   <div style={{ display: 'flex', gap: '10px', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem' }}>
                     <button className={`btn-sm ${ventasSubTab === 'facturas' ? 'status-aura' : ''}`} onClick={() => setVentasSubTab('facturas')}>
-                      📈 Registro de Ventas y Clientes
+                      Ã°Å¸â€œË† Registro de Ventas y Clientes
                     </button>
                     <button className={`btn-sm ${ventasSubTab === 'empleados' ? 'status-aura' : ''}`} onClick={() => setVentasSubTab('empleados')}>
-                      👥 Administrar Empleados
+                      Ã°Å¸â€˜Â¥ Administrar Empleados
                     </button>
                     <button className={`btn-sm ${ventasSubTab === 'facturacion_avanzada' ? 'status-aura' : ''}`} onClick={() => setVentasSubTab('facturacion_avanzada')}>
-                      💻 Facturación Avanzada (POS)
+                      Ã°Å¸â€™Â» FacturaciÃƒÂ³n Avanzada (POS)
                     </button>
                   </div>
 
@@ -3359,7 +3645,7 @@ export default function App() {
                         <div className="card glass-panel" style={{ padding: '1.25rem', marginBottom: '2rem' }}>
                           <div className="card-header">
                             <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Venta Total Bruta</span>
-                            <span>📈</span>
+                            <span>Ã°Å¸â€œË†</span>
                           </div>
                           <h3 style={{ margin: '8px 0', fontSize: '20px', color: 'var(--cyan)' }}>${totalSales.toFixed(2)}</h3>
                           <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Venta Neta (sin IVA): ${netSales.toFixed(2)}</p>
@@ -3367,7 +3653,7 @@ export default function App() {
                         <div className="card glass-panel" style={{ padding: '1.25rem' }}>
                           <div className="card-header">
                             <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>IVA Ventas Cobrado</span>
-                            <span>🏛️</span>
+                            <span>Ã°Å¸Ââ€ºÃ¯Â¸Â</span>
                           </div>
                           <h3 style={{ margin: '8px 0', fontSize: '20px', color: 'var(--indigo)' }}>${totalIvaCollected.toFixed(2)}</h3>
                           <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{globalIvaRate}% IVA acumulado para declarar al SRI</p>
@@ -3375,7 +3661,7 @@ export default function App() {
                         <div className="card glass-panel" style={{ padding: '1.25rem' }}>
                           <div className="card-header">
                             <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Venta Promedio / Factura</span>
-                            <span>💰</span>
+                            <span>Ã°Å¸â€™Â°</span>
                           </div>
                           <h3 style={{ margin: '8px 0', fontSize: '20px', color: 'var(--emerald)' }}>${avgTicket.toFixed(2)}</h3>
                           <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Ticket promedio para {invoices.length} facturas</p>
@@ -3386,10 +3672,10 @@ export default function App() {
                         {/* Invoices List */}
                         <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '10px' }}>
-                            <h3 style={{ margin: 0 }}>Facturas Electrónicas Emitidas</h3>
+                            <h3 style={{ margin: 0 }}>Facturas ElectrÃƒÂ³nicas Emitidas</h3>
                             <input
                               type="text"
-                              placeholder="🔍 Buscar por cliente o clave..."
+                              placeholder="Ã°Å¸â€Â Buscar por cliente o clave..."
                               value={invoiceSearch}
                               onChange={(e) => setInvoiceSearch(e.target.value)}
                               style={{ padding: '6px 12px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '13px', width: '240px', background: 'rgba(255,255,255,0.05)', color: '#fff' }}
@@ -3409,7 +3695,7 @@ export default function App() {
                                   <th>IVA ({globalIvaRate}%)</th>
                                   <th>Total ($)</th>
                                   <th>Estado SRI</th>
-                                  <th>Envío</th>
+                                  <th>EnvÃƒÂ­o</th>
                                   <th>Acciones</th>
                                 </tr>
                               </thead>
@@ -3448,7 +3734,7 @@ export default function App() {
                           <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Emitir Factura de Venta</h4>
                           <form onSubmit={handleCreateInvoice}>
                             <div className="form-group">
-                              <label>Cliente (Nombre o Razón Social):</label>
+                              <label>Cliente (Nombre o RazÃƒÂ³n Social):</label>
                               <input type="text" required value={newClientName} onChange={e => setNewClientName(e.target.value)} placeholder="Ej: CORPORACION EL ROSADO S.A." />
                             </div>
 
@@ -3461,7 +3747,7 @@ export default function App() {
                                   style={{ padding: '2px 8px', fontSize: '11px' }}
                                   onClick={() => setInvoiceItems([...invoiceItems, { productId: '', quantity: 1 }])}
                                 >
-                                  + Agregar Ítem
+                                  + Agregar ÃƒÂtem
                                 </button>
                               </div>
 
@@ -3520,9 +3806,9 @@ export default function App() {
                                         fontSize: '14px',
                                         padding: '4px'
                                       }}
-                                      title="Eliminar ítem"
+                                      title="Eliminar ÃƒÂ­tem"
                                     >
-                                      🗑️
+                                      Ã°Å¸â€”â€˜Ã¯Â¸Â
                                     </button>
                                   </div>
                                 );
@@ -3567,7 +3853,7 @@ export default function App() {
                             <thead>
                               <tr>
                                 <th>Cliente</th>
-                                <th>Nº Facturas</th>
+                                <th>NÃ‚Âº Facturas</th>
                                 <th>Total Comprado ($)</th>
                                 <th>Saldo Pendiente de Cobro ($)</th>
                                 <th>Estado General</th>
@@ -3584,7 +3870,7 @@ export default function App() {
                                   </td>
                                   <td>
                                     <span className={`badge-status ${c.unpaid <= 0 ? 'status-yes' : 'status-partial'}`}>
-                                      {c.unpaid <= 0 ? 'AL DÍA' : 'SALDO PENDIENTE'}
+                                      {c.unpaid <= 0 ? 'AL DÃƒÂA' : 'SALDO PENDIENTE'}
                                     </span>
                                   </td>
                                 </tr>
@@ -3603,13 +3889,13 @@ export default function App() {
                         <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
                           <h3 style={{ marginTop: 0 }}>Empleados Registrados</h3>
                           <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                            Estos son los usuarios autorizados para facturar a nombre de tu empresa en el **Sistema de Facturación**.
+                            Estos son los usuarios autorizados para facturar a nombre de tu empresa en el **Sistema de FacturaciÃƒÂ³n**.
                           </p>
 
                           {employeesLoading && employees.length === 0 ? (
                             <p>Cargando empleados...</p>
                           ) : employees.length === 0 ? (
-                            <p>No has registrado ningún empleado. Agrega uno a la derecha para permitir el acceso a Facturación.</p>
+                            <p>No has registrado ningÃƒÂºn empleado. Agrega uno a la derecha para permitir el acceso a FacturaciÃƒÂ³n.</p>
                           ) : (
                             <table>
                               <thead>
@@ -3617,7 +3903,7 @@ export default function App() {
                                   <th>Nombre</th>
                                   <th>Email (Usuario de Acceso)</th>
                                   <th>Fecha Registro</th>
-                                  <th style={{ textAlign: 'center' }}>Acción</th>
+                                  <th style={{ textAlign: 'center' }}>AcciÃƒÂ³n</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -3632,7 +3918,7 @@ export default function App() {
                                         onClick={() => handleDeleteEmployee(emp.id)}
                                         style={{ background: 'rgb(239, 68, 68)', color: '#f87171', border: '1px solid rgb(239, 68, 68)' }}
                                       >
-                                        🗑️ Eliminar
+                                        Ã°Å¸â€”â€˜Ã¯Â¸Â Eliminar
                                       </button>
                                     </td>
                                   </tr>
@@ -3653,11 +3939,11 @@ export default function App() {
                                 required
                                 value={empName}
                                 onChange={e => setEmpName(e.target.value)}
-                                placeholder="Ej: Juan Pérez"
+                                placeholder="Ej: Juan PÃƒÂ©rez"
                               />
                             </div>
                             <div className="form-group">
-                              <label>Correo Electrónico:</label>
+                              <label>Correo ElectrÃƒÂ³nico:</label>
                               <input
                                 type="email"
                                 required
@@ -3667,23 +3953,23 @@ export default function App() {
                               />
                             </div>
                             <div className="form-group">
-                              <label>Contraseña:</label>
+                              <label>ContraseÃƒÂ±a:</label>
                               <input
                                 type="password"
                                 required
                                 value={empPassword}
                                 onChange={e => setEmpPassword(e.target.value)}
-                                placeholder="Mínimo 6 caracteres"
+                                placeholder="MÃƒÂ­nimo 6 caracteres"
                               />
                             </div>
                             <div className="form-group">
-                              <label>Confirmar Contraseña:</label>
+                              <label>Confirmar ContraseÃƒÂ±a:</label>
                               <input
                                 type="password"
                                 required
                                 value={empConfirmPassword}
                                 onChange={e => setEmpConfirmPassword(e.target.value)}
-                                placeholder="Repite la contraseña"
+                                placeholder="Repite la contraseÃƒÂ±a"
                               />
                             </div>
                             <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '1.25rem' }}>
@@ -3694,6 +3980,373 @@ export default function App() {
                       </div>
                     </div>
                   )}
+
+                  {/* ── SUB-TAB: DIRECTORIO DE CLIENTES ── */}
+                  {ventasSubTab === 'clientes' && (
+                    <div className="fade-in">
+                      <div className="dashboard-grid">
+                        {/* Customer List */}
+                        <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '10px' }}>
+                            <h3 style={{ margin: 0 }}>🙋 Directorio de Clientes</h3>
+                            <input
+                              type="text"
+                              placeholder="🔍 Buscar cliente..."
+                              value={customerSearch}
+                              onChange={e => setCustomerSearch(e.target.value)}
+                              style={{ padding: '6px 12px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '13px', width: '200px', background: 'rgba(255,255,255,0.05)', color: '#fff' }}
+                            />
+                          </div>
+                          {customers.filter(c =>
+                            c.name.toLowerCase().includes(customerSearch.toLowerCase()) ||
+                            c.ruc.includes(customerSearch) ||
+                            c.email.toLowerCase().includes(customerSearch.toLowerCase())
+                          ).length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+                              <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>🙋</span>
+                              <p>No hay clientes registrados. Agrega uno desde el formulario.</p>
+                            </div>
+                          ) : (
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Nombre / Razón Social</th>
+                                  <th>RUC / Cédula</th>
+                                  <th>Correo</th>
+                                  <th>Teléfono</th>
+                                  <th>Dirección</th>
+                                  <th style={{ textAlign: 'right' }}>Acciones</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {customers.filter(c =>
+                                  c.name.toLowerCase().includes(customerSearch.toLowerCase()) ||
+                                  c.ruc.includes(customerSearch) ||
+                                  c.email.toLowerCase().includes(customerSearch.toLowerCase())
+                                ).map(c => (
+                                  <tr key={c.id}>
+                                    <td><strong>{c.name}</strong></td>
+                                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: '12px' }}>{c.ruc || '—'}</td>
+                                    <td style={{ fontSize: '12px' }}>{c.email || '—'}</td>
+                                    <td style={{ fontSize: '12px' }}>{c.phone || '—'}</td>
+                                    <td style={{ fontSize: '12px', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.address || '—'}</td>
+                                    <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                                      <button className="btn-sm" onClick={() => handleEditCustomer(c)} style={{ marginRight: '6px', background: 'rgba(99,102,241,0.2)', border: '1px solid var(--indigo)', color: 'var(--indigo)', cursor: 'pointer' }}>✏️ Editar</button>
+                                      <button className="btn-sm" onClick={() => handleDeleteCustomer(c.id)} style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid #f87171', color: '#f87171', cursor: 'pointer' }}>🗑️</button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+
+                        {/* Customer Form */}
+                        <div className="card glass-panel" style={{ padding: '1.5rem' }}>
+                          <h4 style={{ marginBottom: '1rem', fontSize: '1.05rem', fontWeight: 'bold' }}>
+                            {customerFormMode === 'create' ? '➕ Nuevo Cliente' : '✏️ Editar Cliente'}
+                          </h4>
+                          <form onSubmit={handleSaveCustomer}>
+                            <div className="form-group">
+                              <label>Nombre / Razón Social:</label>
+                              <input type="text" required value={custName} onChange={e => setCustName(e.target.value)} placeholder="Ej: CORP. EL ROSADO S.A." />
+                            </div>
+                            <div className="form-group">
+                              <label>RUC / Cédula:</label>
+                              <input type="text" value={custRuc} onChange={e => setCustRuc(e.target.value)} placeholder="Ej: 0923456789001" maxLength={13} style={{ fontFamily: 'var(--font-mono)' }} />
+                            </div>
+                            <div className="form-group">
+                              <label>Correo Electrónico:</label>
+                              <input type="email" value={custEmail} onChange={e => setCustEmail(e.target.value)} placeholder="cliente@empresa.com" />
+                            </div>
+                            <div className="grid-2-form">
+                              <div className="form-group">
+                                <label>Teléfono:</label>
+                                <input type="text" value={custPhone} onChange={e => setCustPhone(e.target.value)} placeholder="0999000000" />
+                              </div>
+                              <div className="form-group">
+                                <label>Dirección:</label>
+                                <input type="text" value={custAddress} onChange={e => setCustAddress(e.target.value)} placeholder="Av. Ejemplo 123" />
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button type="submit" className="btn btn-cyan w-full">{customerFormMode === 'create' ? 'Guardar Cliente' : 'Actualizar Cliente'}</button>
+                              {customerFormMode === 'edit' && (
+                                <button type="button" className="btn-sm w-full" onClick={() => { setCustomerFormMode('create'); setEditingCustomerId(null); setCustName(''); setCustRuc(''); setCustEmail(''); setCustPhone(''); setCustAddress(''); }} style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-muted)', cursor: 'pointer', borderRadius: '8px' }}>Cancelar</button>
+                              )}
+                            </div>
+                          </form>
+                          <div style={{ marginTop: '1.5rem', padding: '10px', background: 'rgba(6,182,212,0.08)', borderRadius: '8px', fontSize: '12px', color: 'var(--text-secondary)', border: '1px solid rgba(6,182,212,0.2)' }}>
+                            💡 Los clientes del directorio pueden ser referenciados rápidamente al emitir facturas y proformas.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── SUB-TAB: PROFORMAS / COTIZACIONES ── */}
+                  {ventasSubTab === 'proformas' && (
+                    <div className="fade-in">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                          <h3 style={{ margin: 0 }}>📄 Proformas y Cotizaciones</h3>
+                          <span className="badge-status status-aura">{proformas.filter(p => p.status === 'BORRADOR').length} Activas</span>
+                        </div>
+                        <button className="btn btn-cyan" onClick={() => { setProformaView(proformaView === 'list' ? 'create' : 'list'); }}
+                          style={{ padding: '8px 16px', borderRadius: '8px', fontWeight: '600' }}>
+                          {proformaView === 'list' ? '➕ Nueva Proforma' : '← Volver a Lista'}
+                        </button>
+                      </div>
+
+                      {proformaView === 'list' ? (
+                        <div className="table-container glass-panel" style={{ padding: '1.5rem' }}>
+                          <div style={{ display: 'flex', gap: '10px', marginBottom: '1rem' }}>
+                            <input type="text" placeholder="🔍 Buscar proformas..." value={proformaSearch}
+                              onChange={e => setProformaSearch(e.target.value)}
+                              style={{ padding: '6px 12px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '13px', width: '220px', background: 'rgba(255,255,255,0.05)', color: '#fff' }} />
+                          </div>
+                          {proformas.filter(p => p.clientName.toLowerCase().includes(proformaSearch.toLowerCase())).length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>
+                              <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>📄</span>
+                              <p>No hay proformas. Crea una nueva con el botón superior.</p>
+                            </div>
+                          ) : (
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>Fecha</th>
+                                  <th>Cliente</th>
+                                  <th>Items</th>
+                                  <th>Total ($)</th>
+                                  <th>Estado</th>
+                                  <th style={{ textAlign: 'right' }}>Acciones</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {proformas.filter(p => p.clientName.toLowerCase().includes(proformaSearch.toLowerCase())).map(p => (
+                                  <tr key={p.id}>
+                                    <td style={{ fontSize: '12px' }}>{new Date(p.createdAt).toLocaleDateString()}</td>
+                                    <td><strong>{p.clientName}</strong><br /><span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{p.clientRuc}</span></td>
+                                    <td>{p.items.length} ítem(s)</td>
+                                    <td style={{ fontWeight: 'bold', color: 'var(--cyan)' }}>${p.total.toFixed(2)}</td>
+                                    <td>
+                                      <span className={`badge-status ${p.status === 'BORRADOR' ? 'status-partial' : p.status === 'ENVIADA' ? 'status-aura' : 'status-yes'}`}>
+                                        {p.status}
+                                      </span>
+                                    </td>
+                                    <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                                      {p.status === 'BORRADOR' && (
+                                        <button className="btn-sm" onClick={() => handleUpdateProformaStatus(p.id, 'ENVIADA')} style={{ marginRight: '4px', background: 'rgba(99,102,241,0.2)', border: '1px solid var(--indigo)', color: 'var(--indigo)', cursor: 'pointer' }}>📤 Enviada</button>
+                                      )}
+                                      {p.status !== 'CONVERTIDA' && (
+                                        <button className="btn-sm btn-cyan" onClick={() => handleConvertProformaToInvoice(p)} style={{ marginRight: '4px', fontWeight: '600' }}>⚡ Facturar</button>
+                                      )}
+                                      <button className="btn-sm" onClick={() => handleDeleteProforma(p.id)} style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid #f87171', color: '#f87171', cursor: 'pointer' }}>🗑️</button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="dashboard-grid">
+                          <div className="card glass-panel" style={{ padding: '1.5rem' }}>
+                            <h4 style={{ marginBottom: '1rem', fontWeight: 'bold' }}>Nueva Proforma</h4>
+                            <form onSubmit={handleCreateProforma}>
+                              <div className="grid-2-form">
+                                <div className="form-group">
+                                  <label>Cliente (Nombre):</label>
+                                  <input type="text" required value={proformaClientName} onChange={e => setProformaClientName(e.target.value)} placeholder="Nombre del cliente" list="proforma-clients-list" />
+                                  <datalist id="proforma-clients-list">
+                                    {customers.map(c => <option key={c.id} value={c.name} />)}
+                                  </datalist>
+                                </div>
+                                <div className="form-group">
+                                  <label>RUC / Cédula:</label>
+                                  <input type="text" value={proformaClientRuc} onChange={e => setProformaClientRuc(e.target.value)} placeholder="Ej: 0923456789001" style={{ fontFamily: 'var(--font-mono)' }} />
+                                </div>
+                              </div>
+
+                              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.8rem', marginBottom: '0.8rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                  <label style={{ fontSize: '12px', fontWeight: 'bold' }}>Productos:</label>
+                                  <button type="button" className="btn-sm btn-cyan" style={{ padding: '2px 8px', fontSize: '11px' }} onClick={() => setProformaItems([...proformaItems, { productId: '', quantity: 1 }])}>+ Agregar</button>
+                                </div>
+                                {proformaItems.map((item, idx) => (
+                                  <div key={idx} style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
+                                    <select value={item.productId} required onChange={e => { const u = [...proformaItems]; u[idx].productId = e.target.value; setProformaItems(u); }} style={{ flex: 2, padding: '4px 6px', fontSize: '12px' }}>
+                                      <option value="">-- Producto --</option>
+                                      {products.map(p => <option key={p.id} value={p.id}>{p.name} (${p.price.toFixed(2)})</option>)}
+                                    </select>
+                                    <input type="number" min={1} value={item.quantity} onChange={e => { const u = [...proformaItems]; u[idx].quantity = parseInt(e.target.value) || 1; setProformaItems(u); }} style={{ width: '55px', padding: '4px 6px', fontSize: '12px' }} />
+                                    <span style={{ fontSize: '12px', width: '60px', textAlign: 'right' }}>${((products.find(p => p.id === item.productId)?.price || 0) * item.quantity).toFixed(2)}</span>
+                                    <button type="button" onClick={() => setProformaItems(proformaItems.filter((_, i) => i !== idx))} style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer', fontSize: '14px', padding: '4px' }}>🗑️</button>
+                                  </div>
+                                ))}
+                              </div>
+
+                              <div className="form-group">
+                                <label>Notas / Condiciones:</label>
+                                <input type="text" value={proformaNotes} onChange={e => setProformaNotes(e.target.value)} placeholder="Ej: Válida por 15 días. Precios sujetos a cambio sin previo aviso." />
+                              </div>
+
+                              <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '0.5rem' }}>Guardar Proforma</button>
+                            </form>
+                          </div>
+                          <div className="card glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+                            <span style={{ fontSize: '3rem' }}>📄</span>
+                            <h4 style={{ margin: 0 }}>Flujo de Proformas</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: 'var(--text-secondary)', width: '100%', textAlign: 'left' }}>
+                              {[['BORRADOR', 'Proforma creada y en edición', 'status-partial'], ['ENVIADA', 'Proforma enviada al cliente', 'status-aura'], ['CONVERTIDA', 'Convertida en Factura Electrónica', 'status-yes']].map(([st, desc, cls]) => (
+                                <div key={st} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
+                                  <span className={`badge-status ${cls}`}>{st}</span>
+                                  <span>{desc}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* ── SUB-TAB: NOMINA / ROLES DE PAGO ── */}
+                  {ventasSubTab === 'nomina' && (
+                    <div className="fade-in">
+                      <div className="dashboard-grid">
+                        {/* Payroll Calculator */}
+                        <div className="card glass-panel" style={{ padding: '1.5rem' }}>
+                          <h4 style={{ marginBottom: '1rem', fontWeight: 'bold' }}>💰 Calculadora de Nómina (IESS)</h4>
+                          <form onSubmit={handleGeneratePayroll}>
+                            <div className="form-group">
+                              <label>Empleado:</label>
+                              <select required value={payrollEmployeeId} onChange={e => setPayrollEmployeeId(e.target.value)} style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '14px' }}>
+                                <option value="">-- Seleccionar Empleado --</option>
+                                {employees.map(emp => <option key={emp.id} value={emp.id}>{emp.name}</option>)}
+                              </select>
+                              {employees.length === 0 && <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>No hay empleados. Regístralos primero en la pestaña de Empleados.</p>}
+                            </div>
+                            <div className="form-group">
+                              <label>Período (Mes):</label>
+                              <input type="month" required value={payrollMonth} onChange={e => setPayrollMonth(e.target.value)} style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '14px' }} />
+                            </div>
+                            <div className="grid-2-form">
+                              <div className="form-group">
+                                <label>Salario Base ($):</label>
+                                <input type="number" required min={460} step="0.01" value={payrollSalary} onChange={e => setPayrollSalary(parseFloat(e.target.value) || 460)} />
+                              </div>
+                              <div className="form-group">
+                                <label>Bonificaciones ($):</label>
+                                <input type="number" min={0} step="0.01" value={payrollBonus} onChange={e => setPayrollBonus(parseFloat(e.target.value) || 0)} />
+                              </div>
+                            </div>
+                            <div className="grid-2-form">
+                              <div className="form-group">
+                                <label>Horas Extra ($):</label>
+                                <input type="number" min={0} step="0.01" value={payrollExtras} onChange={e => setPayrollExtras(parseFloat(e.target.value) || 0)} />
+                              </div>
+                              <div className="form-group">
+                                <label>Otras Deducciones ($):</label>
+                                <input type="number" min={0} step="0.01" value={payrollOtherDeductions} onChange={e => setPayrollOtherDeductions(parseFloat(e.target.value) || 0)} />
+                              </div>
+                            </div>
+
+                            {/* Live Calculation Preview */}
+                            <div style={{ background: 'rgba(6,182,212,0.06)', border: '1px solid rgba(6,182,212,0.2)', borderRadius: '12px', padding: '1rem', marginBottom: '1rem', fontSize: '13px' }}>
+                              <div style={{ fontWeight: 'bold', color: 'var(--cyan)', marginBottom: '10px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Vista Previa del Rol</div>
+                              {[
+                                ['Salario Base', payrollSalary],
+                                ['+ Bonificaciones', payrollBonus],
+                                ['+ Horas Extra', payrollExtras],
+                              ].map(([label, val]) => (
+                                <div key={String(label)} style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '4px', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '4px' }}>
+                                  <span style={{ color: 'var(--text-secondary)' }}>{label}</span>
+                                  <span>${Number(val).toFixed(2)}</span>
+                                </div>
+                              ))}
+                              <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '4px', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '4px', fontWeight: 'bold' }}>
+                                <span>= Ingreso Bruto</span>
+                                <span style={{ color: 'var(--emerald)' }}>${payrollCalc.gross.toFixed(2)}</span>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '4px', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '4px' }}>
+                                <span style={{ color: '#f87171' }}>- IESS Empleado (9.45%)</span>
+                                <span style={{ color: '#f87171' }}>-${payrollCalc.iessEmployee.toFixed(2)}</span>
+                              </div>
+                              {payrollOtherDeductions > 0 && (
+                                <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '4px', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '4px' }}>
+                                  <span style={{ color: '#f87171' }}>- Otras Deducciones</span>
+                                  <span style={{ color: '#f87171' }}>-${payrollOtherDeductions.toFixed(2)}</span>
+                                </div>
+                              )}
+                              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '6px', fontWeight: 'bold', fontSize: '15px' }}>
+                                <span>= SALARIO NETO</span>
+                                <span style={{ color: 'var(--cyan)' }}>${payrollCalc.net.toFixed(2)}</span>
+                              </div>
+                              <div style={{ marginTop: '8px', padding: '6px 8px', background: 'rgba(16,185,129,0.1)', borderRadius: '6px', color: 'var(--emerald)', fontSize: '12px', display: 'flex', justifyContent: 'space-between' }}>
+                                <span>Aporte Patronal IESS (11.15%)</span>
+                                <strong>${payrollCalc.iessEmployer.toFixed(2)}</strong>
+                              </div>
+                            </div>
+
+                            <button type="submit" className="btn btn-cyan w-full" disabled={!payrollEmployeeId}>Generar Rol de Pago</button>
+                          </form>
+                        </div>
+
+                        {/* Payroll History */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                          <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                              <h3 style={{ margin: 0 }}>Historial de Roles de Pago</h3>
+                              <button className="btn-sm" onClick={handleExportPayrollCSV} style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid var(--emerald)', color: 'var(--emerald)', cursor: 'pointer' }}>📥 Exportar CSV</button>
+                            </div>
+                            {payrollRoles.length === 0 ? (
+                              <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '1rem' }}>No hay roles generados aún.</p>
+                            ) : (
+                              <table>
+                                <thead>
+                                  <tr>
+                                    <th>Empleado</th>
+                                    <th>Período</th>
+                                    <th>Bruto</th>
+                                    <th>IESS Emp.</th>
+                                    <th>Patronal</th>
+                                    <th>Neto</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {payrollRoles.slice().reverse().map((r: any) => (
+                                    <tr key={r.id}>
+                                      <td><strong>{r.employeeName}</strong></td>
+                                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: '12px' }}>{r.month}</td>
+                                      <td>${r.gross.toFixed(2)}</td>
+                                      <td style={{ color: '#f87171' }}>-${r.iessEmployee.toFixed(2)}</td>
+                                      <td style={{ color: 'var(--emerald)', fontSize: '12px' }}>${r.iessEmployer.toFixed(2)}</td>
+                                      <td style={{ fontWeight: 'bold', color: 'var(--cyan)' }}>${r.net.toFixed(2)}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            )}
+                          </div>
+                          <div className="card glass-panel" style={{ padding: '1.25rem', background: 'rgba(234,179,8,0.06)', border: '1px solid rgba(234,179,8,0.2)' }}>
+                            <div style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+                              <strong style={{ color: '#eab308' }}>📋 Normativa IESS 2026:</strong>
+                              <ul style={{ margin: '8px 0 0 1rem', paddingLeft: 0, listStyleType: 'disc' }}>
+                                <li>Salario Básico Unificado (SBU): $460.00/mes</li>
+                                <li>Aporte Personal al IESS: 9.45% del salario bruto</li>
+                                <li>Aporte Patronal al IESS: 11.15% del salario bruto</li>
+                                <li>Décimo Tercero: 1/12 del ingreso anual (Dic.)</li>
+                                <li>Décimo Cuarto: equivalente al SBU (Ago./Mar.)</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+
                 </div>
               )}
 
@@ -3718,14 +4371,14 @@ export default function App() {
                           <thead>
                             <tr>
                               <th>Fecha</th>
-                              <th>Nº Factura</th>
+                              <th>NÃ‚Âº Factura</th>
                               <th>Proveedor</th>
                               <th>RUC Proveedor</th>
                               <th>Subtotal ($)</th>
                               <th>IVA ($)</th>
                               <th>Total ($)</th>
                               <th>Tipo</th>
-                              <th>Acción</th>
+                              <th>AcciÃƒÂ³n</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -3758,7 +4411,7 @@ export default function App() {
                       <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Subir Compra / Proveedor</h4>
                       <form onSubmit={handleCreatePurchase}>
                         <div className="form-group">
-                          <label>Proveedor (Razón Social):</label>
+                          <label>Proveedor (RazÃƒÂ³n Social):</label>
                           <input type="text" required value={newPurProviderName} onChange={e => setNewPurProviderName(e.target.value)} placeholder="Ej: TELCONET S.A." />
                         </div>
                         <div className="form-group">
@@ -3767,7 +4420,7 @@ export default function App() {
                         </div>
                         <div className="grid-2-form">
                           <div className="form-group">
-                            <label>Factura Nº:</label>
+                            <label>Factura NÃ‚Âº:</label>
                             <input type="text" required value={newPurInvoiceNum} onChange={e => setNewPurInvoiceNum(e.target.value)} placeholder="001-002-12345" />
                           </div>
                           <div className="form-group">
@@ -3788,7 +4441,7 @@ export default function App() {
                         <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.75rem', marginTop: '0.75rem' }}>
                           <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0.5rem 0' }}>
                             <input type="checkbox" id="newPurStockUpdate" checked={newPurStockUpdate} onChange={e => setNewPurStockUpdate(e.target.checked)} />
-                            <label htmlFor="newPurStockUpdate" style={{ margin: 0, cursor: 'pointer', fontWeight: 'bold' }}>¿Ingresar stock a Kárdex?</label>
+                            <label htmlFor="newPurStockUpdate" style={{ margin: 0, cursor: 'pointer', fontWeight: 'bold' }}>Ã‚Â¿Ingresar stock a KÃƒÂ¡rdex?</label>
                           </div>
                           {newPurStockUpdate && (
                             <div className="grid-2-form">
@@ -3824,7 +4477,7 @@ export default function App() {
                     <div className="card glass-panel" style={{ padding: '1.25rem' }}>
                       <div className="card-header">
                         <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Total Ingresos (Cobros)</span>
-                        <span style={{ color: 'var(--emerald)' }}>💵</span>
+                        <span style={{ color: 'var(--emerald)' }}>Ã°Å¸â€™Âµ</span>
                       </div>
                       <h3 style={{ margin: '8px 0', fontSize: '20px', color: 'var(--emerald)' }}>
                         ${recoSummary?.metrics?.totalRecaudado?.toFixed(2) || '0.00'}
@@ -3834,7 +4487,7 @@ export default function App() {
                     <div className="card glass-panel" style={{ padding: '1.25rem' }}>
                       <div className="card-header">
                         <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Total Egresos (Pagos)</span>
-                        <span style={{ color: '#f87171' }}>💸</span>
+                        <span style={{ color: '#f87171' }}>Ã°Å¸â€™Â¸</span>
                       </div>
                       <h3 style={{ margin: '8px 0', fontSize: '20px', color: '#f87171' }}>
                         ${recoSummary?.metrics?.totalPagado?.toFixed(2) || '0.00'}
@@ -3844,7 +4497,7 @@ export default function App() {
                     <div className="card glass-panel" style={{ padding: '1.25rem' }}>
                       <div className="card-header">
                         <span style={{ fontSize: '13px', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Saldo Neto Caja / Bancos</span>
-                        <span style={{ color: 'var(--cyan)' }}>⚖️</span>
+                        <span style={{ color: 'var(--cyan)' }}>Ã¢Å¡â€“Ã¯Â¸Â</span>
                       </div>
                       <h3 style={{ margin: '8px 0', fontSize: '20px', color: (recoSummary?.metrics?.flujoNeto || 0) >= 0 ? 'var(--cyan)' : '#f87171' }}>
                         ${recoSummary?.metrics?.flujoNeto?.toFixed(2) || '0.00'}
@@ -3860,7 +4513,7 @@ export default function App() {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '10px' }}>
                           <h3 style={{ margin: 0 }}>Saldos de Facturas y Caja {recoLoading && <span style={{ fontSize: '12px', color: 'var(--indigo)' }}>(Cargando...)</span>}</h3>
                           <button onClick={handleExportReconciliation} className="btn btn-sm btn-indigo" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            📥 Exportar Conciliaciones (CSV)
+                            Ã°Å¸â€œÂ¥ Exportar Conciliaciones (CSV)
                           </button>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -3877,7 +4530,7 @@ export default function App() {
                                     <th>Cobrado en Caja</th>
                                     <th>Retenciones</th>
                                     <th>Saldo</th>
-                                    <th>Acción</th>
+                                    <th>AcciÃƒÂ³n</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -3916,7 +4569,7 @@ export default function App() {
                                     <th>Pagado en Caja</th>
                                     <th>Retenciones</th>
                                     <th>Saldo</th>
-                                    <th>Acción</th>
+                                    <th>AcciÃƒÂ³n</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -3954,7 +4607,7 @@ export default function App() {
                             <thead>
                               <tr>
                                 <th>Fecha</th>
-                                <th>Descripción</th>
+                                <th>DescripciÃƒÂ³n</th>
                                 <th>Origen</th>
                                 <th>Monto ($)</th>
                               </tr>
@@ -4034,7 +4687,7 @@ export default function App() {
                             </div>
                           </div>
                           <div className="form-group">
-                            <label>Descripción / Concepto:</label>
+                            <label>DescripciÃƒÂ³n / Concepto:</label>
                             <input type="text" required={cashSource === 'MANUAL'} value={cashDesc} onChange={e => setCashDesc(e.target.value)} placeholder="Concepto del movimiento" />
                           </div>
                           <button type="submit" className="btn btn-cyan w-full">Guardar y Contabilizar Caja</button>
@@ -4044,12 +4697,212 @@ export default function App() {
                       <div className="card glass-panel" style={{ padding: '1.5rem' }}>
                         <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Sincronizar Retenciones SRI</h4>
                         <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                          Descarga las retenciones de impuestos emitidas por tus clientes y las que emitiste a tus proveedores, y concílialas.
+                          Descarga las retenciones de impuestos emitidas por tus clientes y las que emitiste a tus proveedores, y concÃƒÂ­lialas.
                         </p>
                         <button onClick={handleSyncWithholdings} className="btn btn-emerald w-full">Sincronizar Retenciones (SRI)</button>
                       </div>
                     </div>
                   </div>
+                </div>
+              )}
+
+
+              {/* ── BANKS MODULE: injected within Caja tab ── */}
+              {activeTab === 'caja' && (
+                <div className="fade-in" style={{ marginTop: '1.5rem' }}>
+                  {/* Banks Sub-nav */}
+                  <div style={{ display: 'flex', gap: '10px', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', flexWrap: 'wrap' }}>
+                    <button className={`btn-sm ${bankView === 'list' ? 'status-aura' : ''}`} onClick={() => setBankView('list')}>🏛️ Cuentas Bancarias</button>
+                    <button className={`btn-sm ${bankView === 'form' ? 'status-aura' : ''}`} onClick={() => setBankView('form')}>➕ Nueva Cuenta</button>
+                    {bankAccounts.length > 0 && (
+                      <button className={`btn-sm ${bankView === 'movements' ? 'status-aura' : ''}`} onClick={() => { setBankView('movements'); if (!selectedBankAccountId && bankAccounts.length > 0) setSelectedBankAccountId(bankAccounts[0].id); }}>💳 Movimientos</button>
+                    )}
+                  </div>
+
+                  {/* Bank Summary Cards */}
+                  {bankAccounts.length > 0 && (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+                      {bankAccounts.map(acc => (
+                        <div key={acc.id} className="card glass-panel" style={{ padding: '1.25rem', borderLeft: '4px solid var(--cyan)', cursor: 'pointer' }} onClick={() => { setSelectedBankAccountId(acc.id); setBankView('movements'); }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                            <div>
+                              <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{acc.bankName}</div>
+                              <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{acc.accountType} ···{acc.accountNumber.slice(-4)}</div>
+                            </div>
+                            <span className="badge-status status-yes">{acc.accountType}</span>
+                          </div>
+                          <div style={{ fontSize: '22px', fontWeight: 'bold', color: acc.balance >= 0 ? 'var(--cyan)' : '#f87171' }}>${acc.balance.toFixed(2)}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>Saldo disponible</div>
+                        </div>
+                      ))}
+                      <div className="card glass-panel" style={{ padding: '1.25rem', borderLeft: '4px solid var(--emerald)', background: 'rgba(16,185,129,0.05)' }}>
+                        <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '4px' }}>TOTAL CONSOLIDADO</div>
+                        <div style={{ fontSize: '26px', fontWeight: 'bold', color: 'var(--emerald)' }}>${bankAccounts.reduce((s, a) => s + a.balance, 0).toFixed(2)}</div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>{bankAccounts.length} cuenta(s) bancaria(s)</div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Bank List View */}
+                  {bankView === 'list' && (
+                    bankAccounts.length === 0 ? (
+                      <div className="table-container glass-panel" style={{ padding: '2rem', textAlign: 'center' }}>
+                        <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>🏛️</span>
+                        <p style={{ color: 'var(--text-secondary)' }}>No hay cuentas bancarias. Agrega una con "Nueva Cuenta".</p>
+                        <button className="btn btn-cyan" onClick={() => setBankView('form')} style={{ marginTop: '1rem', padding: '8px 20px', borderRadius: '8px' }}>Agregar Primera Cuenta</button>
+                      </div>
+                    ) : (
+                      <div className="table-container glass-panel" style={{ padding: '1.5rem' }}>
+                        <h3 style={{ marginTop: 0 }}>Cuentas Bancarias Registradas</h3>
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Banco</th>
+                              <th>Tipo</th>
+                              <th>Número de Cuenta</th>
+                              <th>Saldo ($)</th>
+                              <th>Moneda</th>
+                              <th style={{ textAlign: 'right' }}>Acciones</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {bankAccounts.map(acc => (
+                              <tr key={acc.id}>
+                                <td><strong>{acc.bankName}</strong></td>
+                                <td><span className="badge-status status-aura">{acc.accountType}</span></td>
+                                <td style={{ fontFamily: 'var(--font-mono)', fontSize: '12px' }}>{acc.accountNumber}</td>
+                                <td style={{ fontWeight: 'bold', color: acc.balance >= 0 ? 'var(--cyan)' : '#f87171' }}>${acc.balance.toFixed(2)}</td>
+                                <td>USD</td>
+                                <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                                  <button className="btn-sm btn-cyan" onClick={() => { setSelectedBankAccountId(acc.id); setBankView('movements'); }} style={{ marginRight: '6px' }}>💳 Movimientos</button>
+                                  <button className="btn-sm" onClick={() => handleDeleteBankAccount(acc.id)} style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid #f87171', color: '#f87171', cursor: 'pointer' }}>🗑️</button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )
+                  )}
+
+                  {/* New Bank Account Form */}
+                  {bankView === 'form' && (
+                    <div className="dashboard-grid">
+                      <div className="card glass-panel" style={{ padding: '1.5rem' }}>
+                        <h4 style={{ marginBottom: '1rem', fontWeight: 'bold' }}>➕ Registrar Cuenta Bancaria</h4>
+                        <form onSubmit={handleCreateBankAccount}>
+                          <div className="form-group">
+                            <label>Nombre del Banco:</label>
+                            <input type="text" required value={bankName} onChange={e => setBankName(e.target.value)} placeholder="Ej: Banco Pichincha" list="bank-names-list" />
+                            <datalist id="bank-names-list">
+                              {['Banco Pichincha', 'Banco del Pacífico', 'Banco Guayaquil', 'Produbanco', 'Banco Internacional', 'Banco Bolivariano', 'Banco del Austro', 'Mutualista Pichincha', 'Cooperativa JEP'].map(b => <option key={b} value={b} />)}
+                            </datalist>
+                          </div>
+                          <div className="grid-2-form">
+                            <div className="form-group">
+                              <label>Tipo de Cuenta:</label>
+                              <select value={bankType} onChange={e => setBankType(e.target.value as 'CORRIENTE' | 'AHORRO')} style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '14px' }}>
+                                <option value="CORRIENTE">Corriente</option>
+                                <option value="AHORRO">Ahorro</option>
+                              </select>
+                            </div>
+                            <div className="form-group">
+                              <label>Número de Cuenta:</label>
+                              <input type="text" required value={bankNumber} onChange={e => setBankNumber(e.target.value)} placeholder="Ej: 2200123456" style={{ fontFamily: 'var(--font-mono)' }} />
+                            </div>
+                          </div>
+                          <div className="form-group">
+                            <label>Saldo Inicial ($):</label>
+                            <input type="number" required min={0} step="0.01" value={bankInitialBalance} onChange={e => setBankInitialBalance(parseFloat(e.target.value) || 0)} />
+                          </div>
+                          <button type="submit" className="btn btn-cyan w-full">Guardar Cuenta Bancaria</button>
+                        </form>
+                      </div>
+                      <div className="card glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', gap: '1rem' }}>
+                        <span style={{ fontSize: '3rem' }}>🏛️</span>
+                        <h4 style={{ margin: 0 }}>Gestión Bancaria</h4>
+                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', maxWidth: '280px', lineHeight: '1.5' }}>Registra todas tus cuentas bancarias y sus movimientos. El saldo se actualiza automáticamente con cada depósito o retiro.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Bank Movements */}
+                  {bankView === 'movements' && selectedBankAccountId && (
+                    <div className="dashboard-grid">
+                      <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '10px' }}>
+                          <div>
+                            <h3 style={{ margin: 0 }}>Movimientos Bancarios</h3>
+                            <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+                              {bankAccounts.find(a => a.id === selectedBankAccountId)?.bankName} — {bankAccounts.find(a => a.id === selectedBankAccountId)?.accountNumber}
+                            </p>
+                          </div>
+                          <select value={selectedBankAccountId} onChange={e => setSelectedBankAccountId(e.target.value)} style={{ padding: '6px 10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '13px' }}>
+                            {bankAccounts.map(acc => <option key={acc.id} value={acc.id}>{acc.bankName} (···{acc.accountNumber.slice(-4)})</option>)}
+                          </select>
+                        </div>
+                        {bankMovements.filter(m => m.accountId === selectedBankAccountId).length === 0 ? (
+                          <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '1rem' }}>No hay movimientos registrados para esta cuenta.</p>
+                        ) : (
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Descripción</th>
+                                <th style={{ textAlign: 'right' }}>Monto ($)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {bankMovements.filter(m => m.accountId === selectedBankAccountId).slice().reverse().map(m => (
+                                <tr key={m.id}>
+                                  <td style={{ fontSize: '12px' }}>{new Date(m.date).toLocaleDateString()}</td>
+                                  <td>
+                                    <span className={`badge-status ${m.type === 'DEPOSITO' ? 'status-yes' : m.type === 'TRANSFERENCIA' ? 'status-aura' : 'status-no'}`}>{m.type}</span>
+                                  </td>
+                                  <td>{m.description}</td>
+                                  <td style={{ textAlign: 'right', fontWeight: 'bold', color: m.type === 'DEPOSITO' ? 'var(--emerald)' : '#f87171' }}>
+                                    {m.type === 'DEPOSITO' ? '+' : '-'}${m.amount.toFixed(2)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        )}
+                      </div>
+
+                      {/* Movement Form */}
+                      <div className="card glass-panel" style={{ padding: '1.5rem' }}>
+                        <h4 style={{ marginBottom: '1rem', fontWeight: 'bold' }}>Registrar Movimiento</h4>
+                        <form onSubmit={handleCreateBankMovement}>
+                          <div className="form-group">
+                            <label>Tipo de Movimiento:</label>
+                            <select value={movType} onChange={e => setMovType(e.target.value as 'DEPOSITO' | 'RETIRO' | 'TRANSFERENCIA')} style={{ width: '100%', padding: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '14px' }}>
+                              <option value="DEPOSITO">Depósito (+)</option>
+                              <option value="RETIRO">Retiro (-)</option>
+                              <option value="TRANSFERENCIA">Transferencia (-)</option>
+                            </select>
+                          </div>
+                          <div className="form-group">
+                            <label>Monto ($):</label>
+                            <input type="number" required min={0.01} step="0.01" value={movAmount} onChange={e => setMovAmount(parseFloat(e.target.value) || 0)} />
+                          </div>
+                          <div className="form-group">
+                            <label>Fecha:</label>
+                            <input type="date" required value={movDate} onChange={e => setMovDate(e.target.value)} style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px', color: 'var(--text-primary)', fontSize: '14px' }} />
+                          </div>
+                          <div className="form-group">
+                            <label>Descripción:</label>
+                            <input type="text" required value={movDesc} onChange={e => setMovDesc(e.target.value)} placeholder="Ej: Depósito de clientes del día" />
+                          </div>
+                          <button type="submit" className={`btn w-full ${movType === 'DEPOSITO' ? 'btn-emerald' : 'btn-indigo'}`}>Registrar {movType}</button>
+                        </form>
+                        <div style={{ marginTop: '1rem', padding: '10px', background: 'rgba(6,182,212,0.06)', borderRadius: '8px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                          <strong>Saldo actual:</strong> <span style={{ color: 'var(--cyan)' }}>${(bankAccounts.find(a => a.id === selectedBankAccountId)?.balance || 0).toFixed(2)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -4062,7 +4915,7 @@ export default function App() {
                       {/* Trial balance verification */}
                       <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                          <h3 style={{ margin: 0 }}>Balance de Comprobación Sumas y Saldos</h3>
+                          <h3 style={{ margin: 0 }}>Balance de ComprobaciÃƒÂ³n Sumas y Saldos</h3>
                           <span className={`badge-status ${Math.abs(totalDebits - totalCredits) < 0.1 ? 'status-yes' : 'status-no'}`}>
                             {Math.abs(totalDebits - totalCredits) < 0.1 ? 'CONTABILIDAD CUADRADA' : 'CUENTAS DESCUADRADAS'}
                           </span>
@@ -4070,10 +4923,10 @@ export default function App() {
                         <table>
                           <thead>
                             <tr>
-                              <th>Código</th>
+                              <th>CÃƒÂ³digo</th>
                               <th>Cuenta Contable</th>
-                              <th>Debe (Débitos)</th>
-                              <th>Haber (Créditos)</th>
+                              <th>Debe (DÃƒÂ©bitos)</th>
+                              <th>Haber (CrÃƒÂ©ditos)</th>
                               <th>Saldo Neto</th>
                             </tr>
                           </thead>
@@ -4120,7 +4973,7 @@ export default function App() {
                                 <table className="journal-table">
                                   <thead>
                                     <tr>
-                                      <th style={{ textTransform: 'none', background: 'transparent', padding: '4px' }}>Código</th>
+                                      <th style={{ textTransform: 'none', background: 'transparent', padding: '4px' }}>CÃƒÂ³digo</th>
                                       <th style={{ textTransform: 'none', background: 'transparent', padding: '4px' }}>Detalle de Cuenta</th>
                                       <th style={{ textTransform: 'none', background: 'transparent', padding: '4px', textAlign: 'right' }}>Debe</th>
                                       <th style={{ textTransform: 'none', background: 'transparent', padding: '4px', textAlign: 'right' }}>Haber</th>
@@ -4155,8 +5008,8 @@ export default function App() {
                       <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Ingresar Asiento Diario</h4>
                       <form onSubmit={handleCreateManualEntry}>
                         <div className="form-group">
-                          <label>Descripción del Asiento:</label>
-                          <input type="text" required value={manualEntryDesc} onChange={e => setManualEntryDesc(e.target.value)} placeholder="Ej. Depósito inicial del socio" />
+                          <label>DescripciÃƒÂ³n del Asiento:</label>
+                          <input type="text" required value={manualEntryDesc} onChange={e => setManualEntryDesc(e.target.value)} placeholder="Ej. DepÃƒÂ³sito inicial del socio" />
                         </div>
                         <div className="form-group">
                           <label>Fecha Contable:</label>
@@ -4164,7 +5017,7 @@ export default function App() {
                         </div>
 
                         <div style={{ borderTop: '1px solid var(--border)', paddingTop: '8px', marginTop: '8px' }}>
-                          <label style={{ fontSize: '11px', color: 'var(--indigo)', marginBottom: '8px', display: 'block' }}>Líneas de Asiento (Deben cuadrar):</label>
+                          <label style={{ fontSize: '11px', color: 'var(--indigo)', marginBottom: '8px', display: 'block' }}>LÃƒÂ­neas de Asiento (Deben cuadrar):</label>
                           {manualEntryLines.map((line, idx) => (
                             <div key={idx} className="journal-entry-line-form">
                               <select value={line.accountCode} onChange={e => {
@@ -4172,15 +5025,15 @@ export default function App() {
                                 const names: Record<string, string> = {
                                   '1.01.01': 'Caja/Bancos',
                                   '1.01.02': 'Cuentas por Cobrar Clientes',
-                                  '1.01.03': 'Crédito Tributario IVA (Compras)',
-                                  '1.01.04': 'Inventario de Mercaderías',
-                                  '1.02.01': 'Depreciación Acumulada Activos Fijos',
+                                  '1.01.03': 'CrÃƒÂ©dito Tributario IVA (Compras)',
+                                  '1.01.04': 'Inventario de MercaderÃƒÂ­as',
+                                  '1.02.01': 'DepreciaciÃƒÂ³n Acumulada Activos Fijos',
                                   '2.01.01': 'Cuentas por Pagar Proveedores',
                                   '2.01.03': 'IVA Ventas Cobrado',
                                   '3.01.01': 'Capital Social (Patrimonio)',
-                                  '4.01.01': 'Ventas de Servicios/Mercaderías',
+                                  '4.01.01': 'Ventas de Servicios/MercaderÃƒÂ­as',
                                   '5.01.01': 'Costo de Ventas / Gasto Compra',
-                                  '5.01.02': 'Gasto Depreciación Activos Fijos',
+                                  '5.01.02': 'Gasto DepreciaciÃƒÂ³n Activos Fijos',
                                   '5.01.03': 'Otros Gastos / Ajuste Caja'
                                 };
                                 const updated = [...manualEntryLines];
@@ -4190,7 +5043,7 @@ export default function App() {
                               }}>
                                 <option value="1.01.01">1.01.01 Caja/Bancos</option>
                                 <option value="1.01.02">1.01.02 Cuentas Cobrar</option>
-                                <option value="1.01.03">1.01.03 Crédito IVA</option>
+                                <option value="1.01.03">1.01.03 CrÃƒÂ©dito IVA</option>
                                 <option value="1.01.04">1.01.04 Inventario</option>
                                 <option value="1.02.01">1.02.01 Depr. Acumulada</option>
                                 <option value="2.01.01">2.01.01 Cuentas Pagar</option>
@@ -4198,7 +5051,7 @@ export default function App() {
                                 <option value="3.01.01">3.01.01 Capital Social</option>
                                 <option value="4.01.01">4.01.01 Ventas</option>
                                 <option value="5.01.01">5.01.01 Costo/Gasto Compra</option>
-                                <option value="5.01.02">5.01.02 Gasto Depreciación</option>
+                                <option value="5.01.02">5.01.02 Gasto DepreciaciÃƒÂ³n</option>
                                 <option value="5.01.03">5.01.03 Otros Gastos</option>
                               </select>
                               <input type="number" min={0} step="0.01" value={line.debit} onChange={e => {
@@ -4220,7 +5073,7 @@ export default function App() {
                           <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                             <button type="button" className="btn-sm w-full" onClick={() => {
                               setManualEntryLines([...manualEntryLines, { accountCode: '5.01.03', accountName: 'Otros Gastos / Ajuste Caja', debit: 0, credit: 0 }]);
-                            }}>+ Línea</button>
+                            }}>+ LÃƒÂ­nea</button>
                             <button type="button" className="btn-sm w-full status-no" onClick={() => {
                               if (manualEntryLines.length > 2) {
                                 setManualEntryLines(manualEntryLines.slice(0, -1));
@@ -4241,13 +5094,13 @@ export default function App() {
                   {/* SRI Sub-navigation tabs */}
                   <div style={{ display: 'flex', gap: '10px', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem' }}>
                     <button className={`btn-sm ${sriSubTab === 'formulario' ? 'status-aura' : ''}`} onClick={() => setSriSubTab('formulario')}>
-                      📊 Formulario 104 (IVA)
+                      Ã°Å¸â€œÅ  Formulario 104 (IVA)
                     </button>
                     <button className={`btn-sm ${sriSubTab === 'ats' ? 'status-aura' : ''}`} onClick={() => setSriSubTab('ats')}>
-                      📦 Anexo Transaccional (ATS)
+                      Ã°Å¸â€œÂ¦ Anexo Transaccional (ATS)
                     </button>
                     <button className={`btn-sm ${sriSubTab === 'config' ? 'status-aura' : ''}`} onClick={() => setSriSubTab('config')}>
-                      ⚙️ Configuración SRI & Firma
+                      Ã¢Å¡â„¢Ã¯Â¸Â ConfiguraciÃƒÂ³n SRI & Firma
                     </button>
                   </div>
 
@@ -4255,14 +5108,14 @@ export default function App() {
                     <div className="table-container glass-panel fade-in" style={{ padding: '1.5rem', margin: 0 }}>
                       <h3 style={{ marginTop: 0 }}>Simulador del Formulario 104 (IVA Ecuador)</h3>
                       <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                        Cálculo en tiempo real de los casilleros de ventas y adquisiciones del SRI según facturación electrónica emitida y compras sincronizadas.
+                        CÃƒÂ¡lculo en tiempo real de los casilleros de ventas y adquisiciones del SRI segÃƒÂºn facturaciÃƒÂ³n electrÃƒÂ³nica emitida y compras sincronizadas.
                       </p>
 
                       <table style={{ marginBottom: '1.5rem' }}>
                         <thead>
                           <tr>
                             <th>Casillero</th>
-                            <th>Descripción del Rubro</th>
+                            <th>DescripciÃƒÂ³n del Rubro</th>
                             <th style={{ textAlign: 'right' }}>Valor Base Imponible</th>
                             <th style={{ textAlign: 'right' }}>Impuesto Generado (IVA {globalIvaRate}%)</th>
                           </tr>
@@ -4312,11 +5165,11 @@ export default function App() {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div>
                             <strong style={{ fontSize: '15px', color: 'var(--text-primary)' }}>IMPUESTO A LIQUIDAR (Casillero 601 / 602):</strong>
-                            <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '4px 0 0' }}>Fórmula: IVA Cobrado en Ventas - IVA Pagado en Compras (Crédito Tributario)</p>
+                            <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '4px 0 0' }}>FÃƒÂ³rmula: IVA Cobrado en Ventas - IVA Pagado en Compras (CrÃƒÂ©dito Tributario)</p>
                           </div>
                           <div style={{ textAlign: 'right' }}>
                             <span className={`badge-status ${sriVatPayable >= 0 ? 'status-no' : 'status-yes'}`} style={{ fontSize: '15px', padding: '6px 12px' }}>
-                              {sriVatPayable >= 0 ? `A PAGAR: $${sriVatPayable.toFixed(2)}` : `CRÉDITO FISCAL: $${Math.abs(sriVatPayable).toFixed(2)}`}
+                              {sriVatPayable >= 0 ? `A PAGAR: $${sriVatPayable.toFixed(2)}` : `CRÃƒâ€°DITO FISCAL: $${Math.abs(sriVatPayable).toFixed(2)}`}
                             </span>
                           </div>
                         </div>
@@ -4328,7 +5181,7 @@ export default function App() {
                     <div className="card glass-panel flex-column fade-in" style={{ padding: '1.5rem', margin: 0 }}>
                       <h3 style={{ marginTop: 0 }}>Generador del Anexo Transaccional (ATS)</h3>
                       <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                        Estructura oficial XML/JSON para la declaración simplificada del anexo transaccional del SRI. Contiene datos de ventas y compras del periodo.
+                        Estructura oficial XML/JSON para la declaraciÃƒÂ³n simplificada del anexo transaccional del SRI. Contiene datos de ventas y compras del periodo.
                       </p>
                       <div className="console-box" style={{ flex: 1, minHeight: '350px' }}>
                         <div className="console-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -4348,15 +5201,15 @@ export default function App() {
                   {sriSubTab === 'config' && (
                     <div className="grid-2 fade-in">
                       <div className="flex-column" style={{ gap: '1.5rem' }}>
-                        {/* Selección del Entorno SRI SOAP */}
+                        {/* SelecciÃƒÂ³n del Entorno SRI SOAP */}
                         <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
-                          <h3 style={{ marginTop: 0 }}>Modo de Conexión SOAP</h3>
+                          <h3 style={{ marginTop: 0 }}>Modo de ConexiÃƒÂ³n SOAP</h3>
                           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
                             Selecciona el entorno para interactuar con los servicios web (SOAP) del SRI.
                           </p>
 
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                            {/* Opción 1: Simulador Local (Demo) */}
+                            {/* OpciÃƒÂ³n 1: Simulador Local (Demo) */}
                             <div
                               onClick={() => {
                                 setSriSimulate(true);
@@ -4381,13 +5234,13 @@ export default function App() {
                                 alignItems: 'center'
                               }}
                             >
-                              <div style={{ fontSize: '20px' }}>🧪</div>
+                              <div style={{ fontSize: '20px' }}>Ã°Å¸Â§Âª</div>
                               <div style={{ flex: 1 }}>
                                 <h4 style={{ margin: '0 0 2px 0', fontSize: '14px', fontWeight: 'bold', color: sriSimulate ? 'var(--cyan)' : 'var(--text-primary)' }}>
                                   Simulador SOAP (Demo de Pruebas)
                                 </h4>
                                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.3', margin: 0 }}>
-                                  Respuestas locales inmediatas. No requiere conexión a internet, firma electrónica real ni genera obligaciones tributarias.
+                                  Respuestas locales inmediatas. No requiere conexiÃƒÂ³n a internet, firma electrÃƒÂ³nica real ni genera obligaciones tributarias.
                                 </p>
                               </div>
                               {sriSimulate && (
@@ -4397,7 +5250,7 @@ export default function App() {
                               )}
                             </div>
 
-                            {/* Opción 2: SOAP SRI - Entorno de Pruebas */}
+                            {/* OpciÃƒÂ³n 2: SOAP SRI - Entorno de Pruebas */}
                             <div
                               onClick={() => {
                                 setSriSimulate(false);
@@ -4422,13 +5275,13 @@ export default function App() {
                                 alignItems: 'center'
                               }}
                             >
-                              <div style={{ fontSize: '20px' }}>📡</div>
+                              <div style={{ fontSize: '20px' }}>Ã°Å¸â€œÂ¡</div>
                               <div style={{ flex: 1 }}>
                                 <h4 style={{ margin: '0 0 2px 0', fontSize: '14px', fontWeight: 'bold', color: (!sriSimulate && sriEnvironment === '1') ? 'var(--indigo)' : 'var(--text-primary)' }}>
                                   SOAP SRI - Entorno de Pruebas
                                 </h4>
                                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.3', margin: 0 }}>
-                                  Conexión real con el servidor de pruebas (`celcer.sri.gob.ec`). Valida tu firma electrónica (.p12) sin valor tributario legal.
+                                  ConexiÃƒÂ³n real con el servidor de pruebas (`celcer.sri.gob.ec`). Valida tu firma electrÃƒÂ³nica (.p12) sin valor tributario legal.
                                 </p>
                               </div>
                               {(!sriSimulate && sriEnvironment === '1') && (
@@ -4438,7 +5291,7 @@ export default function App() {
                               )}
                             </div>
 
-                            {/* Opción 3: SOAP SRI - Entorno de Producción (Real) */}
+                            {/* OpciÃƒÂ³n 3: SOAP SRI - Entorno de ProducciÃƒÂ³n (Real) */}
                             <div
                               onClick={() => {
                                 setSriSimulate(false);
@@ -4463,13 +5316,13 @@ export default function App() {
                                 alignItems: 'center'
                               }}
                             >
-                              <div style={{ fontSize: '20px' }}>🏛️</div>
+                              <div style={{ fontSize: '20px' }}>Ã°Å¸Ââ€ºÃ¯Â¸Â</div>
                               <div style={{ flex: 1 }}>
                                 <h4 style={{ margin: '0 0 2px 0', fontSize: '14px', fontWeight: 'bold', color: (!sriSimulate && sriEnvironment === '2') ? 'var(--emerald)' : 'var(--text-primary)' }}>
-                                  SOAP SRI - Entorno de Producción (Principal y Real)
+                                  SOAP SRI - Entorno de ProducciÃƒÂ³n (Principal y Real)
                                 </h4>
                                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: '1.3', margin: 0 }}>
-                                  Conexión en vivo con el servidor oficial (`cel.sri.gob.ec`). Emite facturas reales con plena validez legal y tributaria.
+                                  ConexiÃƒÂ³n en vivo con el servidor oficial (`cel.sri.gob.ec`). Emite facturas reales con plena validez legal y tributaria.
                                 </p>
                               </div>
                               {(!sriSimulate && sriEnvironment === '2') && (
@@ -4481,25 +5334,25 @@ export default function App() {
                           </div>
                         </div>
 
-                        {/* Configuración específica según la selección */}
+                        {/* ConfiguraciÃƒÂ³n especÃƒÂ­fica segÃƒÂºn la selecciÃƒÂ³n */}
                         <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
                           {sriConfigLoading ? (
-                            <p>Cargando configuración...</p>
+                            <p>Cargando configuraciÃƒÂ³n...</p>
                           ) : sriSimulate ? (
                             /* Interfaz para el Simulador */
                             <div className="fade-in">
-                              <h4 style={{ margin: '0 0 10px', color: 'var(--cyan)' }}>🔬 Simulador SOAP Activo</h4>
+                              <h4 style={{ margin: '0 0 10px', color: 'var(--cyan)' }}>Ã°Å¸â€Â¬ Simulador SOAP Activo</h4>
                               <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
-                                El sistema está configurado en modo educativo y de pruebas locales. Las facturas emitidas simularán su firma y el flujo SOAP del SRI de manera automática.
+                                El sistema estÃƒÂ¡ configurado en modo educativo y de pruebas locales. Las facturas emitidas simularÃƒÂ¡n su firma y el flujo SOAP del SRI de manera automÃƒÂ¡tica.
                               </p>
 
                               <div style={{ background: 'rgb(6, 182, 212)', border: '1px solid rgb(6, 182, 212)', borderRadius: '8px', padding: '12px', marginBottom: '1.5rem' }}>
-                                <h5 style={{ margin: '0 0 6px', fontSize: '12px', fontWeight: 'bold', color: 'var(--cyan)' }}>Guía Rápida de Interacción:</h5>
+                                <h5 style={{ margin: '0 0 6px', fontSize: '12px', fontWeight: 'bold', color: 'var(--cyan)' }}>GuÃƒÂ­a RÃƒÂ¡pida de InteracciÃƒÂ³n:</h5>
                                 <ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '11px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                  <li>Dirígete a la pestaña <strong>Control de Ventas</strong>.</li>
+                                  <li>DirÃƒÂ­gete a la pestaÃƒÂ±a <strong>Control de Ventas</strong>.</li>
                                   <li>Ingresa un cliente ficticio y el monto de la venta.</li>
                                   <li>Haz clic en <strong>Firmar y Transmitir al SRI</strong>.</li>
-                                  <li>La factura se autorizará de inmediato, calculando el IVA.</li>
+                                  <li>La factura se autorizarÃƒÂ¡ de inmediato, calculando el IVA.</li>
                                 </ul>
                               </div>
 
@@ -4510,7 +5363,7 @@ export default function App() {
                                   onClick={() => { setShowTutorial(true); setTutorialStep(1); }}
                                   style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', fontSize: '13px' }}
                                 >
-                                  📖 Iniciar tutorial
+                                  Ã°Å¸â€œâ€“ Iniciar tutorial
                                 </button>
 
                                 <button
@@ -4520,24 +5373,24 @@ export default function App() {
                                   style={{ border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-primary)' }}
                                   disabled={sriSaving}
                                 >
-                                  {sriSaving ? 'Guardando...' : 'Guardar Configuración'}
+                                  {sriSaving ? 'Guardando...' : 'Guardar ConfiguraciÃƒÂ³n'}
                                 </button>
                               </div>
                             </div>
                           ) : (
-                            /* Formulario para el Sistema Real (Pruebas / Producción) */
+                            /* Formulario para el Sistema Real (Pruebas / ProducciÃƒÂ³n) */
                             <form onSubmit={handleSaveSriConfig} className="fade-in">
                               <h4 style={{ margin: '0 0 10px', color: sriEnvironment === '2' ? 'var(--emerald)' : 'var(--indigo)' }}>
-                                {sriEnvironment === '2' ? '⚙️ Parámetros del Entorno de Producción' : '⚙️ Parámetros del Entorno de Pruebas'}
+                                {sriEnvironment === '2' ? 'Ã¢Å¡â„¢Ã¯Â¸Â ParÃƒÂ¡metros del Entorno de ProducciÃƒÂ³n' : 'Ã¢Å¡â„¢Ã¯Â¸Â ParÃƒÂ¡metros del Entorno de Pruebas'}
                               </h4>
                               <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                                Introduce tu firma electrónica para la conexión real al servidor SOAP del SRI.
+                                Introduce tu firma electrÃƒÂ³nica para la conexiÃƒÂ³n real al servidor SOAP del SRI.
                               </p>
 
                               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.25rem', marginTop: '1.25rem' }}>
-                                <h5 style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 'bold' }}>Firma Electrónica (Formato .p12)</h5>
+                                <h5 style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 'bold' }}>Firma ElectrÃƒÂ³nica (Formato .p12)</h5>
                                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                                  Archivo pkcs12 necesario para firmar digitalmente cada documento XML bajo el estándar XAdES-BES.
+                                  Archivo pkcs12 necesario para firmar digitalmente cada documento XML bajo el estÃƒÂ¡ndar XAdES-BES.
                                 </p>
 
                                 <div className="form-group" style={{ marginBottom: '1rem' }}>
@@ -4556,24 +5409,24 @@ export default function App() {
                                     }}
                                   />
                                   <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginTop: '4px' }}>
-                                    {sriConfigHasSignature ? '✔️ Firma guardada anteriormente en el servidor.' : '⚠️ No se ha subido ninguna firma electrónica aún.'}
+                                    {sriConfigHasSignature ? 'Ã¢Å“â€Ã¯Â¸Â Firma guardada anteriormente en el servidor.' : 'Ã¢Å¡Â Ã¯Â¸Â No se ha subido ninguna firma electrÃƒÂ³nica aÃƒÂºn.'}
                                   </span>
                                 </div>
 
                                 <div className="form-group">
-                                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>Contraseña de la Firma:</label>
+                                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>ContraseÃƒÂ±a de la Firma:</label>
                                   <input
                                     type="password"
                                     value={sriSignaturePassword}
                                     onChange={(e) => setSriSignaturePassword(e.target.value)}
-                                    placeholder={sriConfigHasSignature ? '••••••••' : 'Ingresa la contraseña del certificado'}
+                                    placeholder={sriConfigHasSignature ? 'Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢' : 'Ingresa la contraseÃƒÂ±a del certificado'}
                                     style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)' }}
                                   />
                                 </div>
 
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
                                   <div className="form-group">
-                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>Código de Establecimiento:</label>
+                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>CÃƒÂ³digo de Establecimiento:</label>
                                     <input
                                       type="text"
                                       value={sriEstablishmentCode}
@@ -4583,7 +5436,7 @@ export default function App() {
                                     />
                                   </div>
                                   <div className="form-group">
-                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>Punto de Emisión:</label>
+                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>Punto de EmisiÃƒÂ³n:</label>
                                     <input
                                       type="text"
                                       value={sriEmissionPoint}
@@ -4595,7 +5448,7 @@ export default function App() {
                                 </div>
 
                                 <div className="form-group" style={{ marginTop: '1rem' }}>
-                                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>Dirección de la Sucursal/Matriz:</label>
+                                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px' }}>DirecciÃƒÂ³n de la Sucursal/Matriz:</label>
                                   <input
                                     type="text"
                                     value={sriEstablishmentAddress}
@@ -4614,7 +5467,7 @@ export default function App() {
                                     style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                                   />
                                   <label htmlFor="isBranchCheckbox" style={{ fontSize: '13px', cursor: 'pointer', color: 'var(--text-primary)' }}>
-                                    ¿Es una sucursal de una empresa principal?
+                                    Ã‚Â¿Es una sucursal de una empresa principal?
                                   </label>
                                 </div>
 
@@ -4638,40 +5491,40 @@ export default function App() {
                                 style={{ marginTop: '1.5rem' }}
                                 disabled={sriSaving}
                               >
-                                {sriSaving ? 'Guardando...' : `Guardar Configuración de ${sriEnvironment === '2' ? 'Producción' : 'Pruebas'}`}
+                                {sriSaving ? 'Guardando...' : `Guardar ConfiguraciÃƒÂ³n de ${sriEnvironment === '2' ? 'ProducciÃƒÂ³n' : 'Pruebas'}`}
                               </button>
                             </form>
                           )}
                         </div>
                       </div>
 
-                      {/* Lado derecho: Estado del SOAP y Diagnóstico */}
+                      {/* Lado derecho: Estado del SOAP y DiagnÃƒÂ³stico */}
                       <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0, display: 'flex', flexDirection: 'column' }}>
-                        <h3 style={{ marginTop: 0 }}>Estado del SOAP y Diagnóstico</h3>
+                        <h3 style={{ marginTop: 0 }}>Estado del SOAP y DiagnÃƒÂ³stico</h3>
                         <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                          Detalles sobre los endpoints y pruebas de conexión física con el SRI.
+                          Detalles sobre los endpoints y pruebas de conexiÃƒÂ³n fÃƒÂ­sica con el SRI.
                         </p>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem', flex: 1, maxWidth: '700px' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                            <span style={{ fontWeight: '600' }}>WSDL Recepción:</span>
+                            <span style={{ fontWeight: '600' }}>WSDL RecepciÃƒÂ³n:</span>
                             <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
                               {sriSimulate ? 'Simulador Local (N/A)' : (sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...')}
                             </span>
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                            <span style={{ fontWeight: '600' }}>WSDL Autorización:</span>
+                            <span style={{ fontWeight: '600' }}>WSDL AutorizaciÃƒÂ³n:</span>
                             <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
                               {sriSimulate ? 'Simulador Local (N/A)' : (sriEnvironment === '2' ? 'https://cel.sri.gob.ec/...' : 'https://celcer.sri.gob.ec/...')}
                             </span>
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                            <span style={{ fontWeight: '600' }}>Conexión SRI SOAP:</span>
+                            <span style={{ fontWeight: '600' }}>ConexiÃƒÂ³n SRI SOAP:</span>
                             <span>
                               {sriSimulate ? (
                                 <span className="badge-status status-aura">MOCK SIMULADO</span>
                               ) : sriEnvironment === '2' ? (
-                                <span className="badge-status status-yes" style={{ background: 'rgb(16, 185, 129)', color: 'var(--emerald)', border: '1px solid rgb(16, 185, 129)' }}>PRODUCCIÓN REAL</span>
+                                <span className="badge-status status-yes" style={{ background: 'rgb(16, 185, 129)', color: 'var(--emerald)', border: '1px solid rgb(16, 185, 129)' }}>PRODUCCIÃƒâ€œN REAL</span>
                               ) : (
                                 <span className="badge-status status-yes">PRUEBAS REAL</span>
                               )}
@@ -4692,25 +5545,25 @@ export default function App() {
                         </div>
 
                         <div style={{ marginTop: '2rem', padding: '1.25rem', borderRadius: '8px', background: 'rgb(0, 0, 0)', fontSize: '12px', border: '1px solid var(--border)', maxWidth: '700px' }}>
-                          <strong style={{ display: 'block', marginBottom: '8px', color: 'var(--text-primary)' }}>Guía de Comprobación:</strong>
+                          <strong style={{ display: 'block', marginBottom: '8px', color: 'var(--text-primary)' }}>GuÃƒÂ­a de ComprobaciÃƒÂ³n:</strong>
                           <ol style={{ paddingLeft: '1.25rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             {sriSimulate ? (
                               <>
-                                <li>Asegúrate de que la configuración esté guardada.</li>
-                                <li>Inicia el tutorial con el botón <strong>"Iniciar tutorial"</strong> para entender el flujo completo.</li>
-                                <li>Ve al panel de Ventas y emite una nueva factura para ver la simulación en acción.</li>
+                                <li>AsegÃƒÂºrate de que la configuraciÃƒÂ³n estÃƒÂ© guardada.</li>
+                                <li>Inicia el tutorial con el botÃƒÂ³n <strong>"Iniciar tutorial"</strong> para entender el flujo completo.</li>
+                                <li>Ve al panel de Ventas y emite una nueva factura para ver la simulaciÃƒÂ³n en acciÃƒÂ³n.</li>
                               </>
                             ) : sriEnvironment === '2' ? (
                               <>
-                                <li>Estás en el entorno de Producción Real.</li>
-                                <li>Sube tu archivo de firma electrónica `.p12` real y digita su contraseña.</li>
-                                <li>Toda factura emitida aquí se enviará y registrará en la base de datos oficial del SRI.</li>
+                                <li>EstÃƒÂ¡s en el entorno de ProducciÃƒÂ³n Real.</li>
+                                <li>Sube tu archivo de firma electrÃƒÂ³nica `.p12` real y digita su contraseÃƒÂ±a.</li>
+                                <li>Toda factura emitida aquÃƒÂ­ se enviarÃƒÂ¡ y registrarÃƒÂ¡ en la base de datos oficial del SRI.</li>
                               </>
                             ) : (
                               <>
-                                <li>Estás en el entorno de Pruebas Real.</li>
-                                <li>Sube tu archivo de firma electrónica `.p12` (incluso de pruebas/real) y digita su contraseña.</li>
-                                <li>Ve al panel de Ventas y emite una nueva factura. El sistema validará la estructura contra el SRI de pruebas.</li>
+                                <li>EstÃƒÂ¡s en el entorno de Pruebas Real.</li>
+                                <li>Sube tu archivo de firma electrÃƒÂ³nica `.p12` (incluso de pruebas/real) y digita su contraseÃƒÂ±a.</li>
+                                <li>Ve al panel de Ventas y emite una nueva factura. El sistema validarÃƒÂ¡ la estructura contra el SRI de pruebas.</li>
                               </>
                             )}
                           </ol>
@@ -4740,8 +5593,8 @@ export default function App() {
                               <th>Nombre del Activo</th>
                               <th>Valor Compra</th>
                               <th>Valor Residual</th>
-                              <th>Vida Útil (Años)</th>
-                              <th>Depreciación Mensual</th>
+                              <th>Vida ÃƒÅ¡til (AÃƒÂ±os)</th>
+                              <th>DepreciaciÃƒÂ³n Mensual</th>
                               <th>Fecha Registro</th>
                             </tr>
                           </thead>
@@ -4754,7 +5607,7 @@ export default function App() {
                                   <td><strong>{a.name}</strong></td>
                                   <td>${a.value.toFixed(2)}</td>
                                   <td>${a.residualValue.toFixed(2)}</td>
-                                  <td>{a.yearsOfLife} años</td>
+                                  <td>{a.yearsOfLife} aÃƒÂ±os</td>
                                   <td style={{ color: 'var(--indigo)', fontWeight: 'bold' }}>
                                     ${monthlyDepr.toFixed(2)} / mes
                                   </td>
@@ -4780,7 +5633,7 @@ export default function App() {
                           </div>
                           <div className="grid-2-form">
                             <div className="form-group">
-                              <label>Valor de Adquisición ($):</label>
+                              <label>Valor de AdquisiciÃƒÂ³n ($):</label>
                               <input type="number" required min={0.01} step="0.01" value={newAssetValue} onChange={e => setNewAssetValue(parseFloat(e.target.value) || 0)} />
                             </div>
                             <div className="form-group">
@@ -4791,9 +5644,9 @@ export default function App() {
                           <div className="form-group">
                             <label>Tipo de Activo (Norma LORTI):</label>
                             <select value={newAssetYears} onChange={e => setNewAssetYears(parseInt(e.target.value) || 3)}>
-                              <option value="3">Equipos de Cómputo (3 años - 33.3% anual)</option>
-                              <option value="5">Vehículos / Logística (5 años - 20% anual)</option>
-                              <option value="10">Maquinarias / Muebles (10 años - 10% anual)</option>
+                              <option value="3">Equipos de CÃƒÂ³mputo (3 aÃƒÂ±os - 33.3% anual)</option>
+                              <option value="5">VehÃƒÂ­culos / LogÃƒÂ­stica (5 aÃƒÂ±os - 20% anual)</option>
+                              <option value="10">Maquinarias / Muebles (10 aÃƒÂ±os - 10% anual)</option>
                             </select>
                           </div>
                           <button type="submit" className="btn btn-indigo w-full">Calcular y Registrar</button>
@@ -4801,12 +5654,12 @@ export default function App() {
                       </div>
 
                       <div className="card glass-panel" style={{ padding: '1.5rem' }}>
-                        <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Depreciación Automatizada</h4>
+                        <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>DepreciaciÃƒÂ³n Automatizada</h4>
                         <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                          Calcula y genera de forma automática los asientos contables mensuales de depreciación acumulada para todos los activos según el reglamento de la LORTI.
+                          Calcula y genera de forma automÃƒÂ¡tica los asientos contables mensuales de depreciaciÃƒÂ³n acumulada para todos los activos segÃƒÂºn el reglamento de la LORTI.
                         </p>
                         <button onClick={handleRunDepreciation} className="btn btn-indigo w-full">
-                          Ejecutar Depreciación Mensual
+                          Ejecutar DepreciaciÃƒÂ³n Mensual
                         </button>
                       </div>
                     </div>
@@ -4814,16 +5667,16 @@ export default function App() {
 
                   {/* Depreciation logs */}
                   <div className="table-container glass-panel" style={{ padding: '1.5rem', marginTop: '1.5rem' }}>
-                    <h3>Registro Diario de Depreciación Acumulada</h3>
+                    <h3>Registro Diario de DepreciaciÃƒÂ³n Acumulada</h3>
                     {depreciationsLoading ? (
                       <p>Cargando registros...</p>
                     ) : depreciations.length === 0 ? (
-                      <p>No se han registrado asientos de depreciación mensual.</p>
+                      <p>No se han registrado asientos de depreciaciÃƒÂ³n mensual.</p>
                     ) : (
                       <table>
                         <thead>
                           <tr>
-                            <th>Período</th>
+                            <th>PerÃƒÂ­odo</th>
                             <th>Activo Fijo</th>
                             <th>Gasto Amortizado ($)</th>
                             <th>Fecha Ajuste</th>
@@ -4850,7 +5703,7 @@ export default function App() {
               {/* TAB: ADMINISTRATION & COMPANY MANAGEMENT */}
               {activeTab === 'admin' && (
                 <div className="fade-in animate-slideup">
-                  {/* Sub tab content: Gestión Empresas */}
+                  {/* Sub tab content: GestiÃƒÂ³n Empresas */}
                   {adminSubTab === 'empresas' && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       {/* Top Action Buttons */}
@@ -4882,7 +5735,7 @@ export default function App() {
                             fontSize: '13px'
                           }}
                         >
-                          ⬅️ Volver
+                          Ã¢Â¬â€¦Ã¯Â¸Â Volver
                         </button>
 
                         <button
@@ -4904,7 +5757,7 @@ export default function App() {
                             boxShadow: companyViewMode === 'list' ? 'none' : '0 0 12px rgb(6, 182, 212)'
                           }}
                         >
-                          💾 Guardar
+                          Ã°Å¸â€™Â¾ Guardar
                         </button>
 
                         <button
@@ -4925,7 +5778,7 @@ export default function App() {
                             fontSize: '13px'
                           }}
                         >
-                          ➕ Nuevo
+                          Ã¢Å¾â€¢ Nuevo
                         </button>
 
                         <button
@@ -4946,7 +5799,7 @@ export default function App() {
                             fontSize: '13px'
                           }}
                         >
-                          ✏️ Modificar
+                          Ã¢Å“ÂÃ¯Â¸Â Modificar
                         </button>
                       </div>
 
@@ -4967,10 +5820,10 @@ export default function App() {
                             <table>
                               <thead>
                                 <tr>
-                                  <th>Razón Social</th>
-                                  <th>Identificación</th>
+                                  <th>RazÃƒÂ³n Social</th>
+                                  <th>IdentificaciÃƒÂ³n</th>
                                   <th>Tipo</th>
-                                  <th>Descripción</th>
+                                  <th>DescripciÃƒÂ³n</th>
                                   <th>Nombre DB</th>
                                   <th style={{ textAlign: 'right' }}>Acciones</th>
                                 </tr>
@@ -4989,7 +5842,7 @@ export default function App() {
                                     <td><strong>{c.name}</strong></td>
                                     <td style={{ fontFamily: 'var(--font-mono)' }}>{c.identification}</td>
                                     <td><span className="badge-status status-yes">{c.type}</span></td>
-                                    <td>{c.description || <span style={{}}>Sin descripción</span>}</td>
+                                    <td>{c.description || <span style={{}}>Sin descripciÃƒÂ³n</span>}</td>
                                     <td style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--cyan)' }}>{c.dbName}</td>
                                     <td style={{ textAlign: 'right' }}>
                                       <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }} onClick={(e) => e.stopPropagation()}>
@@ -5008,7 +5861,7 @@ export default function App() {
                                           style={{ padding: '4px 8px', background: 'rgb(255, 255, 255)', border: '1px solid rgb(255, 255, 255)', borderRadius: '4px', cursor: 'pointer' }}
                                           title="Editar"
                                         >
-                                          ✏️
+                                          Ã¢Å“ÂÃ¯Â¸Â
                                         </button>
                                         <button
                                           onClick={() => handleDeleteCompany(c.id, c.name)}
@@ -5016,7 +5869,7 @@ export default function App() {
                                           style={{ padding: '4px 8px', background: 'rgb(239, 68, 68)', border: '1px solid rgb(239, 68, 68)', borderRadius: '4px', cursor: 'pointer' }}
                                           title="Eliminar"
                                         >
-                                          🗑️
+                                          Ã°Å¸â€”â€˜Ã¯Â¸Â
                                         </button>
                                       </div>
                                     </td>
@@ -5030,7 +5883,7 @@ export default function App() {
                         /* Form View */
                         <div className="card glass-panel" style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
                           <h3 style={{ marginTop: 0, marginBottom: '1.5rem' }}>
-                            {companyFormAction === 'create' ? '🏢 Registrar Nueva Empresa' : '✏️ Modificar Empresa'}
+                            {companyFormAction === 'create' ? 'Ã°Å¸ÂÂ¢ Registrar Nueva Empresa' : 'Ã¢Å“ÂÃ¯Â¸Â Modificar Empresa'}
                           </h3>
                           <form onSubmit={handleSaveCompany} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                             <div className="form-group">
@@ -5041,42 +5894,42 @@ export default function App() {
                                 style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                               >
                                 <option value="RUC">RUC</option>
-                                <option value="CÉDULA">Cédula</option>
+                                <option value="CÃƒâ€°DULA">CÃƒÂ©dula</option>
                                 <option value="PASAPORTE">Pasaporte</option>
                               </select>
                             </div>
 
                             <div className="form-group">
-                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Identificación:</label>
+                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>IdentificaciÃƒÂ³n:</label>
                               <input
                                 type="text"
                                 required
                                 value={compIdentificacion}
                                 onChange={(e) => setCompIdentificacion(e.target.value)}
-                                placeholder="Identificación (RUC o Cédula)"
+                                placeholder="IdentificaciÃƒÂ³n (RUC o CÃƒÂ©dula)"
                                 style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                               />
                             </div>
 
                             <div className="form-group">
-                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Razón Social:</label>
+                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>RazÃƒÂ³n Social:</label>
                               <input
                                 type="text"
                                 required
                                 value={compRazonSocial}
                                 onChange={(e) => setCompRazonSocial(e.target.value)}
-                                placeholder="Nombre Oficial o Razón Social"
+                                placeholder="Nombre Oficial o RazÃƒÂ³n Social"
                                 style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                               />
                             </div>
 
                             <div className="form-group">
-                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Descripción:</label>
+                              <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>DescripciÃƒÂ³n:</label>
                               <input
                                 type="text"
                                 value={compDescripcion}
                                 onChange={(e) => setCompDescripcion(e.target.value)}
-                                placeholder="Nombre Comercial o Descripción"
+                                placeholder="Nombre Comercial o DescripciÃƒÂ³n"
                                 style={{ width: '100%', padding: '10px', background: 'rgb(0, 0, 0)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none' }}
                               />
                             </div>
@@ -5108,7 +5961,7 @@ export default function App() {
                         <h3 style={{ marginTop: 0, marginBottom: '1.5rem' }}>Establecimiento y Sucursal</h3>
                         <form onSubmit={handleSaveSriConfig} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                           <div className="form-group">
-                            <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Código Establecimiento (SRI):</label>
+                            <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>CÃƒÂ³digo Establecimiento (SRI):</label>
                             <input
                               type="text"
                               required
@@ -5120,7 +5973,7 @@ export default function App() {
                           </div>
 
                           <div className="form-group">
-                            <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Punto de Emisión (SRI):</label>
+                            <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Punto de EmisiÃƒÂ³n (SRI):</label>
                             <input
                               type="text"
                               required
@@ -5132,7 +5985,7 @@ export default function App() {
                           </div>
 
                           <div className="form-group">
-                            <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>Dirección de Establecimiento/Sucursal:</label>
+                            <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', fontWeight: '600' }}>DirecciÃƒÂ³n de Establecimiento/Sucursal:</label>
                             <input
                               type="text"
                               required
@@ -5152,7 +6005,7 @@ export default function App() {
                               style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                             />
                             <label htmlFor="adminIsBranchCheckbox" style={{ fontSize: '13px', cursor: 'pointer', color: 'var(--text-primary)', fontWeight: '600' }}>
-                              ¿Esta cuenta es una sucursal de una Matriz principal?
+                              Ã‚Â¿Esta cuenta es una sucursal de una Matriz principal?
                             </label>
                           </div>
 
@@ -5171,16 +6024,16 @@ export default function App() {
                           )}
 
                           <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '1rem', padding: '12px', fontWeight: 'bold' }} disabled={sriSaving}>
-                            {sriSaving ? 'Guardando...' : '💾 Guardar Configuración de Sucursal'}
+                            {sriSaving ? 'Guardando...' : 'Ã°Å¸â€™Â¾ Guardar ConfiguraciÃƒÂ³n de Sucursal'}
                           </button>
                         </form>
                       </div>
 
                       <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-                        <span style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏪</span>
-                        <h4 style={{ margin: '0 0 10px 0' }}>Sincronización de Sucursales</h4>
+                        <span style={{ fontSize: '3rem', marginBottom: '1rem' }}>Ã°Å¸ÂÂª</span>
+                        <h4 style={{ margin: '0 0 10px 0' }}>SincronizaciÃƒÂ³n de Sucursales</h4>
                         <p style={{ fontSize: '13px', color: 'var(--text-secondary)', maxWidth: '300px', lineHeight: '1.5' }}>
-                          El establecimiento <strong>{sriEstablishmentCode}</strong> y punto de emisión <strong>{sriEmissionPoint}</strong> identifican de forma única esta sucursal física en los comprobantes autorizados por el SRI.
+                          El establecimiento <strong>{sriEstablishmentCode}</strong> y punto de emisiÃƒÂ³n <strong>{sriEmissionPoint}</strong> identifican de forma ÃƒÂºnica esta sucursal fÃƒÂ­sica en los comprobantes autorizados por el SRI.
                         </p>
                       </div>
                     </div>
@@ -5191,9 +6044,9 @@ export default function App() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       <div className="dashboard-grid">
                         <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
-                          <h3 style={{ marginTop: 0 }}>Microservicio de Facturación</h3>
+                          <h3 style={{ marginTop: 0 }}>Microservicio de FacturaciÃƒÂ³n</h3>
                           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                            Conexión local independiente para el firmado digital XAdES-BES de XMLs y comunicación SOAP con el SRI.
+                            ConexiÃƒÂ³n local independiente para el firmado digital XAdES-BES de XMLs y comunicaciÃƒÂ³n SOAP con el SRI.
                           </p>
 
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -5206,9 +6059,9 @@ export default function App() {
                               <span style={{ fontFamily: 'var(--font-mono)' }}>SQLite Local (/app/prisma)</span>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                              <span>Estado de Conexión:</span>
+                              <span>Estado de ConexiÃƒÂ³n:</span>
                               <span>
-                                <span className="badge-status status-yes" style={{ background: 'rgb(16, 185, 129)', color: 'var(--emerald)', border: '1px solid rgb(16, 185, 129)' }}>⚡ ONLINE</span>
+                                <span className="badge-status status-yes" style={{ background: 'rgb(16, 185, 129)', color: 'var(--emerald)', border: '1px solid rgb(16, 185, 129)' }}>Ã¢Å¡Â¡ ONLINE</span>
                               </span>
                             </div>
                           </div>
@@ -5217,7 +6070,7 @@ export default function App() {
                         <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
                           <h3 style={{ marginTop: 0 }}>Portal SRI (Servicio de Rentas Internas)</h3>
                           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                            Entorno y certificado configurados para la transmisión oficial de comprobantes tributarios.
+                            Entorno y certificado configurados para la transmisiÃƒÂ³n oficial de comprobantes tributarios.
                           </p>
 
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -5227,14 +6080,14 @@ export default function App() {
                                 {sriSimulate ? (
                                   <span className="badge-status status-aura">MOCK SIMULADO</span>
                                 ) : sriEnvironment === '2' ? (
-                                  <span className="badge-status status-yes" style={{ background: 'rgb(16, 185, 129)', color: 'var(--emerald)', border: '1px solid rgb(16, 185, 129)' }}>PRODUCCIÓN REAL</span>
+                                  <span className="badge-status status-yes" style={{ background: 'rgb(16, 185, 129)', color: 'var(--emerald)', border: '1px solid rgb(16, 185, 129)' }}>PRODUCCIÃƒâ€œN REAL</span>
                                 ) : (
                                   <span className="badge-status status-yes">PRUEBAS REAL</span>
                                 )}
                               </span>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                              <span>Firma Electrónica (.p12):</span>
+                              <span>Firma ElectrÃƒÂ³nica (.p12):</span>
                               <span>
                                 {sriConfigHasSignature ? (
                                   <span className="badge-status status-yes">CARGADO</span>
@@ -5244,7 +6097,7 @@ export default function App() {
                               </span>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                              <span>Transmisión SOAP:</span>
+                              <span>TransmisiÃƒÂ³n SOAP:</span>
                               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px' }}>
                                 {sriSimulate ? 'Desactivado' : 'Activo (celcer.sri.gob.ec)'}
                               </span>
@@ -5258,14 +6111,14 @@ export default function App() {
                   {/* Sub tab content: Actividades Sistema */}
                   {adminSubTab === 'actividades' && (
                     <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
-                      <h3 style={{ marginTop: 0, marginBottom: '1.5rem' }}>Bitácora de Actividades del Sistema</h3>
+                      <h3 style={{ marginTop: 0, marginBottom: '1.5rem' }}>BitÃƒÂ¡cora de Actividades del Sistema</h3>
                       <table style={{ width: '100%' }}>
                         <thead>
                           <tr>
                             <th>Fecha/Hora</th>
                             <th>Usuario</th>
-                            <th>Módulo</th>
-                            <th>Acción</th>
+                            <th>MÃƒÂ³dulo</th>
+                            <th>AcciÃƒÂ³n</th>
                             <th>Estado</th>
                           </tr>
                         </thead>
@@ -5273,8 +6126,8 @@ export default function App() {
                           <tr style={{ background: 'rgb(255, 255, 255)' }}>
                             <td style={{ fontSize: '12px', fontFamily: 'var(--font-mono)' }}>{new Date().toLocaleString()}</td>
                             <td>{user.email}</td>
-                            <td><span className="badge-status status-aura">ADMINISTRACIÓN</span></td>
-                            <td><strong>Consulta de bitácora de auditoría del sistema</strong></td>
+                            <td><span className="badge-status status-aura">ADMINISTRACIÃƒâ€œN</span></td>
+                            <td><strong>Consulta de bitÃƒÂ¡cora de auditorÃƒÂ­a del sistema</strong></td>
                             <td><span className="badge-status status-yes">COMPLETADO</span></td>
                           </tr>
                           {companies.length > 0 && (
@@ -5294,7 +6147,7 @@ export default function App() {
                             </td>
                             <td>{user.email}</td>
                             <td><span className="badge-status status-yes">SRI CONFIG</span></td>
-                            <td>Consulta de credenciales y firmas de facturación</td>
+                            <td>Consulta de credenciales y firmas de facturaciÃƒÂ³n</td>
                             <td><span className="badge-status status-yes">COMPLETADO</span></td>
                           </tr>
                           <tr>
@@ -5303,7 +6156,7 @@ export default function App() {
                             </td>
                             <td>{user.email}</td>
                             <td><span className="badge-status status-no">AUTH</span></td>
-                            <td>Inicio de sesión exitoso en el sistema principal</td>
+                            <td>Inicio de sesiÃƒÂ³n exitoso en el sistema principal</td>
                             <td><span className="badge-status status-yes">EXITOSO</span></td>
                           </tr>
                         </tbody>
@@ -5315,7 +6168,7 @@ export default function App() {
 
             </main>
             <footer style={{ marginTop: 'auto', paddingTop: '2rem', paddingBottom: '1rem', textAlign: 'center', fontSize: '11px' }}>
-              <p>AuraContable — Ecosistema Contable Autónomo Real &copy; 2026</p>
+              <p>AuraContable Ã¢â‚¬â€ Ecosistema Contable AutÃƒÂ³nomo Real &copy; 2026</p>
             </footer>
           </div >
         </>
@@ -5352,7 +6205,7 @@ export default function App() {
                 fontFamily: 'inherit'
               }}
             >
-              ← Volver al Inicio
+              Ã¢â€ Â Volver al Inicio
             </button>
           </div>
 
@@ -5370,10 +6223,10 @@ export default function App() {
             <div className="header-glow"></div>
             <div className="auth-header text-center" style={{ marginBottom: '1.5rem' }}>
               <h2 style={{ fontSize: '1.6rem', fontWeight: 'bold', color: 'var(--text-primary)', margin: 0 }}>
-                {isLoginView ? 'Iniciar Sesión' : 'Registrar Contribuyente'}
+                {isLoginView ? 'Iniciar SesiÃƒÂ³n' : 'Registrar Contribuyente'}
               </h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '6px', margin: 0 }}>
-                Acceso al Ecosistema Contable Autónomo — AuraContable
+                Acceso al Ecosistema Contable AutÃƒÂ³nomo Ã¢â‚¬â€ AuraContable
               </p>
             </div>
 
@@ -5384,9 +6237,9 @@ export default function App() {
                 <>
                   {/* RUC Input */}
                   <div className="form-group">
-                    <label>RUC (13 dígitos):</label>
+                    <label>RUC (13 dÃƒÂ­gitos):</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>🪪</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>Ã°Å¸ÂªÂª</span>
                       <input
                         type="text"
                         required
@@ -5399,32 +6252,32 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Razón Social Input */}
+                  {/* RazÃƒÂ³n Social Input */}
                   <div className="form-group">
-                    <label>Razón social o nombre completo:</label>
+                    <label>RazÃƒÂ³n social o nombre completo:</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>👤</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>Ã°Å¸â€˜Â¤</span>
                       <input
                         type="text"
                         required
                         value={nameInput}
-                        placeholder="Razón social o nombre completo"
+                        placeholder="RazÃƒÂ³n social o nombre completo"
                         onChange={(e) => setNameInput(e.target.value)}
                         style={{ paddingLeft: '38px', width: '100%' }}
                       />
                     </div>
                   </div>
 
-                  {/* Dirección Input */}
+                  {/* DirecciÃƒÂ³n Input */}
                   <div className="form-group">
-                    <label>Dirección:</label>
+                    <label>DirecciÃƒÂ³n:</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>📍</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>Ã°Å¸â€œÂ</span>
                       <input
                         type="text"
                         required
                         value={addressInput}
-                        placeholder="Dirección del establecimiento principal"
+                        placeholder="DirecciÃƒÂ³n del establecimiento principal"
                         onChange={(e) => setAddressInput(e.target.value)}
                         style={{ paddingLeft: '38px', width: '100%' }}
                       />
@@ -5436,7 +6289,7 @@ export default function App() {
                     <div className="form-group">
                       <label>Provincia:</label>
                       <div style={{ position: 'relative' }}>
-                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>📍</span>
+                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>Ã°Å¸â€œÂ</span>
                         <select
                           required
                           value={provinceInput}
@@ -5459,7 +6312,7 @@ export default function App() {
                     <div className="form-group">
                       <label>Ciudad:</label>
                       <div style={{ position: 'relative' }}>
-                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>📍</span>
+                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>Ã°Å¸â€œÂ</span>
                         <select
                           required
                           value={cityInput}
@@ -5480,7 +6333,7 @@ export default function App() {
                   < div className="form-group" style={{ position: 'relative' }}>
                     <label>Tipo de negocio (Elige de 1 a 4):</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>🏢</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>Ã°Å¸ÂÂ¢</span>
                       <input
                         type="text"
                         placeholder="Buscar tipo..."
@@ -5526,7 +6379,7 @@ export default function App() {
                                   lineHeight: 1
                                 }}
                               >
-                                ✕
+                                Ã¢Å“â€¢
                               </button>
                             </span>
                           ))}
@@ -5570,7 +6423,7 @@ export default function App() {
                                       setBusinessTypesInput(businessTypesInput.filter(t => t !== type));
                                     } else {
                                       if (businessTypesInput.length >= 4) {
-                                        alert('Puedes elegir un máximo de 4 tipos de negocio.');
+                                        alert('Puedes elegir un mÃƒÂ¡ximo de 4 tipos de negocio.');
                                         return;
                                       }
                                       setBusinessTypesInput([...businessTypesInput, type]);
@@ -5591,7 +6444,7 @@ export default function App() {
                                   }}
                                 >
                                   <span>{type}</span>
-                                  {isSelected && <span style={{ color: 'var(--cyan)', fontWeight: 'bold' }}>✓</span>}
+                                  {isSelected && <span style={{ color: 'var(--cyan)', fontWeight: 'bold' }}>Ã¢Å“â€œ</span>}
                                 </div>
                               );
                             })
@@ -5605,7 +6458,7 @@ export default function App() {
                   < div className="form-group" >
                     <label>WhatsApp:</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>📞</span>
+                      <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>Ã°Å¸â€œÅ¾</span>
                       <input
                         type="text"
                         value={whatsappInput}
@@ -5619,9 +6472,9 @@ export default function App() {
               )}
 
               <div className="form-group">
-                <label>Correo Electrónico:</label>
+                <label>Correo ElectrÃƒÂ³nico:</label>
                 <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>✉️</span>
+                  <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>Ã¢Å“â€°Ã¯Â¸Â</span>
                   <input
                     type="email"
                     required
@@ -5634,14 +6487,14 @@ export default function App() {
               </div >
 
               <div className="form-group">
-                <label>Contraseña:</label>
+                <label>ContraseÃƒÂ±a:</label>
                 <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>🔒</span>
+                  <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>Ã°Å¸â€â€™</span>
                   <input
                     type="password"
                     required
                     value={passwordInput}
-                    placeholder="••••••••"
+                    placeholder="Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢"
                     onChange={(e) => setPasswordInput(e.target.value)}
                     style={{ paddingLeft: '38px', width: '100%' }}
                   />
@@ -5659,22 +6512,22 @@ export default function App() {
             <div className="auth-toggle" style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '13px' }}>
               {isLoginView ? (
                 <p>
-                  ¿No tienes una cuenta registrada?{' '}
+                  Ã‚Â¿No tienes una cuenta registrada?{' '}
                   <button type="button" onClick={() => {
                     setIsLoginView(false);
                     setViewMode('signup');
                   }} style={{ background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontWeight: '600', textDecoration: 'underline' }}>
-                    Crea una cuenta aquí
+                    Crea una cuenta aquÃƒÂ­
                   </button>
                 </p>
               ) : (
                 <p>
-                  ¿Ya posees una cuenta activa?{' '}
+                  Ã‚Â¿Ya posees una cuenta activa?{' '}
                   <button type="button" onClick={() => {
                     setIsLoginView(true);
                     setViewMode('login');
                   }} style={{ background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontWeight: '600', textDecoration: 'underline' }}>
-                    Inicia sesión aquí
+                    Inicia sesiÃƒÂ³n aquÃƒÂ­
                   </button>
                 </p>
               )}
@@ -5699,7 +6552,7 @@ export default function App() {
             zIndex: 500,
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '24px', filter: 'drop-shadow(0 0 8px var(--cyan))' }}>✨</span>
+              <span style={{ fontSize: '24px', filter: 'drop-shadow(0 0 8px var(--cyan))' }}>Ã¢Å“Â¨</span>
               <strong style={{
                 fontSize: '18px',
                 fontWeight: 'bold',
@@ -5733,7 +6586,7 @@ export default function App() {
                   gap: '4px',
                   padding: '4px 0',
                 }}>
-                  Productos <span style={{ fontSize: '10px' }}>▼</span>
+                  Productos <span style={{ fontSize: '10px' }}>Ã¢â€“Â¼</span>
                 </button>
 
                 {isProductsDropdownOpen && (
@@ -5767,8 +6620,8 @@ export default function App() {
                       onMouseEnter={(e) => e.currentTarget.style.background = 'rgb(255, 255, 255)'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
-                      <strong style={{ fontSize: '13px', color: '#22d3ee' }}>🏛️ Aura Contable</strong>
-                      <span style={{ fontSize: '11px', color: 'var(--text-primary)', marginTop: '2px' }}>Gestión de diarios, Kardex y reportes.</span>
+                      <strong style={{ fontSize: '13px', color: '#22d3ee' }}>Ã°Å¸Ââ€ºÃ¯Â¸Â Aura Contable</strong>
+                      <span style={{ fontSize: '11px', color: 'var(--text-primary)', marginTop: '2px' }}>GestiÃƒÂ³n de diarios, Kardex y reportes.</span>
                     </a>
                     <a
                       href="#products-billing"
@@ -5785,8 +6638,8 @@ export default function App() {
                       onMouseEnter={(e) => e.currentTarget.style.background = 'rgb(255, 255, 255)'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
-                      <strong style={{ fontSize: '13px', color: '#818cf8' }}>⚡ Facturación Electrónica</strong>
-                      <span style={{ fontSize: '11px', color: 'var(--text-primary)', marginTop: '2px' }}>Microservicio de emisión y firmas SRI.</span>
+                      <strong style={{ fontSize: '13px', color: '#818cf8' }}>Ã¢Å¡Â¡ FacturaciÃƒÂ³n ElectrÃƒÂ³nica</strong>
+                      <span style={{ fontSize: '11px', color: 'var(--text-primary)', marginTop: '2px' }}>Microservicio de emisiÃƒÂ³n y firmas SRI.</span>
                     </a>
                     {/* Direct access to billing frontend */}
                     <div style={{ borderTop: '1px solid rgb(255, 255, 255)', margin: '4px 0', paddingTop: '6px' }}>
@@ -5818,15 +6671,15 @@ export default function App() {
                           e.currentTarget.style.transform = 'scale(1)';
                         }}
                       >
-                        <span style={{ fontSize: '14px' }}>⚡</span>
-                        Iniciar Sesión — Facturación
+                        <span style={{ fontSize: '14px' }}>Ã¢Å¡Â¡</span>
+                        Iniciar SesiÃƒÂ³n Ã¢â‚¬â€ FacturaciÃƒÂ³n
                       </a>
                     </div>
                   </div>
                 )}
               </div>
 
-              <a href="#features" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px' }}>Características</a>
+              <a href="#features" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontSize: '14px' }}>CaracterÃƒÂ­sticas</a>
             </div>
 
             <div className="landing-nav-auth" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -5862,7 +6715,7 @@ export default function App() {
                       cursor: 'pointer',
                     }}
                   >
-                    Cerrar Sesión
+                    Cerrar SesiÃƒÂ³n
                   </button>
                 </>
               ) : (
@@ -5892,7 +6745,7 @@ export default function App() {
                       e.currentTarget.style.boxShadow = 'none';
                     }}
                   >
-                    Iniciar Sesión
+                    Iniciar SesiÃƒÂ³n
                   </button>
                   <button
                     className="btn btn-cyan"
@@ -5937,7 +6790,7 @@ export default function App() {
               WebkitTextFillColor: 'transparent',
               letterSpacing: '-1.5px',
             }}>
-              Ecosistema Contable y Facturación Electrónica Autónoma
+              Ecosistema Contable y FacturaciÃƒÂ³n ElectrÃƒÂ³nica AutÃƒÂ³noma
             </h1>
             <p className="landing-hero-subtitle" style={{
               fontSize: '1.1rem',
@@ -5946,7 +6799,7 @@ export default function App() {
               lineHeight: '1.6',
               margin: '0 0 2.5rem 0',
             }}>
-              La suite integral diseñada para el control diario de tu contabilidad, conciliaciones de caja, inventarios Kárdex y facturación oficial ante el SRI.
+              La suite integral diseÃƒÂ±ada para el control diario de tu contabilidad, conciliaciones de caja, inventarios KÃƒÂ¡rdex y facturaciÃƒÂ³n oficial ante el SRI.
             </p>
             <div style={{ display: 'flex', gap: '1.2rem', justifyContent: 'center' }}>
               {user ? (
@@ -6015,7 +6868,7 @@ export default function App() {
               <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
                 <span style={{ color: '#22d3ee', textTransform: 'uppercase', fontSize: '12px', fontWeight: 'bold', letterSpacing: '2px' }}>Portafolio de Aplicaciones</span>
                 <h2 style={{ fontSize: '2.2rem', fontWeight: '700', color: '#fff', marginTop: '8px' }}>Nuestras Soluciones Integradas</h2>
-                <p style={{ color: 'var(--text-primary)', fontSize: '15px', marginTop: '10px' }}>Ecosistemas desacoplados y diseñados para trabajar en armonía.</p>
+                <p style={{ color: 'var(--text-primary)', fontSize: '15px', marginTop: '10px' }}>Ecosistemas desacoplados y diseÃƒÂ±ados para trabajar en armonÃƒÂ­a.</p>
               </div>
 
               <div className="landing-products-grid" style={{ gap: '2.5rem' }}>
@@ -6043,19 +6896,19 @@ export default function App() {
                     color: '#22d3ee',
                     boxShadow: '0 0 15px rgb(6, 182, 212)',
                   }}>
-                    🏛️
+                    Ã°Å¸Ââ€ºÃ¯Â¸Â
                   </div>
                   <h3 style={{ fontSize: '1.5rem', margin: 0, color: '#fff', fontWeight: 'bold' }}>Aura Contable</h3>
                   <p style={{ color: 'var(--text-primary)', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
-                    La herramienta completa para el control financiero. Administra el libro diario con asientos automáticos desencadenados de tus actividades de venta y compra, controla el stock mediante movimientos de Kárdex y amortiza activos fijos en segundos. Genera reportes listos para la declaración mensual de IVA del SRI.
+                    La herramienta completa para el control financiero. Administra el libro diario con asientos automÃƒÂ¡ticos desencadenados de tus actividades de venta y compra, controla el stock mediante movimientos de KÃƒÂ¡rdex y amortiza activos fijos en segundos. Genera reportes listos para la declaraciÃƒÂ³n mensual de IVA del SRI.
                   </p>
                   <ul style={{ color: 'var(--text-primary)', fontSize: '12.5px', paddingLeft: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <li>Asientos contables automáticos (Debe/Haber).</li>
+                    <li>Asientos contables automÃƒÂ¡ticos (Debe/Haber).</li>
                     <li>Libro Mayor y balances al instante.</li>
-                    <li>Kárdex de stock y valorización de inventario.</li>
+                    <li>KÃƒÂ¡rdex de stock y valorizaciÃƒÂ³n de inventario.</li>
                     <li>Simulador de Formulario 104 del SRI.</li>
                   </ul>
-                  {/* CTA Button — Aura Contable */}
+                  {/* CTA Button Ã¢â‚¬â€ Aura Contable */}
                   <div style={{ marginTop: 'auto', paddingTop: '0.5rem' }}>
                     <button
                       onClick={() => { if (user) { setViewMode('app'); } else { setIsLoginView(true); setViewMode('login'); } }}
@@ -6076,7 +6929,7 @@ export default function App() {
                       onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 22px rgb(6, 182, 212)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 14px rgb(6, 182, 212)'; e.currentTarget.style.transform = 'scale(1)'; }}
                     >
-                      🏛️ {user ? 'Ir al Sistema Contable' : 'Iniciar en Aura Contable'}
+                      Ã°Å¸Ââ€ºÃ¯Â¸Â {user ? 'Ir al Sistema Contable' : 'Iniciar en Aura Contable'}
                     </button>
                   </div>
                 </div>
@@ -6104,19 +6957,19 @@ export default function App() {
                     color: '#818cf8',
                     boxShadow: '0 0 15px rgb(129, 140, 248)',
                   }}>
-                    ⚡
+                    Ã¢Å¡Â¡
                   </div>
-                  <h3 style={{ fontSize: '1.5rem', margin: 0, color: '#fff', fontWeight: 'bold' }}>Sistema de Facturación</h3>
+                  <h3 style={{ fontSize: '1.5rem', margin: 0, color: '#fff', fontWeight: 'bold' }}>Sistema de FacturaciÃƒÂ³n</h3>
                   <p style={{ color: 'var(--text-primary)', fontSize: '13.5px', lineHeight: '1.6', margin: 0 }}>
-                    Un microservicio desacoplado y altamente reutilizable para facturación electrónica en el Ecuador. Firma digitalmente archivos XML de comprobantes con certificados PKCS#12 (.p12), se comunica de forma segura mediante SOAP con el SRI y gestiona sucursales y puntos de emisión dinámicamente.
+                    Un microservicio desacoplado y altamente reutilizable para facturaciÃƒÂ³n electrÃƒÂ³nica en el Ecuador. Firma digitalmente archivos XML de comprobantes con certificados PKCS#12 (.p12), se comunica de forma segura mediante SOAP con el SRI y gestiona sucursales y puntos de emisiÃƒÂ³n dinÃƒÂ¡micamente.
                   </p>
                   <ul style={{ color: 'var(--text-primary)', fontSize: '12.5px', paddingLeft: '1.2rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <li>Firma XML independiente con certificados .p12.</li>
                     <li>Conectividad SOAP directa con el SRI (Real y Simulado).</li>
-                    <li>Soporte para múltiples sucursales y puntos de emisión.</li>
-                    <li>Control de estado y reintentos automáticos de autorización.</li>
+                    <li>Soporte para mÃƒÂºltiples sucursales y puntos de emisiÃƒÂ³n.</li>
+                    <li>Control de estado y reintentos automÃƒÂ¡ticos de autorizaciÃƒÂ³n.</li>
                   </ul>
-                  {/* CTA Button — Sistema de Facturación */}
+                  {/* CTA Button Ã¢â‚¬â€ Sistema de FacturaciÃƒÂ³n */}
                   <div style={{ marginTop: 'auto', paddingTop: '0.5rem' }}>
                     <a
                       href="http://localhost:5174"
@@ -6141,7 +6994,7 @@ export default function App() {
                       onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 22px rgb(129, 140, 248)'; e.currentTarget.style.transform = 'scale(1.02)'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 14px rgb(129, 140, 248)'; e.currentTarget.style.transform = 'scale(1)'; }}
                     >
-                      ⚡ Iniciar en Facturación
+                      Ã¢Å¡Â¡ Iniciar en FacturaciÃƒÂ³n
                     </a>
                   </div>
                 </div>
@@ -6153,23 +7006,23 @@ export default function App() {
           <section id="features" style={{ padding: '5rem 2rem' }}>
             <div style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
               <div style={{ marginBottom: '3.5rem' }}>
-                <span style={{ color: '#22d3ee', textTransform: 'uppercase', fontSize: '12px', fontWeight: 'bold', letterSpacing: '2px' }}>Características Clave</span>
+                <span style={{ color: '#22d3ee', textTransform: 'uppercase', fontSize: '12px', fontWeight: 'bold', letterSpacing: '2px' }}>CaracterÃƒÂ­sticas Clave</span>
                 <h2 style={{ fontSize: '2.2rem', fontWeight: '700', color: '#fff', marginTop: '8px' }}>Potencia Contable en un Solo Lugar</h2>
               </div>
 
               <div className="landing-features-grid" style={{ gap: '2rem' }}>
                 <div style={{ padding: '1.5rem', textAlign: 'center' }}>
-                  <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>⚙️</span>
-                  <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Automatización</h4>
+                  <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>Ã¢Å¡â„¢Ã¯Â¸Â</span>
+                  <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>AutomatizaciÃƒÂ³n</h4>
                   <p style={{ color: 'var(--text-primary)', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Tus libros y balances contables se generan en tiempo real al emitir facturas y compras.</p>
                 </div>
                 <div style={{ padding: '1.5rem', textAlign: 'center' }}>
-                  <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>🔒</span>
-                  <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Seguridad Criptográfica</h4>
-                  <p style={{ color: 'var(--text-primary)', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Cifrado y firmas digitales PKCS#12 con contraseñas seguras y protegidas en el backend.</p>
+                  <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>Ã°Å¸â€â€™</span>
+                  <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Seguridad CriptogrÃƒÂ¡fica</h4>
+                  <p style={{ color: 'var(--text-primary)', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Cifrado y firmas digitales PKCS#12 con contraseÃƒÂ±as seguras y protegidas en el backend.</p>
                 </div>
                 <div style={{ padding: '1.5rem', textAlign: 'center' }}>
-                  <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>⚖️</span>
+                  <span style={{ fontSize: '32px', display: 'block', marginBottom: '12px' }}>Ã¢Å¡â€“Ã¯Â¸Â</span>
                   <h4 style={{ color: '#fff', fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>Cumplimiento Legal</h4>
                   <p style={{ color: 'var(--text-primary)', fontSize: '12.5px', lineHeight: '1.6', margin: 0 }}>Adaptado al 100% de la normativa ecuatoriana de retenciones e IVA diferenciado.</p>
                 </div>
@@ -6185,8 +7038,8 @@ export default function App() {
             background: 'rgb(5, 8, 20)',
             marginTop: 'auto',
           }}>
-            <p style={{ color: '#64748b', fontSize: '13px' }}>AuraContable — Ecosistema Contable y Facturación Electrónica &copy; 2026</p>
-            <p style={{ color: '#475569', fontSize: '11px', marginTop: '6px' }}>Tecnologías: React Single-Page Application, NestJS, Prisma, PostgreSQL y SQLite</p>
+            <p style={{ color: '#64748b', fontSize: '13px' }}>AuraContable Ã¢â‚¬â€ Ecosistema Contable y FacturaciÃƒÂ³n ElectrÃƒÂ³nica &copy; 2026</p>
+            <p style={{ color: '#475569', fontSize: '11px', marginTop: '6px' }}>TecnologÃƒÂ­as: React Single-Page Application, NestJS, Prisma, PostgreSQL y SQLite</p>
           </footer>
 
 
@@ -6229,7 +7082,7 @@ export default function App() {
               {/* Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '20px' }}>📖</span>
+                  <span style={{ fontSize: '20px' }}>Ã°Å¸â€œâ€“</span>
                   <strong style={{ fontSize: '16px', color: 'var(--cyan)' }}>Tutorial: Simulador SOAP de Pruebas</strong>
                 </div>
                 <button
@@ -6247,17 +7100,17 @@ export default function App() {
                 {tutorialStep === 1 && (
                   <div className="fade-in">
                     <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', fontSize: '15px' }}>
-                      Paso 1 de 5: ¿Qué es el Simulador SOAP de Pruebas?
+                      Paso 1 de 5: Ã‚Â¿QuÃƒÂ© es el Simulador SOAP de Pruebas?
                     </h4>
                     <p>
-                      El <strong>Simulador SOAP (modo demo)</strong> es una herramienta educativa y de validación local integrada en AuraContable.
+                      El <strong>Simulador SOAP (modo demo)</strong> es una herramienta educativa y de validaciÃƒÂ³n local integrada en AuraContable.
                     </p>
                     <p style={{ marginTop: '10px' }}>
-                      Su principal función es emular de manera idéntica la respuesta de los servidores web del <strong>SRI</strong> (Servicio de Rentas Internas de Ecuador).
-                      No requiere que tengas un certificado de firma digital real `.p12` cargado y funciona sin conexión externa al SRI.
+                      Su principal funciÃƒÂ³n es emular de manera idÃƒÂ©ntica la respuesta de los servidores web del <strong>SRI</strong> (Servicio de Rentas Internas de Ecuador).
+                      No requiere que tengas un certificado de firma digital real `.p12` cargado y funciona sin conexiÃƒÂ³n externa al SRI.
                     </p>
                     <div style={{ marginTop: '15px', background: 'rgb(6, 182, 212)', border: '1px solid rgb(6, 182, 212)', padding: '12px', borderRadius: '6px' }}>
-                      💡 <strong>Beneficio:</strong> Ideal para entrenamiento de personal o demostraciones inmediatas sin demoras de red ni errores de validación legal.
+                      Ã°Å¸â€™Â¡ <strong>Beneficio:</strong> Ideal para entrenamiento de personal o demostraciones inmediatas sin demoras de red ni errores de validaciÃƒÂ³n legal.
                     </div>
                   </div>
                 )}
@@ -6265,17 +7118,17 @@ export default function App() {
                 {tutorialStep === 2 && (
                   <div className="fade-in">
                     <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', fontSize: '15px' }}>
-                      Paso 2 de 5: Cómo emitir facturas de prueba
+                      Paso 2 de 5: CÃƒÂ³mo emitir facturas de prueba
                     </h4>
                     <p>
                       Para interactuar con el simulador SOAP:
                     </p>
                     <ol style={{ paddingLeft: '1.25rem', margin: '10px 0', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <li>Ve a la pestaña <strong>📈 Control de Ventas</strong> en el menú de navegación principal.</li>
+                      <li>Ve a la pestaÃƒÂ±a <strong>Ã°Å¸â€œË† Control de Ventas</strong> en el menÃƒÂº de navegaciÃƒÂ³n principal.</li>
                       <li>Usa el formulario lateral derecho <strong>Emitir Factura de Venta</strong>.</li>
                       <li>Escribe el nombre de un cliente ficticio (ej. <code>Consumidor Final</code>) y un monto.</li>
-                      <li>Marca o desmarca <strong>Desglosar {globalIvaRate}% IVA</strong> según prefieras.</li>
-                      <li>Haz clic en el botón <strong>Firmar y Transmitir al SRI</strong>.</li>
+                      <li>Marca o desmarca <strong>Desglosar {globalIvaRate}% IVA</strong> segÃƒÂºn prefieras.</li>
+                      <li>Haz clic en el botÃƒÂ³n <strong>Firmar y Transmitir al SRI</strong>.</li>
                     </ol>
                   </div>
                 )}
@@ -6286,12 +7139,12 @@ export default function App() {
                       Paso 3 de 5: Proceso de Firma y SOAP simulado
                     </h4>
                     <p>
-                      Cuando presionas el botón de emitir en modo simulación, el sistema ejecuta en segundo plano lo siguiente:
+                      Cuando presionas el botÃƒÂ³n de emitir en modo simulaciÃƒÂ³n, el sistema ejecuta en segundo plano lo siguiente:
                     </p>
                     <ul style={{ paddingLeft: '1.25rem', margin: '10px 0', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <li><strong>Generación del XML:</strong> Genera la estructura oficial offline del comprobante.</li>
+                      <li><strong>GeneraciÃƒÂ³n del XML:</strong> Genera la estructura oficial offline del comprobante.</li>
                       <li><strong>Firma Digital:</strong> Firma digitalmente el archivo XML usando un certificado mock en memoria.</li>
-                      <li><strong>Transmisión SOAP:</strong> Se conecta al servicio local, el cual devuelve el estado <strong>RECIBIDO</strong> y posteriormente <strong>AUTORIZADO</strong> con un número de autorización y clave de acceso simulada de 49 dígitos de manera inmediata.</li>
+                      <li><strong>TransmisiÃƒÂ³n SOAP:</strong> Se conecta al servicio local, el cual devuelve el estado <strong>RECIBIDO</strong> y posteriormente <strong>AUTORIZADO</strong> con un nÃƒÂºmero de autorizaciÃƒÂ³n y clave de acceso simulada de 49 dÃƒÂ­gitos de manera inmediata.</li>
                     </ul>
                   </div>
                 )}
@@ -6308,7 +7161,7 @@ export default function App() {
                       Los valores de la base imponible y el IVA desglosado se acumulan de inmediato en la contabilidad general de la empresa.
                     </p>
                     <p style={{ marginTop: '10px' }}>
-                      Puedes dirigirte a la pestaña <strong>🏛️ Reportes SRI Form 104</strong> y ver cómo se actualizan los casilleros 411 y 412 (ventas gravadas) y se calcula en tiempo real el impuesto a pagar o crédito fiscal, simulando una declaración de IVA real.
+                      Puedes dirigirte a la pestaÃƒÂ±a <strong>Ã°Å¸Ââ€ºÃ¯Â¸Â Reportes SRI Form 104</strong> y ver cÃƒÂ³mo se actualizan los casilleros 411 y 412 (ventas gravadas) y se calcula en tiempo real el impuesto a pagar o crÃƒÂ©dito fiscal, simulando una declaraciÃƒÂ³n de IVA real.
                     </p>
                   </div>
                 )}
@@ -6316,16 +7169,16 @@ export default function App() {
                 {tutorialStep === 5 && (
                   <div className="fade-in">
                     <h4 style={{ margin: '0 0 10px 0', color: 'var(--text-primary)', fontSize: '15px' }}>
-                      Paso 5 de 5: Configuración para el Entorno Real
+                      Paso 5 de 5: ConfiguraciÃƒÂ³n para el Entorno Real
                     </h4>
                     <p>
-                      Cuando decidas iniciar a facturar electrónicamente de forma real:
+                      Cuando decidas iniciar a facturar electrÃƒÂ³nicamente de forma real:
                     </p>
                     <ol style={{ paddingLeft: '1.25rem', margin: '10px 0', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <li>Regresa a la pestaña <strong>⚙️ Configuración SRI & Firma</strong>.</li>
-                      <li>Selecciona la opción <strong>Sistema Real SRI SOAP</strong>.</li>
-                      <li>Carga tu archivo de firma electrónica <code>.p12</code> real y digita su contraseña.</li>
-                      <li>Selecciona el ambiente deseado: <strong>Pruebas</strong> (para verificar que tu firma firme bien y el SRI responda) o <strong>Producción</strong> (para facturación oficial legal).</li>
+                      <li>Regresa a la pestaÃƒÂ±a <strong>Ã¢Å¡â„¢Ã¯Â¸Â ConfiguraciÃƒÂ³n SRI & Firma</strong>.</li>
+                      <li>Selecciona la opciÃƒÂ³n <strong>Sistema Real SRI SOAP</strong>.</li>
+                      <li>Carga tu archivo de firma electrÃƒÂ³nica <code>.p12</code> real y digita su contraseÃƒÂ±a.</li>
+                      <li>Selecciona el ambiente deseado: <strong>Pruebas</strong> (para verificar que tu firma firme bien y el SRI responda) o <strong>ProducciÃƒÂ³n</strong> (para facturaciÃƒÂ³n oficial legal).</li>
                     </ol>
                   </div>
                 )}
@@ -6388,9 +7241,9 @@ export default function App() {
       {
         !user && (
           <footer style={{ marginTop: '3rem', textAlign: 'center', fontSize: '12px' }}>
-            <p>AuraContable — Ecosistema Contable Autónomo Real</p>
+            <p>AuraContable Ã¢â‚¬â€ Ecosistema Contable AutÃƒÂ³nomo Real</p>
             <p style={{ marginTop: '4px' }}>
-              Tecnologías: React SPA, Vite, NestJS, Prisma, PostgreSQL con Auth JWT.
+              TecnologÃƒÂ­as: React SPA, Vite, NestJS, Prisma, PostgreSQL con Auth JWT.
             </p>
           </footer >
         )
@@ -6483,10 +7336,10 @@ export default function App() {
               background: 'rgb(15, 23, 42)',
               boxShadow: '0 10px 30px rgb(6, 182, 212)',
             }}>
-              <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '1rem' }}>⚙️</span>
-              <h3 style={{ fontSize: '1.5rem', color: 'var(--cyan)', marginBottom: '1rem' }}>Módulo Simulado: {simulatedModule}</h3>
+              <span style={{ fontSize: '3.5rem', display: 'block', marginBottom: '1rem' }}>Ã¢Å¡â„¢Ã¯Â¸Â</span>
+              <h3 style={{ fontSize: '1.5rem', color: 'var(--cyan)', marginBottom: '1rem' }}>MÃƒÂ³dulo Simulado: {simulatedModule}</h3>
               <p style={{ fontSize: '14px', lineHeight: '1.6', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                El panel para <strong>{simulatedModule}</strong> está configurado en este entorno de negocios general.
+                El panel para <strong>{simulatedModule}</strong> estÃƒÂ¡ configurado en este entorno de negocios general.
               </p>
               <div style={{
                 background: 'rgb(255, 255, 255)',
@@ -6498,7 +7351,7 @@ export default function App() {
                 textAlign: 'left',
                 marginBottom: '1.5rem'
               }}>
-                💡 <strong>Nota del Desarrollador:</strong> Todos los datos de este apartado se guardarán localmente de forma provisional y se sincronizarán con los servidores oficiales del SRI una vez activada la licencia correspondiente.
+                Ã°Å¸â€™Â¡ <strong>Nota del Desarrollador:</strong> Todos los datos de este apartado se guardarÃƒÂ¡n localmente de forma provisional y se sincronizarÃƒÂ¡n con los servidores oficiales del SRI una vez activada la licencia correspondiente.
               </div>
               <button
                 onClick={() => setSimulatedModule(null)}
@@ -6552,7 +7405,7 @@ export default function App() {
                   cursor: 'pointer'
                 }}
               >
-                ✕
+                Ã¢Å“â€¢
               </button>
               <h3 style={{ marginTop: 0, borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.8rem', color: 'var(--cyan)' }}>
                 Detalle de Factura Emitida
@@ -6575,7 +7428,7 @@ export default function App() {
                 </div>
               </div>
 
-              <h4 style={{ margin: '1rem 0 0.5rem 0', fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Productos / Ítems Vendidos</h4>
+              <h4 style={{ margin: '1rem 0 0.5rem 0', fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Productos / ÃƒÂtems Vendidos</h4>
               <div style={{ maxHeight: '180px', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', marginBottom: '1.5rem' }}>
                 <table style={{ margin: 0, fontSize: '12px', width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
@@ -6590,7 +7443,7 @@ export default function App() {
                   <tbody>
                     {(!selectedDetailsInvoice.items || selectedDetailsInvoice.items.length === 0) ? (
                       <tr>
-                        <td colSpan={5} style={{ padding: '12px', textAlign: 'center', color: 'var(--text-muted)' }}>Esta factura no registra desglose de ítems (Cargada desde webhook/sincronización).</td>
+                        <td colSpan={5} style={{ padding: '12px', textAlign: 'center', color: 'var(--text-muted)' }}>Esta factura no registra desglose de ÃƒÂ­tems (Cargada desde webhook/sincronizaciÃƒÂ³n).</td>
                       </tr>
                     ) : (
                       selectedDetailsInvoice.items.map((item: any, idx: number) => (
