@@ -519,13 +519,6 @@ export default function App() {
   const [businessTypesDropdownOpen, setBusinessTypesDropdownOpen] = useState(false);
   const [activeEnvironment, setActiveEnvironment] = useState<string>('default');
 
-  // Roadmap states
-  const [isRoadmapExpanded, setIsRoadmapExpanded] = useState(false);
-  const [selectedRoadmapItems, setSelectedRoadmapItems] = useState<Record<string, boolean>>({});
-  const toggleRoadmapItem = (item: string) => {
-    setSelectedRoadmapItems(prev => ({ ...prev, [item]: !prev[item] }));
-  };
-
   // Company management and Administration states
   const [isAdministrationExpanded, setIsAdministrationExpanded] = useState(false);
   const [companies, setCompanies] = useState<any[]>([]);
@@ -568,6 +561,7 @@ export default function App() {
   const [isProductCollapseOpen, setIsProductCollapseOpen] = useState(true);
   const [isCategoryCollapseOpen, setIsCategoryCollapseOpen] = useState(false);
   const [isTxCollapseOpen, setIsTxCollapseOpen] = useState(false);
+  const [activeFlyout, setActiveFlyout] = useState<string | null>(null);
 
   // Data States
   const [products, setProducts] = useState<Product[]>([]);
@@ -2073,37 +2067,46 @@ export default function App() {
   }, null, 2);
 
   const renderAccordion = (
-    _id: string,
+    key: string,
     icon: string,
     label: string,
-    isExpanded: boolean,
-    setIsExpanded: (expanded: boolean) => void,
+    _isExpanded: boolean,
+    _setIsExpanded: (expanded: boolean) => void,
     subItems: { label: string; icon: string; onClick: () => void; isActive?: boolean }[]
   ) => {
     const isAnyActive = subItems.some(item => item.isActive);
+    const isFlyoutOpen = activeFlyout === key;
+
     return (
-      <div className="admin-menu-accordion" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div 
+        className="admin-menu-accordion" 
+        style={{ position: 'relative' }}
+        onMouseEnter={() => setActiveFlyout(key)}
+        onMouseLeave={() => setActiveFlyout(null)}
+      >
         <button
           type="button"
           className={`tab-btn ${isAnyActive ? 'active' : ''}`}
           onClick={() => {
-            setIsExpanded(!isExpanded);
-            if (isSidebarCollapsed) {
-              setIsSidebarCollapsed(false);
-            }
+            setActiveFlyout(isFlyoutOpen ? null : key);
           }}
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             width: '100%',
-            background: 'transparent',
-            border: 'none',
+            background: isAnyActive ? 'rgba(33, 57, 147, 0.08)' : 'transparent',
+            border: isAnyActive ? '1px solid rgba(33, 57, 147, 0.15)' : 'none',
             cursor: 'pointer',
             padding: '10px 15px',
-            color: isAnyActive ? '#444' : '#000',
+            color: isAnyActive ? '#213993' : '#0f172a',
             fontSize: '14px',
-            textAlign: 'left'
+            textAlign: 'left',
+            borderRadius: '10px',
+            fontWeight: isAnyActive ? '700' : '600',
+            transition: 'all 0.2s ease',
+            height: '46px',
+            boxSizing: 'border-box'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -2111,51 +2114,67 @@ export default function App() {
             {!isSidebarCollapsed && <span>{label}</span>}
           </div>
           {!isSidebarCollapsed && (
-            <span style={{
-              fontSize: '10px',
-              transform: isExpanded ? 'rotate(90deg)' : 'none',
-              transition: 'transform 0.2s',
-
-            }}>
-              ▶
-            </span>
+            <span style={{ fontSize: '12px', color: isAnyActive ? '#213993' : 'var(--text-muted)', transform: 'scale(0.85)' }}>►</span>
           )}
         </button>
 
-        {isExpanded && !isSidebarCollapsed && (
-          <div className="admin-sub-menu" style={{
-            paddingLeft: '15px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '2px',
-            margin: '2px 0 6px 0',
-            borderLeft: '1px solid rgb(255, 255, 255)',
-            maxHeight: '260px',
-            overflowY: 'auto'
-          }}>
+        {isFlyoutOpen && (
+          <div 
+            className="glass-panel flyout-submenu" 
+            style={{
+              position: 'absolute',
+              left: isSidebarCollapsed ? '75px' : '265px',
+              top: '0',
+              width: '230px',
+              background: '#ffffff',
+              border: '1px solid rgba(0,0,0,0.1)',
+              borderRadius: '12px',
+              boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+              padding: '8px',
+              zIndex: 99999,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4px'
+            }}
+          >
             {subItems.map((item, idx) => (
               <button
                 key={idx}
                 type="button"
                 className={`sub-tab-btn ${item.isActive ? 'active' : ''}`}
-                onClick={item.onClick}
+                onClick={() => {
+                  item.onClick();
+                  setActiveFlyout(null);
+                }}
                 style={{
-                  background: item.isActive ? 'rgb(0, 0, 0)' : 'transparent',
+                  background: item.isActive ? 'rgba(33, 57, 147, 0.08)' : 'transparent',
                   border: 'none',
-                  color: item.isActive ? '#f8fafc' : 'var(--text-primary)',
-                  padding: '6px 12px',
-                  borderRadius: '6px',
+                  color: item.isActive ? '#213993' : '#334155',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
                   cursor: 'pointer',
-                  fontSize: '12px',
+                  fontSize: '13px',
                   textAlign: 'left',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
-                  fontWeight: item.isActive ? 'bold' : 'normal',
+                  fontWeight: item.isActive ? '700' : '500',
+                  width: '100%',
                   transition: 'all 0.15s ease'
                 }}
+                onMouseEnter={(e) => {
+                  if (!item.isActive) {
+                    e.currentTarget.style.background = '#f1f5f9';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!item.isActive) {
+                    e.currentTarget.style.background = 'transparent';
+                  }
+                }}
               >
-                <span style={{ fontSize: '1rem' }}>{item.icon}</span> {!isSidebarCollapsed && item.label}
+                <span style={{ fontSize: '1.1rem' }}>{item.icon}</span> 
+                <span>{item.label}</span>
               </button>
             ))}
           </div>
@@ -2206,14 +2225,15 @@ export default function App() {
       }
     ];
 
+    const isFlyoutOpen = activeFlyout === 'roadmap';
+
     if (isSidebarCollapsed) {
       return (
         <button
           type="button"
           className="tab-btn"
           onClick={() => {
-            setIsRoadmapExpanded(true);
-            setIsSidebarCollapsed(false);
+            setActiveFlyout(isFlyoutOpen ? null : 'roadmap');
           }}
           style={{
             display: 'flex',
@@ -2238,64 +2258,79 @@ export default function App() {
     }
 
     return (
-      <div className="admin-menu-accordion" style={{ display: 'flex', flexDirection: 'column', background: '#fff', borderRadius: '8px', margin: '4px', border: '1px solid #dee2e6' }}>
+      <div 
+        className="admin-menu-accordion" 
+        style={{ position: 'relative' }}
+        onMouseEnter={() => setActiveFlyout('roadmap')}
+        onMouseLeave={() => setActiveFlyout(null)}
+      >
         <button
           type="button"
           onClick={() => {
-            setIsRoadmapExpanded(!isRoadmapExpanded);
-            if (isSidebarCollapsed) setIsSidebarCollapsed(false);
+            setActiveFlyout(isFlyoutOpen ? null : 'roadmap');
           }}
-          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)', border: 'none', borderBottom: isRoadmapExpanded ? '1px solid #dee2e6' : 'none', cursor: 'pointer', padding: '12px 15px', color: '#000', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottomLeftRadius: isRoadmapExpanded ? '0' : '8px', borderBottomRightRadius: isRoadmapExpanded ? '0' : '8px' }}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '10px 15px',
+            color: '#0f172a',
+            fontSize: '14px',
+            textAlign: 'left',
+            borderRadius: '10px',
+            fontWeight: '600',
+            transition: 'all 0.2s ease',
+            height: '46px',
+            boxSizing: 'border-box'
+          }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span className="icon" style={{ fontSize: '1.2rem' }}>🎯</span>
             {!isSidebarCollapsed && <span>Nuevas Funciones</span>}
           </div>
           {!isSidebarCollapsed && (
-            <span style={{ fontSize: '10px', transform: isRoadmapExpanded ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s', color: '#000' }}>▶</span>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)', transform: 'scale(0.85)' }}>►</span>
           )}
         </button>
-        {isRoadmapExpanded && !isSidebarCollapsed && (
-          <div style={{ display: 'flex', flexDirection: 'column', maxHeight: '400px', overflowY: 'auto', background: '#fafbfc', borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px' }}>
+
+        {isFlyoutOpen && (
+          <div 
+            className="glass-panel flyout-submenu" 
+            style={{
+              position: 'absolute',
+              left: isSidebarCollapsed ? '75px' : '265px',
+              top: '0',
+              width: '280px',
+              background: '#ffffff',
+              border: '1px solid rgba(0,0,0,0.1)',
+              borderRadius: '12px',
+              boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+              padding: '12px',
+              zIndex: 99999,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              maxHeight: '380px',
+              overflowY: 'auto'
+            }}
+          >
+            <h4 style={{ margin: '0 0 6px 0', fontSize: '13px', fontWeight: '700', color: '#000', borderBottom: '1px solid rgba(0,0,0,0.08)', paddingBottom: '6px' }}>
+              Nuevas Funciones
+            </h4>
             {roadmapData.map(group => (
-              <div key={group.id} style={{ borderBottom: '1px solid #f1f3f5' }}>
-                <div style={{ padding: '8px 15px', fontSize: '13px', fontWeight: '600', color: '#000', display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#f8f9fa' }}>
+              <div key={group.id} style={{ marginBottom: '8px' }}>
+                <div style={{ fontSize: '11px', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <span>{group.icon}</span> {group.label}
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {group.items.map((item, idx) => {
-                    const isSelected = selectedRoadmapItems[item];
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => toggleRoadmapItem(item)}
-                        style={{
-                          background: isSelected ? 'rgb(255, 255, 255)' : 'transparent',
-                          border: 'none',
-                          borderLeft: isSelected ? '4px solid #f8fafc' : '4px solid transparent',
-                          color: isSelected ? '#f8fafc' : 'var(--text-primary)',
-                          padding: '10px 15px 10px 25px',
-                          cursor: 'pointer',
-                          fontSize: '12.5px',
-                          textAlign: 'left',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          fontWeight: isSelected ? 'bold' : 'normal',
-                          transition: 'all 0.15s ease'
-                        }}
-                      >
-                        <div style={{
-                          width: '14px', height: '14px', border: `2px solid ${isSelected ? '#444' : '#333'}`, borderRadius: '50%',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: isSelected ? '#444' : 'transparent', flexShrink: 0
-                        }}>
-                          {isSelected && <span style={{ color: '#fff', fontSize: '10px' }}>✓</span>}
-                        </div>
-                        <span style={{ lineHeight: '1.2' }}>{item}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+                <ul style={{ margin: 0, paddingLeft: '14px', fontSize: '11.5px', color: '#334155', listStyleType: 'disc' }}>
+                  {group.items.map((item, idx) => (
+                    <li key={idx} style={{ marginBottom: '2px' }}>{item}</li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
@@ -2310,9 +2345,14 @@ export default function App() {
         <>
           {/* Sidebar Nav */}
           <aside className="sidebar glass-panel">
-            <div className="sidebar-header">
-              <h1 className="brand-title">AuraContable</h1>
-              <button className="sidebar-toggle" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}>
+            <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'space-between', width: '100%', marginBottom: '1.5rem' }}>
+              {!isSidebarCollapsed && (
+                <h1 className="brand-title" style={{ fontSize: '1.6rem', fontWeight: '800', margin: 0, display: 'flex', alignItems: 'center', fontFamily: 'var(--font-sans)', letterSpacing: '-0.5px' }}>
+                  <span style={{ color: '#213993' }}>Aura</span>
+                  <span style={{ color: '#ED3833' }}>Contable</span>
+                </h1>
+              )}
+              <button className="sidebar-toggle" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} style={{ flexShrink: 0 }}>
                 {isSidebarCollapsed ? '›' : '‹'}
               </button>
             </div>
