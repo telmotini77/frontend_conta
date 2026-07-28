@@ -51,7 +51,7 @@
   display: flex;
   gap: 12px;
   padding: 16px 24px;
-  background: rgb(0, 0, 0);
+  background: rgb(180, 178, 178);
   border-bottom: 1px solid var(--border);
   align-items: center;
   flex-wrap: wrap;
@@ -61,7 +61,7 @@
   padding: 8px 16px;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: rgb(20, 15, 15);
+  background: rgb(158, 157, 157);
   color: #f8fafc;
   font-weight: 600;
   font-size: 13px;
@@ -73,7 +73,7 @@
 }
 
 .billing-app .btn:hover {
-  background: rgb(20, 15, 15);
+  background: rgb(163, 160, 160);
   transform: translateY(-2px);
   border-color: rgb(20, 15, 15);
 }
@@ -107,7 +107,7 @@
 .tabs {
   display: flex;
   padding: 0 24px;
-  background: rgb(0, 0, 0);
+  background: rgb(167, 165, 165);
   border-bottom: 1px solid var(--border);
 }
 
@@ -295,7 +295,7 @@
 }
 
 .grid-container {
-  background: rgb(0, 0, 0);
+  background: rgb(154, 153, 153);
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow-x: auto;
@@ -342,13 +342,13 @@
 
 .td-input:focus,
 .td-input:hover {
-  background: rgb(0, 0, 0);
+  background: rgb(135, 133, 133);
   border-color: rgb(255, 255, 255);
 }
 
 .footer {
   padding: 16px 24px;
-  background: rgb(0, 0, 0);
+  background: rgb(137, 135, 135);
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
