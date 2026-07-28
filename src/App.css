@@ -441,7 +441,7 @@ tr:hover td {
 .status-no {
   background: rgb(239, 68, 68);
   color: #7ec47e;
-  border: 1px solid rgb(239, 68, 68);
+  border: 1px solid rgb(2, 2, 6);
 }
 
 .status-aura {
