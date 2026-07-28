@@ -2206,6 +2206,37 @@ export default function App() {
       }
     ];
 
+    if (isSidebarCollapsed) {
+      return (
+        <button
+          type="button"
+          className="tab-btn"
+          onClick={() => {
+            setIsRoadmapExpanded(true);
+            setIsSidebarCollapsed(false);
+          }}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '52px',
+            height: '52px',
+            padding: '0',
+            margin: '6px auto',
+            borderRadius: '14px',
+            background: 'rgba(255, 255, 255, 0.8)',
+            border: '1px solid rgba(0, 0, 0, 0.08)',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.04)',
+            cursor: 'pointer',
+            transition: 'all 0.25s ease'
+          }}
+          title="Nuevas Funciones"
+        >
+          <span className="icon" style={{ fontSize: '1.5rem', margin: 0 }}>🎯</span>
+        </button>
+      );
+    }
+
     return (
       <div className="admin-menu-accordion" style={{ display: 'flex', flexDirection: 'column', background: '#fff', borderRadius: '8px', margin: '4px', border: '1px solid #dee2e6' }}>
         <button
