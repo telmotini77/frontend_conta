@@ -558,7 +558,16 @@ export default function App() {
   const [isTalleresExpanded, setIsTalleresExpanded] = useState(false);
   const [isRestauranteExpanded, setIsRestauranteExpanded] = useState(false);
   const [isInformesExpanded, setIsInformesExpanded] = useState(false);
+  const [newProductPurpose, setNewProductPurpose] = useState<'VENTA' | 'GASTO' | 'ACTIVO_FIJO'>('VENTA');
+  const [newProductAssetType, setNewProductAssetType] = useState<'COMPUTO' | 'VEHICULO' | 'MAQUINARIA'>('COMPUTO');
+  const [productSearch, setProductSearch] = useState('');
+  const [invoiceSearch, setInvoiceSearch] = useState('');
+  const [selectedDetailsInvoice, setSelectedDetailsInvoice] = useState<any | null>(null);
+  const [autoSyncInterval, setAutoSyncInterval] = useState<'OFF' | '5' | '15' | '30'>('OFF');
   const [simulatedModule, setSimulatedModule] = useState<string | null>(null);
+  const [isProductCollapseOpen, setIsProductCollapseOpen] = useState(true);
+  const [isCategoryCollapseOpen, setIsCategoryCollapseOpen] = useState(false);
+  const [isTxCollapseOpen, setIsTxCollapseOpen] = useState(false);
 
   // Data States
   const [products, setProducts] = useState<Product[]>([]);
@@ -1035,6 +1044,24 @@ export default function App() {
     };
   }, [user, token, activeTab, fetchInvoices]);
 
+  // Unified Periodic Auto-sync hook
+  useEffect(() => {
+    if (!user || !token || autoSyncInterval === 'OFF') return;
+    const sec = parseInt(autoSyncInterval, 10);
+    if (isNaN(sec)) return;
+
+    const interval = setInterval(() => {
+      void fetchInvoices();
+      void fetchProducts();
+      void fetchPurchases();
+      void fetchAssets();
+      void fetchAccountingData();
+      void fetchReconciliationSummary();
+    }, sec * 1000);
+
+    return () => clearInterval(interval);
+  }, [user, token, autoSyncInterval, fetchInvoices, fetchProducts, fetchPurchases, fetchAssets, fetchAccountingData, fetchReconciliationSummary]);
+
   // Clear auth forms when toggling
   useEffect(() => {
     setNameInput('');
@@ -1293,12 +1320,37 @@ export default function App() {
         return;
       }
 
+      // If product purpose is ACTIVO_FIJO, automatically create a Fixed Asset
+      if (newProductPurpose === 'ACTIVO_FIJO') {
+        const yearsOfLife = newProductAssetType === 'COMPUTO' ? 3 : (newProductAssetType === 'VEHICULO' ? 5 : 10);
+        await fetch(`${API_BASE}/assets`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: `${newProductName} (${newProductSku})`,
+            value: newProductCost,
+            residualValue: 0,
+            yearsOfLife: yearsOfLife,
+          }),
+        }).then(resAsset => {
+          if (resAsset.ok) {
+            console.log('Activo Fijo creado automáticamente desde producto.');
+            void fetchAssets();
+          }
+        }).catch(errAsset => console.error('Failed to create asset automatically:', errAsset));
+      }
+
       setNewProductSku('');
       setNewProductName('');
       setNewProductCost(0);
       setNewProductPrice(0);
       setNewProductStock(0);
       setNewProductIva(true);
+      setNewProductPurpose('VENTA');
+      setNewProductAssetType('COMPUTO');
       const savedRate = localStorage.getItem('globalIvaRate');
       setNewProductIvaRate(savedRate ? parseInt(savedRate, 10) : 15);
       setSetAsDefault(false);
@@ -1879,6 +1931,31 @@ export default function App() {
     }
   };
 
+  const handleExportReconciliation = () => {
+    if (!recoSummary) {
+      alert('No hay datos de conciliación disponibles para exportar.');
+      return;
+    }
+    
+    let csv = 'Tipo;Nombre;Monto Total;Cobrado/Pagado;Retenido;Saldo;Estado\n';
+    
+    recoSummary.invoices?.forEach((i: any) => {
+      csv += `Venta;${i.clientName};${i.amount};${i.cashPaid};${i.withheld};${i.balance};${i.status}\n`;
+    });
+    
+    recoSummary.purchases?.forEach((p: any) => {
+      csv += `Compra;${p.providerName};${p.amount};${p.cashPaid};${p.withheld};${p.balance};${p.status}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', `conciliacion_caja_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Data processors for dashboard
   // Kardex recent logs
   const recentTransactions: { product: string; sku: string; tx: KardexTransaction }[] = [];
@@ -1891,7 +1968,7 @@ export default function App() {
   });
   recentTransactions.sort((a, b) => new Date(b.tx.date).getTime() - new Date(a.tx.date).getTime());
 
-  // Filter products by IVA & Category
+  // Filter products by IVA & Category & Search text
   const filteredProducts = products.filter(p => {
     if (ivaFilter === 'with' && !p.hasIva) return false;
     if (ivaFilter === 'without' && p.hasIva) return false;
@@ -1899,6 +1976,19 @@ export default function App() {
       if (p.categoryId) return false;
     } else if (categoryFilter !== 'all') {
       if (p.categoryId !== categoryFilter) return false;
+    }
+    if (productSearch.trim()) {
+      const q = productSearch.toLowerCase();
+      if (!p.sku.toLowerCase().includes(q) && !p.name.toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+
+  // Filter invoices by search text
+  const filteredInvoices = invoices.filter(inv => {
+    if (invoiceSearch.trim()) {
+      const q = invoiceSearch.toLowerCase();
+      if (!inv.clientName.toLowerCase().includes(q) && !inv.claveAcceso.toLowerCase().includes(q)) return false;
     }
     return true;
   });
@@ -2420,6 +2510,31 @@ export default function App() {
                   </div>
                 )}
                 <span className="top-bar-text" style={{ fontSize: '12px', }}>Ecosistema Autónomo AuraContable</span>
+
+                {/* Global Auto Sync Selector */}
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', marginLeft: 'auto', marginRight: '10px' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>🔄 Auto-Sync:</span>
+                  <select
+                    value={autoSyncInterval}
+                    onChange={(e) => setAutoSyncInterval(e.target.value as any)}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '4px',
+                      color: '#fff',
+                      fontSize: '11px',
+                      padding: '3px 6px',
+                      cursor: 'pointer',
+                      outline: 'none'
+                    }}
+                  >
+                    <option value="OFF" style={{ color: '#000' }}>Desactivada</option>
+                    <option value="5" style={{ color: '#000' }}>Cada 5s</option>
+                    <option value="15" style={{ color: '#000' }}>Cada 15s</option>
+                    <option value="30" style={{ color: '#000' }}>Cada 30s</option>
+                  </select>
+                </div>
+
                 <button
                   onClick={() => {
                     if (activeTab === 'kardex') {
@@ -2599,12 +2714,21 @@ export default function App() {
                   <div className="dashboard-grid">
                     {/* Products Table */}
                     <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '10px' }}>
                         <h3 style={{ margin: 0 }}>Catálogo de Productos e IVA</h3>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <button className={`btn-sm ${ivaFilter === 'all' ? 'status-aura' : ''}`} onClick={() => setIvaFilter('all')}>Todos</button>
-                          <button className={`btn-sm ${ivaFilter === 'with' ? 'status-yes' : ''}`} onClick={() => setIvaFilter('with')}>Con IVA ({globalIvaRate}%)</button>
-                          <button className={`btn-sm ${ivaFilter === 'without' ? 'status-no' : ''}`} onClick={() => setIvaFilter('without')}>Sin IVA (0%)</button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                          <input
+                            type="text"
+                            placeholder="🔍 Buscar SKU o nombre..."
+                            value={productSearch}
+                            onChange={(e) => setProductSearch(e.target.value)}
+                            style={{ padding: '6px 12px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '13px', width: '200px', background: 'rgba(255,255,255,0.05)', color: '#fff' }}
+                          />
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            <button className={`btn-sm ${ivaFilter === 'all' ? 'status-aura' : ''}`} onClick={() => setIvaFilter('all')}>Todos</button>
+                            <button className={`btn-sm ${ivaFilter === 'with' ? 'status-yes' : ''}`} onClick={() => setIvaFilter('with')}>Con IVA ({globalIvaRate}%)</button>
+                            <button className={`btn-sm ${ivaFilter === 'without' ? 'status-no' : ''}`} onClick={() => setIvaFilter('without')}>Sin IVA (0%)</button>
+                          </div>
                         </div>
                       </div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center', marginBottom: '1.5rem', borderTop: '1px solid rgb(255, 255, 255)', paddingTop: '0.8rem' }}>
@@ -2701,321 +2825,379 @@ export default function App() {
                     </div>
 
                     {/* Sidebar forms */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                      <div className="card glass-panel" style={{ padding: '1.5rem', overflow: 'visible', zIndex: 10 }}>
-                        <div style={{ display: 'flex', borderBottom: '1px solid rgb(255, 255, 255)', marginBottom: '1rem' }}>
-                          <button
-                            type="button"
-                            onClick={() => setProductFormMode('create')}
-                            style={{
-                              flex: 1,
-                              padding: '8px',
-                              background: 'none',
-                              border: 'none',
-                              borderBottom: productFormMode === 'create' ? '2px solid var(--accent-cyan, #06b6d4)' : '2px solid transparent',
-                              color: productFormMode === 'create' ? '#fff' : 'var(--text-secondary)',
-                              fontWeight: '600',
-                              cursor: 'pointer',
-                              fontSize: '0.9rem',
-                            }}
-                          >
-                            Crear Nuevo
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setProductFormMode('update')}
-                            style={{
-                              flex: 1,
-                              padding: '8px',
-                              background: 'none',
-                              border: 'none',
-                              borderBottom: productFormMode === 'update' ? '2px solid var(--accent-cyan, #06b6d4)' : '2px solid transparent',
-                              color: productFormMode === 'update' ? '#fff' : 'var(--text-secondary)',
-                              fontWeight: '600',
-                              cursor: 'pointer',
-                              fontSize: '0.9rem',
-                            }}
-                          >
-                            Modificar Existente
-                          </button>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      
+                      {/* ACCORDION 1: Producto */}
+                      <div className="card glass-panel" style={{ padding: '1.25rem', overflow: 'visible', zIndex: 10, display: 'flex', flexDirection: 'column' }}>
+                        <div 
+                          onClick={() => setIsProductCollapseOpen(!isProductCollapseOpen)}
+                          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
+                        >
+                          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+                            📦 {productFormMode === 'create' ? 'Nuevo Producto' : 'Modificar Producto'}
+                          </h4>
+                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{isProductCollapseOpen ? '▲ Opciones' : '▼ Opciones'}</span>
                         </div>
+                        
+                        {isProductCollapseOpen && (
+                          <div style={{ marginTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.25rem' }}>
+                            <div style={{ display: 'flex', borderBottom: '1px solid rgba(255, 255, 255, 0.1)', marginBottom: '1rem' }}>
+                              <button
+                                type="button"
+                                onClick={() => setProductFormMode('create')}
+                                style={{
+                                  flex: 1,
+                                  padding: '8px',
+                                  background: 'none',
+                                  border: 'none',
+                                  borderBottom: productFormMode === 'create' ? '2px solid var(--accent-cyan, #06b6d4)' : '2px solid transparent',
+                                  color: productFormMode === 'create' ? '#fff' : 'var(--text-secondary)',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  fontSize: '0.85rem',
+                                }}
+                              >
+                                Crear Nuevo
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setProductFormMode('update')}
+                                style={{
+                                  flex: 1,
+                                  padding: '8px',
+                                  background: 'none',
+                                  border: 'none',
+                                  borderBottom: productFormMode === 'update' ? '2px solid var(--accent-cyan, #06b6d4)' : '2px solid transparent',
+                                  color: productFormMode === 'update' ? '#fff' : 'var(--text-secondary)',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  fontSize: '0.85rem',
+                                }}
+                              >
+                                Modificar Existente
+                              </button>
+                            </div>
 
-                        {productFormMode === 'create' ? (
-                          <>
-                            <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Nuevo Producto</h4>
-                            <form onSubmit={handleCreateProduct}>
-                              <div className="form-group">
-                                <label>SKU (Código único):</label>
-                                <input type="text" required value={newProductSku} onChange={e => setNewProductSku(e.target.value)} placeholder="Ej: BOOK-002" />
-                              </div>
-                              <div className="form-group">
-                                <label>Nombre del Producto:</label>
-                                <input type="text" required value={newProductName} onChange={e => setNewProductName(e.target.value)} placeholder="Ej: Cuaderno de Cuentas" />
-                              </div>
-                              <div className="grid-2-form">
+                            {productFormMode === 'create' ? (
+                              <form onSubmit={handleCreateProduct}>
                                 <div className="form-group">
-                                  <label>Costo ($):</label>
-                                  <input type="number" required min={0} step="0.01" value={newProductCost} onChange={e => setNewProductCost(parseFloat(e.target.value) || 0)} />
+                                  <label>SKU (Código único):</label>
+                                  <input type="text" required value={newProductSku} onChange={e => setNewProductSku(e.target.value)} placeholder="Ej: BOOK-002" />
                                 </div>
                                 <div className="form-group">
-                                  <label>Precio Venta ($):</label>
-                                  <input type="number" required min={0} step="0.01" value={newProductPrice} onChange={e => setNewProductPrice(parseFloat(e.target.value) || 0)} />
+                                  <label>Nombre del Producto:</label>
+                                  <input type="text" required value={newProductName} onChange={e => setNewProductName(e.target.value)} placeholder="Ej: Cuaderno de Cuentas" />
                                 </div>
-                              </div>
-                              <div className="grid-2-form" style={{ alignItems: 'flex-start' }}>
-                                <div className="form-group">
-                                  <label>Stock Inicial:</label>
-                                  <input type="number" required min={0} value={newProductStock} onChange={e => setNewProductStock(parseInt(e.target.value) || 0)} />
-                                </div>
-                                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '0.4rem', paddingLeft: '1rem' }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <input type="checkbox" id="newProductIva" checked={newProductIva} onChange={e => setNewProductIva(e.target.checked)} />
-                                    <label htmlFor="newProductIva" style={{ margin: 0, cursor: 'pointer' }}>Graba IVA</label>
+                                <div className="grid-2-form">
+                                  <div className="form-group">
+                                    <label>Costo ($):</label>
+                                    <input type="number" required min={0} step="0.01" value={newProductCost} onChange={e => setNewProductCost(parseFloat(e.target.value) || 0)} />
                                   </div>
-                                  {newProductIva && (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <label style={{ margin: 0, fontSize: '11px', whiteSpace: 'nowrap' }}>IVA (%):</label>
-                                        <input
-                                          type="number"
-                                          min={0}
-                                          max={100}
-                                          style={{ width: '60px', padding: '4px 6px', fontSize: '12px' }}
-                                          value={newProductIvaRate}
-                                          onChange={e => setNewProductIvaRate(parseInt(e.target.value) || 0)}
-                                        />
+                                  <div className="form-group">
+                                    <label>Precio Venta ($):</label>
+                                    <input type="number" required min={0} step="0.01" value={newProductPrice} onChange={e => setNewProductPrice(parseFloat(e.target.value) || 0)} />
+                                  </div>
+                                </div>
+                                <div className="grid-2-form" style={{ alignItems: 'flex-start' }}>
+                                  <div className="form-group">
+                                    <label>Stock Inicial:</label>
+                                    <input type="number" required min={0} value={newProductStock} onChange={e => setNewProductStock(parseInt(e.target.value) || 0)} />
+                                  </div>
+                                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '0.4rem', paddingLeft: '1rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                      <input type="checkbox" id="newProductIva" checked={newProductIva} onChange={e => setNewProductIva(e.target.checked)} />
+                                      <label htmlFor="newProductIva" style={{ margin: 0, cursor: 'pointer' }}>Graba IVA</label>
+                                    </div>
+                                    {newProductIva && (
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', width: '100%' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                          <label style={{ margin: 0, fontSize: '11px', whiteSpace: 'nowrap' }}>IVA (%):</label>
+                                          <input
+                                            type="number"
+                                            min={0}
+                                            max={100}
+                                            style={{ width: '60px', padding: '4px 6px', fontSize: '12px' }}
+                                            value={newProductIvaRate}
+                                            onChange={e => setNewProductIvaRate(parseInt(e.target.value) || 0)}
+                                          />
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                          <input
+                                            type="checkbox"
+                                            id="setAsDefault"
+                                            checked={setAsDefault}
+                                            onChange={e => setSetAsDefault(e.target.checked)}
+                                          />
+                                          <label htmlFor="setAsDefault" style={{ margin: 0, fontSize: '10px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                                            Predeterminar valor
+                                          </label>
+                                        </div>
                                       </div>
-                                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                        <input
-                                          type="checkbox"
-                                          id="setAsDefault"
-                                          checked={setAsDefault}
-                                          onChange={e => setSetAsDefault(e.target.checked)}
-                                        />
-                                        <label htmlFor="setAsDefault" style={{ margin: 0, fontSize: '10px', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                                          Predeterminar valor
-                                        </label>
-                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="form-group">
+                                  <label>Categoría (Opcional):</label>
+                                  <select value={selectedCategoryId} onChange={e => setSelectedCategoryId(e.target.value)}>
+                                    <option value="">Sin Categoría</option>
+                                    {categories.map(cat => (
+                                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                    ))}
+                                  </select>
+                                </div>
+                                <div className="grid-2-form" style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
+                                  <div className="form-group">
+                                    <label>Propósito de Compra/Venta:</label>
+                                    <select value={newProductPurpose} onChange={e => setNewProductPurpose(e.target.value as any)}>
+                                      <option value="VENTA">Para Venta</option>
+                                      <option value="GASTO">Para Gasto (Compra)</option>
+                                      <option value="ACTIVO_FIJO">Activo Fijo (Autoregistro)</option>
+                                    </select>
+                                  </div>
+                                  {newProductPurpose === 'ACTIVO_FIJO' && (
+                                    <div className="form-group">
+                                      <label>Tipo de Activo Fijo (LORTI):</label>
+                                      <select value={newProductAssetType} onChange={e => setNewProductAssetType(e.target.value as any)}>
+                                        <option value="COMPUTO">Equipos de Cómputo (3 años)</option>
+                                        <option value="VEHICULO">Vehículos (5 años)</option>
+                                        <option value="MAQUINARIA">Maquinaria / Muebles (10 años)</option>
+                                      </select>
                                     </div>
                                   )}
                                 </div>
-                              </div>
+                                <button type="submit" className="btn btn-cyan w-full" style={{ marginTop: '0.5rem' }}>Crear Producto</button>
+                              </form>
+                            ) : (
+                              <form onSubmit={handleUpdateProduct}>
+                                <div className="form-group" style={{ position: 'relative' }}>
+                                  <label>Buscar por SKU:</label>
+                                  <input
+                                    type="text"
+                                    required
+                                    value={searchSku}
+                                    onChange={e => setSearchSku(e.target.value)}
+                                    placeholder="Ej: MON-41d5"
+                                    autoComplete="off"
+                                  />
+                                  {showSuggestions && (
+                                    <div
+                                      style={{
+                                        position: 'absolute',
+                                        zIndex: 1000,
+                                        background: '#1e293b',
+                                        border: '1px solid rgb(255, 255, 255)',
+                                        borderRadius: '6px',
+                                        width: '100%',
+                                        maxHeight: '250px',
+                                        overflowY: 'auto',
+                                        boxShadow: '0 10px 15px -3px rgb(0, 0, 0)',
+                                        marginTop: '4px'
+                                      }}
+                                    >
+                                      {skuSuggestions.map(p => (
+                                        <div
+                                          key={p.id}
+                                          onClick={() => {
+                                            setSearchSku(p.sku);
+                                          }}
+                                          style={{
+                                            padding: '8px 12px',
+                                            cursor: 'pointer',
+                                            borderBottom: '1px solid rgb(255, 255, 255)',
+                                            fontSize: '13px',
+                                            color: '#fff',
+                                            transition: 'background 0.2s'
+                                          }}
+                                          onMouseEnter={(e) => e.currentTarget.style.background = 'rgb(6, 182, 212)'}
+                                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                                        >
+                                          <strong>{p.sku}</strong> - {p.name}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+
+                                {searchSku.trim() && (
+                                  <>
+                                    {foundProduct ? (
+                                      <div
+                                        style={{
+                                          background: 'rgb(6, 182, 212)',
+                                          border: '1px solid rgb(6, 182, 212)',
+                                          padding: '10px',
+                                          borderRadius: '6px',
+                                          marginBottom: '1rem',
+                                          fontSize: '12px',
+                                        }}
+                                      >
+                                        <div style={{ color: '#fff', fontWeight: 'bold', marginBottom: '4px' }}>
+                                          ✓ Producto Identificado:
+                                        </div>
+                                        <div style={{ color: 'var(--text-secondary)' }}>
+                                          <strong>Nombre:</strong> {foundProduct.name}
+                                        </div>
+                                        <div style={{ color: 'var(--text-secondary)' }}>
+                                          <strong>Costo:</strong> ${foundProduct.cost.toFixed(2)}
+                                        </div>
+                                        <div style={{ color: 'var(--text-secondary)' }}>
+                                          <strong>Stock Actual:</strong> {foundProduct.stock} uds
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div
+                                        style={{
+                                          background: 'rgb(239, 68, 68)',
+                                          border: '1px solid rgb(239, 68, 68)',
+                                          padding: '10px',
+                                          borderRadius: '6px',
+                                          marginBottom: '1rem',
+                                          fontSize: '12px',
+                                          color: '#f87171',
+                                          fontWeight: '500',
+                                        }}
+                                      >
+                                        ⚠ No se encontró ningún producto con este SKU en el catálogo.
+                                      </div>
+                                    )}
+                                  </>
+                                )}
+
+                                {foundProduct && (
+                                  <>
+                                    <div className="form-group">
+                                      <label>Precio Venta ($):</label>
+                                      <input
+                                        type="number"
+                                        required
+                                        min={0}
+                                        step="0.01"
+                                        value={updateProductPrice}
+                                        onChange={e => setUpdateProductPrice(parseFloat(e.target.value) || 0)}
+                                      />
+                                    </div>
+
+                                    <div className="form-group">
+                                      <label>Añadir Stock (Cantidad):</label>
+                                      <input
+                                        type="number"
+                                        min={0}
+                                        value={updateProductAddedStock}
+                                        onChange={e => setUpdateProductAddedStock(parseInt(e.target.value) || 0)}
+                                      />
+                                      <small style={{ fontSize: '10px', color: 'var(--text-secondary)', display: 'block', marginTop: '2px' }}>
+                                        Se registrará un ingreso en Kárdex por esta cantidad.
+                                      </small>
+                                    </div>
+
+                                    <div className="form-group">
+                                      <label>Categoría:</label>
+                                      <select
+                                        value={updateProductCategoryId}
+                                        onChange={e => setUpdateProductCategoryId(e.target.value)}
+                                      >
+                                        <option value="">Sin Categoría</option>
+                                        {categories.map(cat => (
+                                          <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                        ))}
+                                      </select>
+                                    </div>
+
+                                    <button type="submit" className="btn btn-cyan w-full">
+                                      Actualizar Producto
+                                    </button>
+                                  </>
+                                )}
+                              </form>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* ACCORDION 2: Categoría */}
+                      <div className="card glass-panel" style={{ padding: '1.25rem', overflow: 'visible', display: 'flex', flexDirection: 'column' }}>
+                        <div 
+                          onClick={() => setIsCategoryCollapseOpen(!isCategoryCollapseOpen)}
+                          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
+                        >
+                          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+                            📁 Nueva Categoría
+                          </h4>
+                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{isCategoryCollapseOpen ? '▲ Opciones' : '▼ Opciones'}</span>
+                        </div>
+                        
+                        {isCategoryCollapseOpen && (
+                          <div style={{ marginTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.25rem' }}>
+                            <form onSubmit={handleCreateCategory}>
                               <div className="form-group">
-                                <label>Categoría (Opcional):</label>
-                                <select value={selectedCategoryId} onChange={e => setSelectedCategoryId(e.target.value)}>
-                                  <option value="">Sin Categoría</option>
+                                <label>Nombre de la Categoría:</label>
+                                <input
+                                  type="text"
+                                  required
+                                  value={newCategoryName}
+                                  onChange={e => setNewCategoryName(e.target.value)}
+                                  placeholder="Ej: Electrónica, Servicios..."
+                                />
+                              </div>
+                              <button type="submit" className="btn btn-cyan w-full">Crear Categoría</button>
+                            </form>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* ACCORDION 3: Movimiento Kárdex */}
+                      <div className="card glass-panel" style={{ padding: '1.25rem', overflow: 'visible', display: 'flex', flexDirection: 'column' }}>
+                        <div 
+                          onClick={() => setIsTxCollapseOpen(!isTxCollapseOpen)}
+                          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}
+                        >
+                          <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+                            🔄 Movimiento Kárdex
+                          </h4>
+                          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{isTxCollapseOpen ? '▲ Opciones' : '▼ Opciones'}</span>
+                        </div>
+                        
+                        {isTxCollapseOpen && (
+                          <div style={{ marginTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.25rem' }}>
+                            <form onSubmit={handleCreateTransaction}>
+                              <div className="form-group">
+                                <label>Filtrar por Categoría:</label>
+                                <select value={kardexFilterCategoryId} onChange={e => setKardexFilterCategoryId(e.target.value)}>
+                                  <option value="all">Todas las Categorías</option>
                                   {categories.map(cat => (
                                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                                   ))}
                                 </select>
                               </div>
-                              <button type="submit" className="btn btn-cyan w-full">Crear Producto</button>
-                            </form>
-                          </>
-                        ) : (
-                          <>
-                            <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Modificar Producto Existente</h4>
-                            <form onSubmit={handleUpdateProduct}>
-                              <div className="form-group" style={{ position: 'relative' }}>
-                                <label>Buscar por SKU:</label>
-                                <input
-                                  type="text"
-                                  required
-                                  value={searchSku}
-                                  onChange={e => setSearchSku(e.target.value)}
-                                  placeholder="Ej: MON-41d5"
-                                  autoComplete="off"
-                                />
-                                {showSuggestions && (
-                                  <div
-                                    style={{
-                                      position: 'absolute',
-                                      zIndex: 1000,
-                                      background: '#1e293b',
-                                      border: '1px solid rgb(255, 255, 255)',
-                                      borderRadius: '6px',
-                                      width: '100%',
-                                      maxHeight: '250px',
-                                      overflowY: 'auto',
-                                      boxShadow: '0 10px 15px -3px rgb(0, 0, 0)',
-                                      marginTop: '4px'
-                                    }}
-                                  >
-                                    {skuSuggestions.map(p => (
-                                      <div
-                                        key={p.id}
-                                        onClick={() => {
-                                          setSearchSku(p.sku);
-                                        }}
-                                        style={{
-                                          padding: '8px 12px',
-                                          cursor: 'pointer',
-                                          borderBottom: '1px solid rgb(255, 255, 255)',
-                                          fontSize: '13px',
-                                          color: '#fff',
-                                          transition: 'background 0.2s'
-                                        }}
-                                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgb(6, 182, 212)'}
-                                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                                      >
-                                        <strong>{p.sku}</strong> - {p.name}
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-
-                              {searchSku.trim() && (
-                                <>
-                                  {foundProduct ? (
-                                    <div
-                                      style={{
-                                        background: 'rgb(6, 182, 212)',
-                                        border: '1px solid rgb(6, 182, 212)',
-                                        padding: '10px',
-                                        borderRadius: '6px',
-                                        marginBottom: '1rem',
-                                        fontSize: '12px',
-                                      }}
-                                    >
-                                      <div style={{ color: '#fff', fontWeight: 'bold', marginBottom: '4px' }}>
-                                        ✓ Producto Identificado:
-                                      </div>
-                                      <div style={{ color: 'var(--text-secondary)' }}>
-                                        <strong>Nombre:</strong> {foundProduct.name}
-                                      </div>
-                                      <div style={{ color: 'var(--text-secondary)' }}>
-                                        <strong>Costo:</strong> ${foundProduct.cost.toFixed(2)}
-                                      </div>
-                                      <div style={{ color: 'var(--text-secondary)' }}>
-                                        <strong>Stock Actual:</strong> {foundProduct.stock} uds
-                                      </div>
-                                    </div>
+                              <div className="form-group">
+                                <label>Seleccionar Producto:</label>
+                                <select value={selectedProductId} onChange={e => setSelectedProductId(e.target.value)}>
+                                  {filteredKardexProducts.length === 0 ? (
+                                    <option value="">No hay productos en esta categoría</option>
                                   ) : (
-                                    <div
-                                      style={{
-                                        background: 'rgb(239, 68, 68)',
-                                        border: '1px solid rgb(239, 68, 68)',
-                                        padding: '10px',
-                                        borderRadius: '6px',
-                                        marginBottom: '1rem',
-                                        fontSize: '12px',
-                                        color: '#f87171',
-                                        fontWeight: '500',
-                                      }}
-                                    >
-                                      ⚠ No se encontró ningún producto con este SKU en el catálogo.
-                                    </div>
+                                    filteredKardexProducts.map(p => (
+                                      <option key={p.id} value={p.id}>{p.name} ({p.sku}) - Stock: {p.stock}</option>
+                                    ))
                                   )}
-                                </>
-                              )}
-
-                              {foundProduct && (
-                                <>
-                                  <div className="form-group">
-                                    <label>Precio Venta ($):</label>
-                                    <input
-                                      type="number"
-                                      required
-                                      min={0}
-                                      step="0.01"
-                                      value={updateProductPrice}
-                                      onChange={e => setUpdateProductPrice(parseFloat(e.target.value) || 0)}
-                                    />
-                                  </div>
-
-                                  <div className="form-group">
-                                    <label>Añadir Stock (Cantidad):</label>
-                                    <input
-                                      type="number"
-                                      min={0}
-                                      value={updateProductAddedStock}
-                                      onChange={e => setUpdateProductAddedStock(parseInt(e.target.value) || 0)}
-                                    />
-                                    <small style={{ fontSize: '10px', color: 'var(--text-secondary)', display: 'block', marginTop: '2px' }}>
-                                      Se registrará un ingreso en Kárdex por esta cantidad.
-                                    </small>
-                                  </div>
-
-                                  <div className="form-group">
-                                    <label>Categoría:</label>
-                                    <select
-                                      value={updateProductCategoryId}
-                                      onChange={e => setUpdateProductCategoryId(e.target.value)}
-                                    >
-                                      <option value="">Sin Categoría</option>
-                                      {categories.map(cat => (
-                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                      ))}
-                                    </select>
-                                  </div>
-
-                                  <button type="submit" className="btn btn-cyan w-full">
-                                    Actualizar Producto
-                                  </button>
-                                </>
-                              )}
+                                </select>
+                              </div>
+                              <div className="grid-2-form">
+                                <div className="form-group">
+                                  <label>Tipo de Movimiento:</label>
+                                  <select value={txType} onChange={e => setTxType(e.target.value as 'INGRESS' | 'EGRESS')}>
+                                    <option value="INGRESS">Ingreso (Entrada)</option>
+                                    <option value="EGRESS">Egreso (Salida)</option>
+                                  </select>
+                                </div>
+                                <div className="form-group">
+                                  <label>Cantidad:</label>
+                                  <input type="number" required min={1} value={txQty} onChange={e => setTxQty(parseInt(e.target.value) || 1)} />
+                                </div>
+                              </div>
+                              <button type="submit" className="btn btn-indigo w-full">Guardar Transacción</button>
                             </form>
-                          </>
+                          </div>
                         )}
-                      </div>
-
-                      <div className="card glass-panel" style={{ padding: '1.5rem' }}>
-                        <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Nueva Categoría</h4>
-                        <form onSubmit={handleCreateCategory}>
-                          <div className="form-group">
-                            <label>Nombre de la Categoría:</label>
-                            <input
-                              type="text"
-                              required
-                              value={newCategoryName}
-                              onChange={e => setNewCategoryName(e.target.value)}
-                              placeholder="Ej: Electrónica, Servicios..."
-                            />
-                          </div>
-                          <button type="submit" className="btn btn-cyan w-full">Crear Categoría</button>
-                        </form>
-                      </div>
-
-                      <div className="card glass-panel" style={{ padding: '1.5rem' }}>
-                        <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>Registrar Movimiento Kárdex</h4>
-                        <form onSubmit={handleCreateTransaction}>
-                          <div className="form-group">
-                            <label>Filtrar por Categoría:</label>
-                            <select value={kardexFilterCategoryId} onChange={e => setKardexFilterCategoryId(e.target.value)}>
-                              <option value="all">Todas las Categorías</option>
-                              {categories.map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.name}</option>
-                              ))}
-                            </select>
-                          </div>
-                          <div className="form-group">
-                            <label>Seleccionar Producto:</label>
-                            <select value={selectedProductId} onChange={e => setSelectedProductId(e.target.value)}>
-                              {filteredKardexProducts.length === 0 ? (
-                                <option value="">No hay productos en esta categoría</option>
-                              ) : (
-                                filteredKardexProducts.map(p => (
-                                  <option key={p.id} value={p.id}>{p.name} ({p.sku}) - Stock: {p.stock}</option>
-                                ))
-                              )}
-                            </select>
-                          </div>
-                          <div className="grid-2-form">
-                            <div className="form-group">
-                              <label>Tipo de Movimiento:</label>
-                              <select value={txType} onChange={e => setTxType(e.target.value as 'INGRESS' | 'EGRESS')}>
-                                <option value="INGRESS">Ingreso (Entrada)</option>
-                                <option value="EGRESS">Egreso (Salida)</option>
-                              </select>
-                            </div>
-                            <div className="form-group">
-                              <label>Cantidad:</label>
-                              <input type="number" required min={1} value={txQty} onChange={e => setTxQty(parseInt(e.target.value) || 1)} />
-                            </div>
-                          </div>
-                          <button type="submit" className="btn btn-indigo w-full">Guardar Transacción</button>
-                        </form>
                       </div>
                     </div>
                   </div>
@@ -3082,7 +3264,21 @@ export default function App() {
                   </div>
 
                   {ventasSubTab === 'facturacion_avanzada' && (
-                    <BillingSystem />
+                    <BillingSystem
+                      products={products}
+                      globalIvaRate={globalIvaRate}
+                      sriEnvironment={sriEnvironment}
+                      sriSignatureBase64={sriSignatureBase64}
+                      sriSignaturePassword={sriSignaturePassword}
+                      sriSimulate={sriSimulate}
+                      sriIsBranch={sriIsBranch}
+                      sriParentCompanyRuc={sriParentCompanyRuc}
+                      sriEstablishmentCode={sriEstablishmentCode}
+                      sriEmissionPoint={sriEmissionPoint}
+                      sriEstablishmentAddress={sriEstablishmentAddress}
+                      fetchInvoices={fetchInvoices}
+                      fetchProducts={fetchProducts}
+                    />
                   )}
 
                   {ventasSubTab === 'facturas' && (
@@ -3118,11 +3314,20 @@ export default function App() {
                       <div className="dashboard-grid">
                         {/* Invoices List */}
                         <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
-                          <h3 style={{ marginTop: 0 }}>Facturas Electrónicas Emitidas</h3>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '10px' }}>
+                            <h3 style={{ margin: 0 }}>Facturas Electrónicas Emitidas</h3>
+                            <input
+                              type="text"
+                              placeholder="🔍 Buscar por cliente o clave..."
+                              value={invoiceSearch}
+                              onChange={(e) => setInvoiceSearch(e.target.value)}
+                              style={{ padding: '6px 12px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '13px', width: '240px', background: 'rgba(255,255,255,0.05)', color: '#fff' }}
+                            />
+                          </div>
                           {invoicesLoading && invoices.length === 0 ? (
                             <p>Cargando facturas...</p>
-                          ) : invoices.length === 0 ? (
-                            <p>No se han emitido facturas de ventas.</p>
+                          ) : filteredInvoices.length === 0 ? (
+                            <p>No se encontraron facturas de ventas.</p>
                           ) : (
                             <table>
                               <thead>
@@ -3138,7 +3343,7 @@ export default function App() {
                                 </tr>
                               </thead>
                               <tbody>
-                                {invoices.map(inv => (
+                                {filteredInvoices.map(inv => (
                                   <tr key={inv.id}>
                                     <td style={{ fontSize: '12px' }}>{new Date(inv.createdAt).toLocaleDateString()}</td>
                                     <td><strong>{inv.clientName}</strong></td>
@@ -3156,6 +3361,7 @@ export default function App() {
                                       </span>
                                     </td>
                                     <td style={{ whiteSpace: 'nowrap' }}>
+                                      <button className="btn-sm" onClick={() => setSelectedDetailsInvoice(inv)} style={{ marginRight: '6px', background: 'rgba(255, 255, 255, 0.1)', color: '#fff', border: 'none', cursor: 'pointer' }}>Detalle</button>
                                       <button className="btn-sm btn-cyan" onClick={() => handleDownloadXml(inv.id)} style={{ marginRight: '6px' }}>XML</button>
                                       <button className="btn-sm btn-indigo" onClick={() => handleSendInvoice(inv.id)} disabled={inv.status !== 'AUTHORIZED'}>Enviar</button>
                                     </td>
@@ -3580,7 +3786,12 @@ export default function App() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       {/* Cruce balances summary table */}
                       <div className="table-container glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
-                        <h3>Saldos de Facturas y Caja {recoLoading && <span style={{ fontSize: '12px', color: 'var(--indigo)' }}>(Cargando...)</span>}</h3>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '10px' }}>
+                          <h3 style={{ margin: 0 }}>Saldos de Facturas y Caja {recoLoading && <span style={{ fontSize: '12px', color: 'var(--indigo)' }}>(Cargando...)</span>}</h3>
+                          <button onClick={handleExportReconciliation} className="btn btn-sm btn-indigo" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            📥 Exportar Conciliaciones (CSV)
+                          </button>
+                        </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                           <div>
                             <h4 style={{ marginBottom: '8px', fontSize: '13px', textTransform: 'uppercase', color: 'var(--cyan)' }}>Facturas de Ventas Pendientes de Cobro</h4>
@@ -6229,6 +6440,114 @@ export default function App() {
           </div>
         )
       }
-    </div >
+      {
+        selectedDetailsInvoice && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'rgba(0,0,0,0.8)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 99999,
+            padding: '20px'
+          }}>
+            <div className="glass-panel" style={{
+              background: 'rgb(15, 23, 42)',
+              border: '1px solid rgb(6, 182, 212)',
+              borderRadius: '16px',
+              maxWidth: '650px',
+              width: '95%',
+              padding: '2rem',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.5)',
+              position: 'relative',
+              color: '#fff',
+              maxHeight: '90vh',
+              overflowY: 'auto'
+            }}>
+              <button
+                onClick={() => setSelectedDetailsInvoice(null)}
+                style={{
+                  position: 'absolute',
+                  top: '1rem',
+                  right: '1rem',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-secondary)',
+                  fontSize: '1.25rem',
+                  cursor: 'pointer'
+                }}
+              >
+                ✕
+              </button>
+              <h3 style={{ marginTop: 0, borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.8rem', color: 'var(--cyan)' }}>
+                Detalle de Factura Emitida
+              </h3>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '15px', marginBottom: '1.5rem', fontSize: '13px' }}>
+                <div>
+                  <p style={{ margin: '4px 0' }}><strong>Cliente:</strong> {selectedDetailsInvoice.clientName}</p>
+                  <p style={{ margin: '4px 0' }}><strong>RUC/C.I.:</strong> {selectedDetailsInvoice.clientRuc || '9999999999999'}</p>
+                  <p style={{ margin: '4px 0' }}><strong>Correo:</strong> {selectedDetailsInvoice.clientEmail || 'N/D'}</p>
+                </div>
+                <div>
+                  <p style={{ margin: '4px 0' }}><strong>Fecha:</strong> {new Date(selectedDetailsInvoice.createdAt).toLocaleString()}</p>
+                  <p style={{ margin: '4px 0' }}><strong>Estado SRI:</strong> 
+                    <span className={`badge-status ${selectedDetailsInvoice.status === 'AUTHORIZED' ? 'status-yes' : selectedDetailsInvoice.status === 'RECEIVED' ? 'status-partial' : 'status-no'}`} style={{ marginLeft: '6px' }}>
+                      {selectedDetailsInvoice.status === 'AUTHORIZED' ? 'AUTORIZADO' : selectedDetailsInvoice.status === 'RECEIVED' ? 'RECIBIDO' : 'RECHAZADO'}
+                    </span>
+                  </p>
+                  <p style={{ margin: '4px 0', wordBreak: 'break-all' }}><strong>Clave de Acceso:</strong> <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10.5px' }}>{selectedDetailsInvoice.claveAcceso}</span></p>
+                </div>
+              </div>
+
+              <h4 style={{ margin: '1rem 0 0.5rem 0', fontSize: '13px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Productos / Ítems Vendidos</h4>
+              <div style={{ maxHeight: '180px', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', marginBottom: '1.5rem' }}>
+                <table style={{ margin: 0, fontSize: '12px', width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: 'rgba(255,255,255,0.05)', textAlign: 'left' }}>
+                      <th style={{ padding: '8px' }}>SKU</th>
+                      <th style={{ padding: '8px' }}>Producto</th>
+                      <th style={{ padding: '8px' }}>Precio Unit.</th>
+                      <th style={{ padding: '8px' }}>Cant.</th>
+                      <th style={{ padding: '8px' }}>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(!selectedDetailsInvoice.items || selectedDetailsInvoice.items.length === 0) ? (
+                      <tr>
+                        <td colSpan={5} style={{ padding: '12px', textAlign: 'center', color: 'var(--text-muted)' }}>Esta factura no registra desglose de ítems (Cargada desde webhook/sincronización).</td>
+                      </tr>
+                    ) : (
+                      selectedDetailsInvoice.items.map((item: any, idx: number) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                          <td style={{ padding: '8px', fontFamily: 'var(--font-mono)' }}>{item.sku}</td>
+                          <td style={{ padding: '8px' }}><strong>{item.name}</strong></td>
+                          <td style={{ padding: '8px' }}>${item.price.toFixed(2)}</td>
+                          <td style={{ padding: '8px' }}>{item.quantity}</td>
+                          <td style={{ padding: '8px', fontWeight: 'bold' }}>${(item.price * item.quantity).toFixed(2)}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px', fontSize: '13px' }}>
+                <div>Subtotal: <strong>${selectedDetailsInvoice.subtotal.toFixed(2)}</strong></div>
+                <div>IVA ({globalIvaRate}%): <strong>${selectedDetailsInvoice.iva.toFixed(2)}</strong></div>
+                <div style={{ fontSize: '16px', color: 'var(--cyan)' }}>Total Facturado: <strong>${selectedDetailsInvoice.amount.toFixed(2)}</strong></div>
+              </div>
+              <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+                <button onClick={() => setSelectedDetailsInvoice(null)} className="btn btn-cyan" style={{ padding: '8px 24px', borderRadius: '8px', fontWeight: 'bold' }}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </div>
   );
 }
