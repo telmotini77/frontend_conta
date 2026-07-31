@@ -357,15 +357,15 @@ export default function BillingSystem({
           <div style={{ display: 'flex', gap: '15px', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: '280px', position: 'relative' }}>
               <div style={{ display: 'flex', gap: '8px', alignItems: 'center', background: 'var(--bg-card, #ffffff)', padding: '6px 12px', border: '1px solid var(--border)', borderRadius: '8px' }}>
-                <span style={{ fontSize: '18px' }}>🔌</span>
-                <strong style={{ fontSize: '12px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>ESCÁNER / SKU:</strong>
+                <span style={{ fontSize: '15px' }}>🔌</span>
+                <strong style={{ fontSize: '9px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>ESCÁNER / SKU:</strong>
                 <input
                   type="text"
                   placeholder="Escanea el código de barras o escribe el SKU y presiona Enter..."
                   value={barcodeInput}
                   onChange={(e) => setBarcodeInput(e.target.value)}
                   onKeyDown={handleBarcodeKeyPress}
-                  style={{ flex: 1, border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none', fontSize: '13px' }}
+                  style={{ flex: 1, border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none', fontSize: '10px' }}
                 />
               </div>
             </div>
@@ -481,7 +481,7 @@ export default function BillingSystem({
                           borderBottom: '1px solid var(--border, #f1f5f9)',
                           display: 'flex',
                           justifyContent: 'space-between',
-                          fontSize: '12.5px',
+                          fontSize: '9.5px',
                           color: '#000'
                         }}
                         onMouseEnter={(e) => e.currentTarget.style.background = '#f1f5f9'}
@@ -623,7 +623,7 @@ export default function BillingSystem({
                                 borderBottom: '1px solid var(--border, #f1f5f9)',
                                 display: 'flex',
                                 justifyContent: 'space-between',
-                                fontSize: '12.5px',
+                                fontSize: '9.5px',
                                 color: '#000'
                               }}
                               onMouseEnter={(e) => e.currentTarget.style.background = '#f1f5f9'}
@@ -691,7 +691,7 @@ export default function BillingSystem({
                           onChange={(e) => handleRowChange(idx, 'hasIva', e.target.checked)}
                           style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                         />
-                        <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                        <span style={{ fontSize: '8px', color: 'var(--text-secondary)' }}>
                           ${inv.iva.toFixed(2)}
                         </span>
                       </div>
