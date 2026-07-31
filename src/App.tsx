@@ -631,6 +631,11 @@ export default function App() {
   const [purchasesLoading, setPurchasesLoading] = useState(false);
   const [accountingLoading, setAccountingLoading] = useState(false);
 
+  // Barcode scanner configuration state
+  const [scannerEnabled, setScannerEnabled] = useState(true);
+  const [scannerMode, setScannerMode] = useState<'GLOBAL' | 'FOCUSED'>('GLOBAL');
+  const [scannerTerminator, setScannerTerminator] = useState<'Enter' | 'Tab' | 'None'>('Enter');
+
   // Form States (New Product)
   const [newProductSku, setNewProductSku] = useState('');
   const [newProductName, setNewProductName] = useState('');
@@ -1161,6 +1166,51 @@ export default function App() {
 
     return () => clearInterval(interval);
   }, [user, token, autoSyncInterval, fetchInvoices, fetchProducts, fetchPurchases, fetchAssets, fetchAccountingData, fetchReconciliationSummary]);
+
+  // Barcode scanner Keyboard Emulation listener hook
+  React.useEffect(() => {
+    if (!scannerEnabled || scannerMode !== 'GLOBAL') return;
+
+    let buffer = '';
+    let timeout: any;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Control' || e.key === 'Shift' || e.key === 'Alt' || e.key === 'Meta') return;
+      
+      if (e.key === scannerTerminator || (scannerTerminator === 'None' && buffer.length >= 8)) {
+        if (buffer.length > 2) {
+          e.preventDefault();
+          const barcode = buffer.trim();
+          buffer = '';
+          const product = products.find((p: any) => p.sku.toLowerCase() === barcode.toLowerCase() || p.name.toLowerCase().includes(barcode.toLowerCase()));
+          if (product) {
+            setSelectedProductId(product.id);
+            setProductSearch(product.sku);
+            alert('Lector detectó SKU: ' + product.sku + ' - ' + product.name + ' (Stock: ' + product.stock + ')');
+          } else {
+            alert('Lector detectó SKU: ' + barcode + ' (No encontrado en catálogo)');
+          }
+        }
+      } else {
+        if (e.key.length === 1) {
+          buffer += e.key;
+        }
+      }
+
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        buffer = '';
+      }, 150);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      clearTimeout(timeout);
+    };
+  }, [scannerEnabled, scannerMode, scannerTerminator, products]);
+
+
 
   // Clear auth forms when toggling
   useEffect(() => {
@@ -6043,28 +6093,38 @@ export default function App() {
                   {adminSubTab === 'integraciones' && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       <div className="dashboard-grid">
-                        <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
-                          <h3 style={{ marginTop: 0 }}>Microservicio de FacturaciÃƒÂ³n</h3>
-                          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                            ConexiÃƒÂ³n local independiente para el firmado digital XAdES-BES de XMLs y comunicaciÃƒÂ³n SOAP con el SRI.
-                          </p>
+                        <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                          <div>
+                            <h3 style={{ marginTop: 0 }}>Microservicio de FacturaciÃƒÂ³n</h3>
+                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                              ConexiÃƒÂ³n local independiente para el firmado digital XAdES-BES de XMLs y comunicaciÃƒÂ³n SOAP con el SRI.
+                            </p>
 
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                              <span>Endpoint del Servicio:</span>
-                              <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--cyan)' }}>http://localhost:3001</span>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                              <span>Base de datos:</span>
-                              <span style={{ fontFamily: 'var(--font-mono)' }}>SQLite Local (/app/prisma)</span>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                              <span>Estado de ConexiÃƒÂ³n:</span>
-                              <span>
-                                <span className="badge-status status-yes" style={{ background: 'rgb(16, 185, 129)', color: 'var(--emerald)', border: '1px solid rgb(16, 185, 129)' }}>Ã¢Å¡Â¡ ONLINE</span>
-                              </span>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                                <span>Endpoint del Servicio:</span>
+                                <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--cyan)' }}>http://localhost:3001</span>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                                <span>Base de datos:</span>
+                                <span style={{ fontFamily: 'var(--font-mono)' }}>SQLite Local (/app/prisma)</span>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
+                                <span>Estado de ConexiÃƒÂ³n:</span>
+                                <span>
+                                  <span className="badge-status status-yes" style={{ background: 'rgb(16, 185, 129)', color: 'var(--emerald)', border: '1px solid rgb(16, 185, 129)' }}>Ã¢Å¡Â¡ ONLINE</span>
+                                </span>
+                              </div>
                             </div>
                           </div>
+
+                          <button
+                            onClick={() => window.open('http://localhost:5174', '_blank')}
+                            className="btn btn-cyan"
+                            style={{ width: '100%', marginTop: '1.5rem', padding: '10px', fontSize: '12.5px', fontWeight: 'bold' }}
+                          >
+                            Abrir Consola de FacturaciÃƒÂ³n Express
+                          </button>
                         </div>
 
                         <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
@@ -6101,6 +6161,52 @@ export default function App() {
                               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px' }}>
                                 {sriSimulate ? 'Desactivado' : 'Activo (celcer.sri.gob.ec)'}
                               </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="card glass-panel" style={{ padding: '1.5rem', margin: 0 }}>
+                          <h3 style={{ marginTop: 0 }}>Lector de CÃƒÂ³digo de Barras</h3>
+                          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                            ConfiguraciÃƒÂ³n del hardware del lector en emulaciÃƒÂ³n de teclado USB/inalÃƒÂ¡mbrico.
+                          </p>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                              <label style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Estado del Lector:</label>
+                              <select
+                                value={scannerEnabled ? 'ON' : 'OFF'}
+                                onChange={(e) => setScannerEnabled(e.target.value === 'ON')}
+                                style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', color: '#fff', padding: '6px', borderRadius: '4px' }}
+                              >
+                                <option value="ON">Habilitado (Escucha Activa)</option>
+                                <option value="OFF">Deshabilitado</option>
+                              </select>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                              <label style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Modo de Captura:</label>
+                              <select
+                                value={scannerMode}
+                                onChange={(e) => setScannerMode(e.target.value as 'GLOBAL' | 'FOCUSED')}
+                                style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', color: '#fff', padding: '6px', borderRadius: '4px' }}
+                              >
+                                <option value="GLOBAL">Global (Captura en cualquier vista)</option>
+                                <option value="FOCUSED">Enfocado (Solo con foco en catÃƒÂ¡logo)</option>
+                              </select>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                              <label style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Tecla de TÃƒÂ©rmino (Sufijo):</label>
+                              <select
+                                value={scannerTerminator}
+                                onChange={(e) => setScannerTerminator(e.target.value as 'Enter' | 'Tab' | 'None')}
+                                style={{ background: 'var(--bg-main)', border: '1px solid var(--border)', color: '#fff', padding: '6px', borderRadius: '4px' }}
+                              >
+                                <option value="Enter">Enter (Retorno de Carro)</option>
+                                <option value="Tab">Tabulador</option>
+                                <option value="None">Ninguno (LÃƒÂ­mite 8 caracteres)</option>
+                              </select>
                             </div>
                           </div>
                         </div>
